@@ -4,7 +4,7 @@
   <title><![CDATA[Chesterfield]]></title>
   <link href="http://chesterlee.github.io/atom.xml" rel="self"/>
   <link href="http://chesterlee.github.io/"/>
-  <updated>2014-07-26T22:33:52+08:00</updated>
+  <updated>2014-07-26T22:40:52+08:00</updated>
   <id>http://chesterlee.github.io/</id>
   <author>
     <name><![CDATA[chesterlee]]></name>
@@ -18,7 +18,7 @@
     <link href="http://chesterlee.github.io/blog/2014/07/26/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-san-zhang-datayu-yi-xue/"/>
     <updated>2014-07-26T22:16:51+08:00</updated>
     <id>http://chesterlee.github.io/blog/2014/07/26/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-san-zhang-datayu-yi-xue</id>
-    <content type="html"><![CDATA[<h4>我的C++对象模型读书笔记&mdash;第三章 Data语义学</h4>
+    <content type="html"><![CDATA[<h3>我的C++对象模型读书笔记&mdash;第三章 Data语义学</h3>
 
 <p> C++ standard 不强制规定“base class subjects的排列次序”“不同存取层记得data members的排列次序” ，也不规定“virtual funcitons 和 virtual base class“的实现细节。
 当一个类并没有任何声明的时候，它实做一个对象的时候，实际分配了1个字节的大小的空间。从而使得这个对象能够有独一无二的地址空间。</p>
@@ -33,7 +33,7 @@
 
 <hr />
 
-<h5>3.1 Data Member的绑定(The Binding of a Data Member)</h5>
+<h4>3.1 Data Member的绑定(The Binding of a Data Member)</h4>
 
 <p> 数据成员的绑定指数据成员与函数成员的一体性，因此无需使用“防御性编码风格”。</p>
 
@@ -47,13 +47,13 @@
 
 <p>反倒是函数参数列表的形式，必须使用防御性编码风格。因为它不是在类完成之后被决议的，反而是在他们第一次遇到编译器的时候，就决议了。因此，例如，若在全局范围做typedef int length;并在class中先做了function的处理声明。那么若在随后的member data声明的时候加上typedef float length;则会出现参考操作不合法的情况。</p>
 
-<h5>3.2  Data member 的布局</h5>
+<h4>3.2  Data member 的布局</h4>
 
 <p>C++ standard要求：在同一个access section 的member只要符合“较晚出现的members在class object中有较高的内存地址”即可，各个member之间并不一定需要得到连续的排列。当前编译器都是把一个以上的access section连锁到一起存放于内存，形成连续区块。可以使用内存高低的办法，去写一个函数，判断同一个类中，哪一个access section先出现。</p>
 
 <p>VPTR的存放位置也不一定，个个编译器自行规定。</p>
 
-<h5>3.3 Data Member的存取</h5>
+<h4>3.3 Data Member的存取</h4>
 
 <p>static data member：只要是static member，那么存取就是一个固定的时间，因为他相当于一个global变量。如果取一个static data member的地址，就会得到一个指向其数据类型的指针，而不是一个指向其class member的指针。因为static member并不包含在一个class object 之中。既然static member放在global data segment之中，就需要对他进行命名处理，防止命名的冲突（注意，这里应该使用的name-mangling处理方法，进行1，名称计算。2名称还原。）</p>
 
@@ -65,7 +65,7 @@
 
 <p>在虚继承的情况下：“经由base class subject存取class members”会增加一层新的间接性(bptr)。如果是由对象访问base class的数据成员(origin.x = 0;)，和上面的时间一样，因为它的偏移量在编译期间已经固定了，而如果是有一个指针来访问(如，pt->x = 0;)，则会很复杂，因为不知道该指针是指向什么类型的的对象。可能是base class，也可能是一个derived class，所以这个操作需啊放置到执行期能解决。</p>
 
-<h5>3.4“继承”和 Data Member</h5>
+<h4>3.4“继承”和 Data Member</h4>
 
 <p>C++中，一个derived class object的空间是自己的members加上base class members。而之间的排列次序在C++  standard中并未强制指定。大部分编译器而言，都是把base class members放在前面。</p>
 
@@ -75,7 +75,7 @@
 
 <p>关于基类和子类的Data Member在补齐上的问题，是否需要以每个base member的空间+补齐空间+derive空间来实例化一个derive object？是的。因为如果每个class的对象空间补齐部分被填入member，那么对象之间的member wise复制操作将会破坏被复制的对象member。（当然，这是编译器落实的事情J）</p>
 
-<p><strong>加上多态：</strong></p>
+<h5>加上多态</h5>
 
 <p>加上多态之后，将会给类的存取时间和空间带来额外的负担：</p>
 
@@ -87,13 +87,13 @@
 
 <p>4、加强了析构器的能力。（析构器重，抹掉vptr指向的值）</p>
 
-<p><strong>加上多重继承：</strong></p>
+<h5>加上多重继承：</h5>
 
 <p>注意，在多继承中，存在基类没有virtual function，子类存在virtual function的情况，那么自然多态就会被打破，编译器需要介入。在把子类指针赋值给基类ptr的时候，编译器也需要介入。</p>
 
 <p>在进行指针转换的情况下，我们总需要进行基地址+offset的方法来调整(编译器是这样做的J)。通过这样的调整，能够使得基类指针类型，指向子类中基类的那个部分的首地址。（如 adrr = base +sizeof(XXX)）</p>
 
-<p><strong>虚拟继承：</strong></p>
+<h5>虚拟继承：</h5>
 
 <p>策略是先安排好derived class的不变部分，而后再建立其共享部分。建立共享部分则需要通过一个指向该base class的指针，以访问virtual base class的成员。而不是像以前一样直接根据计算得到的偏移量得到。</p>
 
@@ -107,7 +107,7 @@
 </ul>
 
 
-<p>我们如何处理这两个问题？使得，1：对象有固定的负担。2：固定的存取时间。</p>
+<p>我们如何处理这两个问题？使得，<code>1：对象有固定的负担。2：固定的存取时间</code> 。</p>
 
 <p>解决方法有这些：</p>
 
