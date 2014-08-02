@@ -4,7 +4,7 @@
   <title><![CDATA[Category: cpp | Chesterfield]]></title>
   <link href="http://chesterlee.github.io/blog/categories/cpp/atom.xml" rel="self"/>
   <link href="http://chesterlee.github.io/"/>
-  <updated>2014-07-26T22:40:52+08:00</updated>
+  <updated>2014-08-02T09:46:23+08:00</updated>
   <id>http://chesterlee.github.io/</id>
   <author>
     <name><![CDATA[chesterlee]]></name>
@@ -12,6 +12,181 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[我的C++对象模型读书笔记-- 第五章 Data语义学]]></title>
+    <link href="http://chesterlee.github.io/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-di-wu-zhang-datayu-yi-xue/"/>
+    <updated>2014-08-02T09:27:24+08:00</updated>
+    <id>http://chesterlee.github.io/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-di-wu-zhang-datayu-yi-xue</id>
+    <content type="html"><![CDATA[<ul>
+<li><p>合理设计之一：将共享的成员放置到base class中。</p></li>
+<li><p>合理设计之二：对于class的成员，应该在构造函数中或者其他的成员函数中初始化。如果让子类class去初始化base class的成员，将会破坏封装性。</p></li>
+</ul>
+
+
+<p>纯虚析构函数设计者一定要定义它，因为子类调用析构函数的时候，会默认静态地调用积累的虚析构函数，因此中间层如果没有定义，则会出现连接失败。因此一个较好的方案是，不要把析构函数写成纯虚。</p>
+
+<p>如果成员member function声明成虚函数，但是函数体是一个inline形式的（如果简单地return一个member data），那么每次被调用，而根本不会被子类复写的。这样的函数调用会消耗很大的性能。因此，不要把所有函数都写成虚函数，而去等编译器优化的时候去除虚函数声明。</p>
+
+<p>虚函数是否需要const？如果不使用const，则无法获取一个const引用或者指针，如果使用const，如果derive的对象要修改某一个datamember。因此无法协调。所以只有不使用const为好。</p>
+
+<h4>5.1无继承体系下的对象构造（关于编译器对代码“膨胀”的实现）</h4>
+
+<p>当类是一个Plain Ol’ Data的形式，只包含built-in数据的struct或者class的时候。那么当存在对象定义、复制、删除或者return的时候，理论上会出现trivial的构造函数、析构、赋值和拷贝构造函数。但是实际上，编译器要么是没有默认合成，要么是合成了却没有调用。</p>
+
+<p>关于构造函数的“膨胀”：如类Point定义一个变量local(1.0,1.0,1.0)。那么对于编译器，会对默认构造函数进行内联膨胀，膨胀成 Point local; local.<em>x = 1.0; local.</em>y = 1.0; local._z = 1.0;。而对应Point *pheap = new Point;而言，会被编译器修改为如下代码：</p>
+
+<pre><code> Point *pheap = new Point;   
+ if(pheap) heap-&gt;Point::Point();
+</code></pre>
+
+<p>之后，再继续*pheap进行内联的膨胀。</p>
+
+<p>加上virtual function之后，也会引起编译器对构造器，析构器的膨胀。加上virtual function之后，vptr的初始化就会执行，初始化于构造器中，置于所有user code之前。</p>
+
+<p>因此，一个构造器名，如 Point::Point();会被膨胀为：</p>
+
+<pre><code>Point::Point(Point *this)
+</code></pre>
+
+<p>而函数体最前面，会被编译器添加：</p>
+
+<pre><code>this-&gt;_vptr = _vtbl_adrr;  //_vtbl_adrr指虚表首地址。
+</code></pre>
+
+<p>相应的，对于赋值构造、拷贝构造，编译器都会添加this,并用this去指向vptr，使得vptr被初始化，并指向当前的“合适的”虚表首地址。</p>
+
+<p>既然标准保证在member initialization list对应的代码执行前，该对象的vptr已经被正确的设置好，那么在member initialization list中调用virtual member function，从vptr的角度来看是安全的；但如果考虑到可能存在的member之间的依赖关系，这种风格显然是不安全、不推荐使用的。</p>
+
+<p>一般而言，如果程序中频繁的在函数中返回一个local class object，那么在设计class时，提供一个copy constructor就比较合理，它的存在会触发NRV优化。</p>
+
+<h4>5.2继承体系下的对象构造（编译器对构造函数的扩充内容和方式）</h4>
+
+<p>编译器扩充构造函数的主要方面可能如下：</p>
+
+<p>1、记录在initialization list 中的data members 初始化裁做会被放进 constructor的函数本身，并以members 的声明顺序为顺序。</p>
+
+<p>2、如果有一个member 没出现在member initialization list 之中，但是他又一个default constructor ，那么该default constructor 必须被调用</p>
+
+<p>3、在这之前呢，如果class object 具有virtual table pointers，那么它们必须被设定处置，以指向适当的virtual table。</p>
+
+<p>4、在那之前，所有的上一层的base class constructors必须被调用，以base class 的声明顺序为顺序。</p>
+
+<p> a) 如果base class 被列于member initialization list 之中， 那么任何明确制定的参数都被传递过去。</p>
+
+<p> b) 如果base class 没有被列于member initialization list 之中，而它具有default constructor,那么会调用default constructor。</p>
+
+<p> c) 如果base class是多重继承下的第二或后继的base class,那么this 指针必须有所调整。</p>
+
+<p>5、 在那之前，所有的virtual base class constructors 必须被调用，从做到又，从最深到最浅。</p>
+
+<p> a) 如果 class 被列于member initialization list 之中， 那么任何明确制定的参数都被传递过去， 如果 class 没有被列于member initialization list 之中，而它具有default constructor,那么会调用default construcotr</p>
+
+<p> b) class 中的每一个virtual base class subject 的便宜量必须在执行期间可被存取</p>
+
+<p> c) 如果class object是最底层的class, 其constructors可能被调用，某些用以支持这个行为的机制必须被放进来！</p>
+
+<p>具体的例子说明，见书207页-210页。</p>
+
+<ul>
+<li>关于虚拟继承，编译器需要对构造器处理的：</li>
+</ul>
+
+
+<p>当加入虚继承的时候，每个子类所拥有的是一个bptr，但是在子类的构造中，不可以每个子类都去调用 this->bptr->base::base()，因为虚基类只能被构造一次，因此，只有到最底层的子类，再进行对虚基类的构造器的调用。因此，在处理虚拟继承类族中的构造函数时，都会在构造函数中加入bool参数：</p>
+
+<p>如把derive::derive()改造为 derive::derive(derive *this,bool most_derive)。若bool值为真，则说明已经到了继承体系的最底层，则会调用虚拟基类的构造函数。否则不调用虚基类的构造函数。（这里的处理，编译器会在构造函数中自行加入。）</p>
+
+<p>这里也引发了一个问题：当一个子类对象完整的被定义出来的时候，我们会调用虚拟类的构造函数，当一个子类对象没有完整定义出来的时候，此构造函数则不会调用。因此可以生产出更有效率的编译器，它可以自行“拆解”构造器，使其更有效率，使一个“完整对象”的构造器能调用虚基类，并使用vptr。而使得“不完整对象”的构造器，无法调用虚基类和设定vptr。</p>
+
+<p>vptr初始化语义学(The Semantics of the vptr Initialization)</p>
+
+<p>vptr初始化是在执行期完成的，一般会发生4件事：</p>
+
+<p>1、        derived类无条件调用base类的constructor</p>
+
+<p>2、        调用完毕base的 constructor之后，初始化vptr。</p>
+
+<p>3、        构造函数的成员初值列如果存在，那么将会被扩展，并且置于vptr构建之后。</p>
+
+<p>4、        执行用户代码。</p>
+
+<h4>5.3 对象复制语意学</h4>
+
+<p>一个class的默认assignment operator，在如下情况下不具备bitwise copy语意：</p>
+
+<p>class含有一个member object，且其具有assignment operator。</p>
+
+<p>class的base class 具有 assignment operator。</p>
+
+<p>class包含virtual function。</p>
+
+<p>class有virtual base class。</p>
+
+<p>概括的说，non-trivial的assignment operator不具备bitwise copy semantics。只有non-trivial的assignment operator 才会被编译器合成出来。</p>
+
+<p>需要注意的时，并不存在与member initialization list 相对应的copy assignment list。</p>
+
+<p>assignment operator 在 virtual inheritance 下表现不佳。</p>
+
+<p>任何解决方案如果是以程序操作为基础，导致较高的复杂度和较大的错误倾向，一般公认，这表明语言在该方面存在弱点。</p>
+
+<h4>5.5解构语义学</h4>
+
+<p>如果class内带了object，且此object带有析构函数，那么class的就会自动合成一个析构函数，否则视为不需要（即便class包含虚函数）。</p>
+
+<p>顺带需要说的是，析构函数的执行顺序和构造函数相反，此刻包括了vptr的初始化、膨胀等操作的反操作。</p>
+
+<p>部分段落摘录自网上，稍加修改，出处不明。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[我的C++对象模型读书笔记--第四章 The Semantics of Function]]></title>
+    <link href="http://chesterlee.github.io/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-si-zhang-the-semantics-of-function/"/>
+    <updated>2014-08-02T09:25:15+08:00</updated>
+    <id>http://chesterlee.github.io/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-si-zhang-the-semantics-of-function</id>
+    <content type="html"><![CDATA[<h4>4.1 Member的各种调用方式</h4>
+
+<p>Nonstatic Member Functions：</p>
+
+<p>速度和一般的Nonmember function 有相同的效率。 编译器会对nonstatic member function进行改造。加入this参数，改变函数内部的对member data 的使用方法(使用this指针来存取！)，改变函数的名字&mdash;相当于nonmember function。这里面有一个函数名字的处理问题(name mangled处理)。</p>
+
+<p>Virtual Member Funciton：</p>
+
+<p>首先虚函数的调用方式若是指针调用，则是通过指针，找到vptr，打出偏移找到函数地址进行调用。其次，vptr的名字也是会被“name mangled”的，因为存在较为复杂的派生体系。</p>
+
+<p>在一个虚函数中调用另外一个虚函数，只需要写成类的函数(class::funcname())即可。因为在母函数中，执行期间已经决议出this指针指向的对象，因此上述做法可以压抑编译器的重复做法(使用vptr打偏移来做)。</p>
+
+<p>通过一个object（对象）调用虚拟函数，这时如果需要通过vptr中转一次，就会显得较为多余，编译器在决议的时候，会直接决议成nonstatic member function。</p>
+
+<p>Static Member Funciton：它的主要特性就是没有this指针，所以它不能够直接存取其class的nonstatic data members；也不能够被声明为virtual，const， volatile；它因此也就不需要经由某个class object 才能够被调用。他的调用速度和nonmember funciton差不多。如果取static member function的地址，那么将会是直接“Nonmember函数指针”，而不是“指向class member funciton的指针”。</p>
+
+<h4>4.2 Virtual Member Function</h4>
+
+<p>多重继承下的Virtual Funciton :</p>
+
+<p>当使用base  class pointer 调用virtual function的时候，可能出现两种情况。因为该base class pointer可能指向的位置处于derived class object的开始处，也可能有一个偏移量。一般规则时，经由指向“第二或后继之base class”的志真来调用derived class virtual funciton ,改掉用操作所连带的“必要的this指针调整”操作，必须在执行期完成。</p>
+
+<p>那么怎么处理呢？ 可能本来不需要调整的也变得要调整了！ 真是讨厌！  嘿嘿！  thunk技术北引用到了编译器中！  怎么解决呢？</p>
+
+<p>Sun编译器的方法是提供所谓的“split functions”技术；以相同的算法产生两个函数，其中第二个在返回之前，为指针加上必要的offset，于是不论通过base1或者derived指针调用函数，都不要调整返回值；而如果通过base2指针调用，则是另外一个函数 。</p>
+
+<p>IBM的方法呢？"把thunk搂抱在真正被调用的virtual function中。函数移开实现（1）调整this指针，然后才（2）执行程序员写的函数码；至于不需要调整的函数调用操作，就直接进入（2）部分"！</p>
+
+<p>MS的方法以所谓的'address points'来取代thunk策略，即将用来改写别人的函数（也就是overriding function)期待获得的是'引入virtual之class'的地址。这就是'address point'</p>
+
+<h4>4.4  指向Member Function的指针</h4>
+
+<p>指向 nonstatic member function 指针 :取一个nonstatic member function 的地址，如果该函数是nonvirtual ,则得到的结果是他在内存中的真正的地址。然而这个值也是不完全的，需要帮盯在某个class object的地址上，才能够通过它调用该函数。所有的nonstatic member functions 都需要对象的地址（以this参数指出）。</p>
+
+<p>指向 static member functions 指针 ：而static member functions的指针则是函数指针，而不是指向member function 的指针。</p>
+
+<p>指向 virtual member functions 指针：对一个virtual member funciton 取地址，所能够获得的只是一个索引值。编译器在评估求值的时候，会(*ptr->vptr[(int)pmf])(ptr) !</p>
+
+<p>后三部分摘录自互联网，出处不明。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[我的C++对象模型读书笔记--第三章 Data语义学]]></title>
