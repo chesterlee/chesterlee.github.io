@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ios | Chesterfield]]></title>
   <link href="http://chesterlee.github.io/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://chesterlee.github.io/"/>
-  <updated>2014-08-24T11:11:31+08:00</updated>
+  <updated>2014-08-24T11:14:24+08:00</updated>
   <id>http://chesterlee.github.io/</id>
   <author>
     <name><![CDATA[chesterlee]]></name>
@@ -33,10 +33,10 @@
 <p>它可以做各种hack的事情：</p>
 
 <ul>
-<li><p>a、拦截获取图片的Request，然后自行加载自己的图片。</p></li>
-<li><p>b、自己拦截特定Request，然后自己做签名，header修改。</p></li>
-<li><p>c、过滤Response、Request中的敏感信息，当然也可以加上敏感信息-0-。</p></li>
-<li><p>d、支持NSURLConnection的callback协议，可以对上层完全透明。</p></li>
+<li><p>拦截获取图片的Request，然后自行加载自己的图片。</p></li>
+<li><p>自己拦截特定Request，然后自己做签名，header修改。</p></li>
+<li><p>过滤Response、Request中的敏感信息，当然也可以加上敏感信息-0-。</p></li>
+<li><p>支持NSURLConnection的callback协议，可以对上层完全透明。</p></li>
 </ul>
 
 
@@ -84,7 +84,7 @@
 - (void)stopLoading
 {    
   //加载结束
-  NSLog(@"something went wrong!");
+  NSLog(@"load over!");
 }
 </code></pre>
 

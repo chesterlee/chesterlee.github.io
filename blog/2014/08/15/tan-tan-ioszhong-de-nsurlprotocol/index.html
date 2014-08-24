@@ -104,10 +104,10 @@
 <p>它可以做各种hack的事情：</p>
 
 <ul>
-<li><p>a、拦截获取图片的Request，然后自行加载自己的图片。</p></li>
-<li><p>b、自己拦截特定Request，然后自己做签名，header修改。</p></li>
-<li><p>c、过滤Response、Request中的敏感信息，当然也可以加上敏感信息-0-。</p></li>
-<li><p>d、支持NSURLConnection的callback协议，可以对上层完全透明。</p></li>
+<li><p>拦截获取图片的Request，然后自行加载自己的图片。</p></li>
+<li><p>自己拦截特定Request，然后自己做签名，header修改。</p></li>
+<li><p>过滤Response、Request中的敏感信息，当然也可以加上敏感信息-0-。</p></li>
+<li><p>支持NSURLConnection的callback协议，可以对上层完全透明。</p></li>
 </ul>
 
 
@@ -187,7 +187,7 @@
 </span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">stopLoading</span>
 </span><span class='line'><span class="p">{</span>
 </span><span class='line'>  <span class="c1">//加载结束</span>
-</span><span class='line'>  <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;something went wrong!&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;load over!&quot;</span><span class="p">);</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
