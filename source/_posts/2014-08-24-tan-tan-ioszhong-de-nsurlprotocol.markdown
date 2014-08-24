@@ -22,13 +22,14 @@ NSURLProtocol是比较"小众"，但是能量极大的一个东东。在NSHipste
 
 它可以做各种hack的事情：
 
-* a、拦截获取图片的Request，然后自行加载自己的图片。
+* 拦截获取图片的Request，然后自行加载自己的图片。
 
-* b、自己拦截特定Request，然后自己做签名，header修改。
+* 自己拦截特定Request，然后自己做签名，header修改。
 
-* c、过滤Response、Request中的敏感信息，当然也可以加上敏感信息-0-。
+* 过滤Response、Request中的敏感信息，当然也可以加上敏感信息-0-。
 
-* d、支持NSURLConnection的callback协议，可以对上层完全透明。
+* 支持NSURLConnection的callback协议，可以对上层完全透明。
+
 
 3、怎么用？
 
@@ -74,7 +75,7 @@ b、在自己的类的回调上，做一些hack的事情。
     - (void)stopLoading
     {    
       //加载结束
-      NSLog(@"something went wrong!");
+      NSLog(@"load over!");
     }
 
     
