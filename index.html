@@ -9,9 +9,7 @@
   <meta name="author" content="chesterlee">
 
   
-  <meta name="description" content="NSURLProtocol是比较&#8221;小众&#8221;，但是能量极大的一个东东。在NSHipster中matt对其有详细介绍。
-它就像在少林寺里，武功最高的，就是在一旁扫落叶的僧人，默默无闻，你一旦发现他，各种绝学就来了。
-&ndash;_-扯远了，我们先看看它是什么，然后看看它能干什么 &hellip;">
+  <meta name="description" content="这几个属性值得写清楚，因为他们有组合起来使用的状况，有时候情况会变得较为复杂。 edgesForExtendedLayout：UIRectEdgeTop 延伸是会影响childviewcontroller的向上延伸的特点。（正确地说，是UINavigationController 作用所有的sub &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +63,48 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/08/24/ios7zhong-ui-trick/">edgesForExtendedLayout、automaticallyAdjustsScrollViewInsets和extendedLayoutIncludesOpaqueBars</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-08-24T23:58:15+08:00" pubdate data-updated="true">2014-08-24 23:58</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>这几个属性值得写清楚，因为他们有组合起来使用的状况，有时候情况会变得较为复杂。</p>
+
+<p>edgesForExtendedLayout：UIRectEdgeTop 延伸是会影响childviewcontroller的向上延伸的特点。（正确地说，是UINavigationController 作用所有的sub ViewController 中的向上延伸的特性。）如果edgesForExtendedLayout包含了UIRectEdgeTop，那么childVC的view会占据整个屏幕，反之，它会置于Navigationbar的offsetY下面。</p>
+
+<p>automaticallyAdjustsScrollViewInsets：它的涵义是：如果UINavigationController或UIToolbarViewController的子View是Scrollview及其子类，在edgesForExtendedLayout含有top的状况下，会修改ScrollView的ContentInsect，来满足Scrollview的内容向上滑动时，statubar和navigation bar浮在其内容上。当然，如果edgesForExtendedLayout如果不含有top，那么就关闭了浮在navigation bar和statubar的特性，automaticallyAdjustsScrollViewInsets的作用也就失去意义了- &ndash;>此时NavigationController不会因为这个值是YES来设置scrollview的contentInsects。PS：（对挂接到一个view的tableview或scrollview是无效的。注意这里如果使用了childviewcontroller就可以验证这一点了。）</p>
+
+<p>extendedLayoutIncludesOpaqueBars，这个属性指定了当Bar使用了不透明图片时，视图是否延伸至Bar所在区域，默认值时NO。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -993,12 +1033,16 @@ C++以下列的方法支持多态：</p>
   <h1>Categories</h1>
   <ul id="categories">
     <li class='category'><a href='/blog/categories/cpp/'>cpp (5)</a></li>
-<li class='category'><a href='/blog/categories/ios/'>ios (2)</a></li>
+<li class='category'><a href='/blog/categories/ios/'>ios (3)</a></li>
 
   </ul>
 </section><section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/08/24/ios7zhong-ui-trick/">edgesForExtendedLayout、automaticallyAdjustsScrollViewInsets和extendedLayoutIncludesOpaqueBars</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2014/08/15/tan-tan-ioszhong-de-nsurlprotocol/">谈谈iOS中的NSURLProtocol</a>
@@ -1014,10 +1058,6 @@ C++以下列的方法支持多态：</p>
     
       <li class="post">
         <a href="/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-si-zhang-the-semantics-of-function/">我的C++对象模型读书笔记&#8211;第四章 The Semantics of Function</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/07/26/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-san-zhang-datayu-yi-xue/">我的C++对象模型读书笔记&#8211;第三章 Data语义学</a>
       </li>
     
   </ul>
