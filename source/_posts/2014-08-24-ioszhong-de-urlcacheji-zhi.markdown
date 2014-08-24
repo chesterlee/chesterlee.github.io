@@ -19,7 +19,7 @@ HTTP缓存在iOS中需要，配合着NSURLRequest的缓存策略来实现的。�
 *  **NSURLRequestReturnCacheDataElseLoad**。如果在之前的网络请求中，我们获取了Cache的Response，那么本次请求同样的接口，就直接从Cache中去抓。反之，从服务器上去获取，并在本地cache起来。(这里的问题是，如果cache存在，就一直拉不到服务器数据，所以用这个机制，有它的弊端，当然也要看具体的需求情况。可以通过自定义自类化NSURLCache来自定义cache time，但也仅仅适用于Data改变不大的项目中。)
 *  **NSURLRequestReturnCacheDataDontLoad**。只从缓存中获取cached response而不从服务器获取。实属离线版本。  
 
-好，这里展开说一下最为复杂的ProtocolCachePolicy机制：  
+好，这里展开说一下相对最为复杂的ProtocolCachePolicy机制：  
 1、如果一个Request的NSCachedURLResponse不存在，就去请求网络。  
 2、如果一个Request的NSCachedURLResponse存在，就去检查response去决定是否需要刷新。检查Response header的Cache-Control字段是否含有must-revalidated字段(HTTP1.1所带)。  
 3、如果包含must-revalidated字段，就通过HEAD方法请求服务器，判断Response头是否有更新，如果有，则去拉数据下来。如果没有，则使用Cache资源。  
