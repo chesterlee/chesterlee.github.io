@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "谈谈iOS中的HTTP缓存策略"
-date: 2014-08-24 09:03:05 +0800
+date: 2014-08-10 09:03:05 +0800
 comments: true
 categories: iOS
 keywords: iOS,HTTPCache
