@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ios | Chesterfield]]></title>
   <link href="http://chesterlee.github.io/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://chesterlee.github.io/"/>
-  <updated>2014-08-24T11:14:24+08:00</updated>
+  <updated>2014-08-24T11:17:01+08:00</updated>
   <id>http://chesterlee.github.io/</id>
   <author>
     <name><![CDATA[chesterlee]]></name>
@@ -30,7 +30,7 @@
 
 <p>2、它的功效：</p>
 
-<p>它可以做各种hack的事情：</p>
+<p>它可以做各种hack的事情：^_^</p>
 
 <ul>
 <li><p>拦截获取图片的Request，然后自行加载自己的图片。</p></li>
@@ -72,7 +72,10 @@
 {    
   //这里就开始加载了，模拟NSURLConnection的callback流程，依次call client的方法来模拟Connection的callback次序
   NSLog(@"%@", request.URL);    
-  NSURLResponse *response = [[NSURLResponse alloc] initWithURL:[request URL] MIMEType:@"image/png"  expectedContentLength:-1 textEncodingName:nil];    
+  NSURLResponse *response = [[NSURLResponse alloc] initWithURL:[request URL] 
+                                                      MIMEType:@"image/png"  
+                                         expectedContentLength:-1 
+                                              textEncodingName:nil];    
   NSString *imagePath = [[NSBundle mainBundle] pathForResource:@"myImage" ofType:@"png"];
   NSData *data = [NSData dataWithContentsOfFile:imagePath];
   [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed]; 

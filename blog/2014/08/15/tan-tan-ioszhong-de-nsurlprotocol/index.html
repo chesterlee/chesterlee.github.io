@@ -101,7 +101,7 @@
 
 <p>2、它的功效：</p>
 
-<p>它可以做各种hack的事情：</p>
+<p>它可以做各种hack的事情：^_^</p>
 
 <ul>
 <li><p>拦截获取图片的Request，然后自行加载自己的图片。</p></li>
@@ -155,6 +155,9 @@
 <span class='line-number'>32</span>
 <span class='line-number'>33</span>
 <span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
 </pre></td><td class='code'><pre><code class='objectivec'><span class='line'><span class="k">+</span> <span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="nf">canInitWithRequest:</span><span class="p">(</span><span class="n">NSURLRequest</span><span class="o">*</span><span class="p">)</span><span class="nv">theRequest</span>
 </span><span class='line'><span class="p">{</span>
 </span><span class='line'>   <span class="c1">//自己选择要截获怎样的request，如果要截获就返回YES</span>
@@ -175,7 +178,10 @@
 </span><span class='line'><span class="p">{</span>
 </span><span class='line'>  <span class="c1">//这里就开始加载了，模拟NSURLConnection的callback流程，依次call client的方法来模拟Connection的callback次序</span>
 </span><span class='line'>  <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;%@&quot;</span><span class="p">,</span> <span class="n">request</span><span class="p">.</span><span class="n">URL</span><span class="p">);</span>
-</span><span class='line'>  <span class="n">NSURLResponse</span> <span class="o">*</span><span class="n">response</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSURLResponse</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">initWithURL</span><span class="o">:</span><span class="p">[</span><span class="n">request</span> <span class="n">URL</span><span class="p">]</span> <span class="n">MIMEType</span><span class="o">:</span><span class="s">@&quot;image/png&quot;</span>  <span class="n">expectedContentLength</span><span class="o">:-</span><span class="mi">1</span> <span class="n">textEncodingName</span><span class="o">:</span><span class="nb">nil</span><span class="p">];</span>
+</span><span class='line'>  <span class="n">NSURLResponse</span> <span class="o">*</span><span class="n">response</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSURLResponse</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">initWithURL</span><span class="o">:</span><span class="p">[</span><span class="n">request</span> <span class="n">URL</span><span class="p">]</span>
+</span><span class='line'>                                                        <span class="n">MIMEType</span><span class="o">:</span><span class="s">@&quot;image/png&quot;</span>
+</span><span class='line'>                                           <span class="n">expectedContentLength</span><span class="o">:-</span><span class="mi">1</span>
+</span><span class='line'>                                                <span class="n">textEncodingName</span><span class="o">:</span><span class="nb">nil</span><span class="p">];</span>
 </span><span class='line'>  <span class="n">NSString</span> <span class="o">*</span><span class="n">imagePath</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSBundle</span> <span class="n">mainBundle</span><span class="p">]</span> <span class="n">pathForResource</span><span class="o">:</span><span class="s">@&quot;myImage&quot;</span> <span class="n">ofType</span><span class="o">:</span><span class="s">@&quot;png&quot;</span><span class="p">];</span>
 </span><span class='line'>  <span class="n">NSData</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSData</span> <span class="n">dataWithContentsOfFile</span><span class="o">:</span><span class="n">imagePath</span><span class="p">];</span>
 </span><span class='line'>  <span class="p">[[</span><span class="n">self</span> <span class="n">client</span><span class="p">]</span> <span class="n">URLProtocol</span><span class="o">:</span><span class="n">self</span> <span class="n">didReceiveResponse</span><span class="o">:</span><span class="n">response</span> <span class="n">cacheStoragePolicy</span><span class="o">:</span><span class="n">NSURLCacheStorageNotAllowed</span><span class="p">];</span>
