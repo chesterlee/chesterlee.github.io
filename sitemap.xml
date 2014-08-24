@@ -3,6 +3,12 @@
   
   
   <url>
+    <loc>http://chesterlee.github.io/blog/2014/08/24/ioszhong-de-urlcacheji-zhi/</loc>
+    <lastmod>2014-08-24T09:03:05+08:00</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
     <loc>http://chesterlee.github.io/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-di-wu-zhang-datayu-yi-xue/</loc>
     <lastmod>2014-08-02T09:27:24+08:00</lastmod>
     <priority>0.8</priority>
@@ -35,21 +41,21 @@
   
   <url>
     <loc>http://chesterlee.github.io/blog/archives/</loc>
-    <lastmod>2014-08-02T09:52:02+08:00</lastmod>
+    <lastmod>2014-08-24T10:00:24+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://chesterlee.github.io/</loc>
-    <lastmod>2014-08-02T09:52:02+08:00</lastmod>
+    <lastmod>2014-08-24T10:00:24+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   
   <url>
     <loc>http://chesterlee.github.io/about/</loc>
-    <lastmod>2014-08-02T09:52:02+08:00</lastmod>
+    <lastmod>2014-08-24T10:00:24+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>

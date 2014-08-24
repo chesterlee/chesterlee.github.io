@@ -1,0 +1,243 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>iOS中的Response缓存策略 - Chesterfield</title>
+  <meta name="author" content="chesterlee">
+
+  
+  <meta name="description" content="iOS中的HTTP URL Cache机制是看上较为简单，但是暗含一些机制的东西。这里将它细化下来。让自己也加深下相应的记忆。 首先，说下概念，HTTP URLCache是HTTP协议中的一部分，用于缓存Response，以达到减轻服务器负担的目的。在iOS中的URL Loading &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://chesterlee.github.io/blog/2014/08/24/ioszhong-de-urlcacheji-zhi/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Chesterfield" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Chesterfield</a></h1>
+  
+    <h2>Time is limited, so don't waste it living someone else's life</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://yahoo.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:chesterlee.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">iOS中的Response缓存策略</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-08-24T09:03:05+08:00" pubdate data-updated="true">2014-08-24 09:03</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>iOS中的HTTP URL Cache机制是看上较为简单，但是暗含一些机制的东西。这里将它细化下来。让自己也加深下相应的记忆。</p>
+
+<p>首先，说下概念，HTTP URLCache是HTTP协议中的一部分，用于缓存Response，以达到减轻服务器负担的目的。在iOS中的URL Loading System中，提供了名字叫NSURLCache的类来设置URL缓存的配置信息。</p>
+
+<p>在iOS中的URL缓存容器是共享的，因而我们可以自己继承NSURLCache来配置自己的cache，自定义化它的内存大小，磁盘大小甚至过期时间等等，最后设置为share cache即可。</p>
+
+<p>HTTP缓存在iOS中需要，配合着NSURLRequest的缓存策略来实现的。比如，如果指定了一个Request的缓存策略，那么对应Request就会按既定策略进行处理。策略常用如下：</p>
+
+<ul>
+<li><strong>NSURLRequestUseProtocolCachePolicy</strong>。一个Request的默认缓存策略。他是最为隐晦的，我们最后说。</li>
+<li><strong>NSURLRequestReturnCacheDataElseLoad</strong>。如果在之前的网络请求中，我们获取了Cache的Response，那么本次请求同样的接口，就直接从Cache中去抓。反之，从服务器上去获取，并在本地cache起来。(这里的问题是，如果cache存在，就一直拉不到服务器数据，所以用这个机制，有它的弊端，当然也要看具体的需求情况。可以通过自定义自类化NSURLCache来自定义cache time，但也仅仅适用于Data改变不大的项目中。)</li>
+<li><strong>NSURLRequestReturnCacheDataDontLoad</strong>。只从缓存中获取cached response而不从服务器获取。实属离线版本。</li>
+</ul>
+
+
+<p>好，这里展开说一下最为复杂的ProtocolCachePolicy机制：<br/>
+1、如果一个Request的NSCachedURLResponse不存在，就去请求网络。<br/>
+2、如果一个Request的NSCachedURLResponse存在，就去检查response去决定是否需要刷新。检查Response header的Cache-Control字段是否含有must-revalidated字段(HTTP1.1所带)。<br/>
+3、如果包含must-revalidated字段，就通过HEAD方法请求服务器，判断Response头是否有更新，如果有，则去拉数据下来。如果没有，则使用Cache资源。<br/>
+4、如果不包含must-revalidated字段，就看看Cache-Control是否包含其他字段，比如max-age等等看看是否过期，如果过期，继续用HEAD去检查Response头，是否为最新数据，如果有则去请求服务器，反之取cache。如果没有过期，则直接取cache。</p>
+
+<ul>
+<li>注意：由于HEAD是URL Loading System自身机制，由于没有抓包，所以没去验证。HEAD方法默认使用可以参见水果文档中的Cache Use Semantics for the HTTP Protocol。</li>
+</ul>
+
+
+<p>然后说下通用HTTP的缓存策略：</p>
+
+<p>  HTTP缓存策略中，我们从服务器获取Response后，可以找到(如果有)Response中包含Etag或则Last-Modified字段。当我们做第二次重复请求的时候，可以从CachedURLResponse取出来，把相应字段拼接在HTTPRequestHeader中（例如，IMS，If-Modified-Since配合Last_Modified），然后发送请求，服务端收到后，如果客户端的资源是最新的，那么就会返回304为Response，而不返回任何内容。反之，如果客户端资源落后了，则直接返回200，并返回Data给客户端。</p>
+
+<p>最后谈谈修改NSCachedURLResponse：<br/>
+在方法-(NSCachedURLResponse<em>)connection:(NSURLConnection</em>)connectionwillCacheResponse:(NSCachedURLResponse*)cachedResponse中，我们可以对即将缓存的Response进行修改，以达到自己的需求。</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">chesterlee</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-08-24T09:03:05+08:00" pubdate data-updated="true">2014-08-24 09:03</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ios/'>ios</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-di-wu-zhang-datayu-yi-xue/" title="Previous Post: 我的C++对象模型读书笔记-- 第五章 Data语义学">&laquo; 我的C++对象模型读书笔记-- 第五章 Data语义学</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li class='category'><a href='/blog/categories/cpp/'>cpp (5)</a></li>
+<li class='category'><a href='/blog/categories/ios/'>ios (1)</a></li>
+
+  </ul>
+</section><section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/08/24/ioszhong-de-urlcacheji-zhi/">iOS中的Response缓存策略</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-di-wu-zhang-datayu-yi-xue/">我的C++对象模型读书笔记-- 第五章 Data语义学</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-si-zhang-the-semantics-of-function/">我的C++对象模型读书笔记--第四章 The Semantics of Function</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/07/26/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-san-zhang-datayu-yi-xue/">我的C++对象模型读书笔记--第三章 Data语义学</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/07/26/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-er-zhang-gou-zao-han-shu-yu-yi-xue/">我的C++对象模型读书笔记--第二章 构造函数语义学</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - chesterlee -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+  - <span class="credit">Theme by <a href="http://www.gehaxelt.in">Gehaxelt</a></span>
+  <span class="credit">and <a href="http://www.it-solutions-neef.de">IT Solutions Neef</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
