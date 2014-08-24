@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ios | Chesterfield]]></title>
   <link href="http://chesterlee.github.io/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://chesterlee.github.io/"/>
-  <updated>2014-08-24T11:17:01+08:00</updated>
+  <updated>2014-08-24T11:19:10+08:00</updated>
   <id>http://chesterlee.github.io/</id>
   <author>
     <name><![CDATA[chesterlee]]></name>
@@ -70,13 +70,15 @@
 
 - (void)startLoading
 {    
-  //这里就开始加载了，模拟NSURLConnection的callback流程，依次call client的方法来模拟Connection的callback次序
+  //这里就开始加载了，模拟NSURLConnection的callback流程，
+  //依次call client的方法来模拟Connection的callback次序
   NSLog(@"%@", request.URL);    
   NSURLResponse *response = [[NSURLResponse alloc] initWithURL:[request URL] 
                                                       MIMEType:@"image/png"  
                                          expectedContentLength:-1 
                                               textEncodingName:nil];    
-  NSString *imagePath = [[NSBundle mainBundle] pathForResource:@"myImage" ofType:@"png"];
+  NSString *imagePath = [[NSBundle mainBundle] pathForResource:@"myImage" 
+                                                         ofType:@"png"];
   NSData *data = [NSData dataWithContentsOfFile:imagePath];
   [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed]; 
   [[self client] URLProtocol:self didLoadData:data];
