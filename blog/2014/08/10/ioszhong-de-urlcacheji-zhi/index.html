@@ -104,7 +104,7 @@
 </ul>
 
 
-<p>好，这里展开说一下最为复杂的ProtocolCachePolicy机制：<br/>
+<p>好，这里展开说一下相对最为复杂的ProtocolCachePolicy机制：<br/>
 1、如果一个Request的NSCachedURLResponse不存在，就去请求网络。<br/>
 2、如果一个Request的NSCachedURLResponse存在，就去检查response去决定是否需要刷新。检查Response header的Cache-Control字段是否含有must-revalidated字段(HTTP1.1所带)。<br/>
 3、如果包含must-revalidated字段，就通过HEAD方法请求服务器，判断Response头是否有更新，如果有，则去拉数据下来。如果没有，则使用Cache资源。<br/>
