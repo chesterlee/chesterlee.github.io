@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ios | Chesterfield]]></title>
   <link href="http://chesterlee.github.io/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://chesterlee.github.io/"/>
-  <updated>2014-08-24T11:19:10+08:00</updated>
+  <updated>2014-08-24T23:54:29+08:00</updated>
   <id>http://chesterlee.github.io/</id>
   <author>
     <name><![CDATA[chesterlee]]></name>
@@ -18,37 +18,27 @@
     <link href="http://chesterlee.github.io/blog/2014/08/15/tan-tan-ioszhong-de-nsurlprotocol/"/>
     <updated>2014-08-15T10:23:37+08:00</updated>
     <id>http://chesterlee.github.io/blog/2014/08/15/tan-tan-ioszhong-de-nsurlprotocol</id>
-    <content type="html"><![CDATA[<p>NSURLProtocol是比较"小众"，但是能量极大的一个东东。在NSHipster中matt对其有详细介绍。</p>
+    <content type="html"><![CDATA[<p>NSURLProtocol是比较"小众"，但是能量极大的一个东东。在NSHipster中matt对其有详细介绍。<br/>
+它就像在少林寺里，武功最高的，就是在一旁扫落叶的僧人，默默无闻，你一旦发现他，各种绝学就来了。<br/>
+&ndash;_-扯远了，我们先看看它是什么，然后看看它能干什么。</p>
 
-<p>它就像在少林寺里，武功最高的，就是在一旁扫落叶的僧人，默默无闻，你一旦发现他，各种绝学就来了。</p>
-
-<p>&ndash;_-扯远了，我们先看看它是什么，然后看看它能干什么。</p>
-
-<p>1、它的概念：</p>
-
-<p>它是一个抽象类，我们可以通过继承它来定义新的或已存在的URL加载行为。</p>
-
-<p>2、它的功效：</p>
-
-<p>它可以做各种hack的事情：^_^</p>
+<p>1、它的概念：
+它是一个抽象类，我们可以通过继承它来定义新的或已存在的URL加载行为。<br/>
+2、就它的功效而言,它可以做各种hack的事情：^_^</p>
 
 <ul>
-<li><p>拦截获取图片的Request，然后自行加载自己的图片。</p></li>
-<li><p>自己拦截特定Request，然后自己做签名，header修改。</p></li>
-<li><p>过滤Response、Request中的敏感信息，当然也可以加上敏感信息-0-。</p></li>
-<li><p>支持NSURLConnection的callback协议，可以对上层完全透明。</p></li>
+<li>拦截获取图片的Request，然后自行加载自己的图片。</li>
+<li>自己拦截特定Request，然后自己做签名，header修改。</li>
+<li>过滤Response、Request中的敏感信息，当然也可以加上敏感信息-0-。</li>
+<li>支持NSURLConnection的callback协议，可以对上层完全透明。</li>
 </ul>
 
 
-<p>3、怎么用？</p>
-
-<p>只需要做两件事情：</p>
-
-<p>a、子类化NSURLProtocol类，并注册。APP启动后，但做网络请求之前，就可以干这事情了。后续iOS必然是单例化你的类，然后吃各种callback了。</p>
-
-<p>b、在自己的类的回调上，做一些hack的事情。</p>
-
-<p>4、最简单的sample&hellip;&ndash;_&ndash;</p>
+<p>3、怎么用？<br/>
+只需要做两件事情： <br/>
+a、子类化NSURLProtocol类，并注册。APP启动后，但做网络请求之前，就可以干这事情了。后续iOS必然是单例化你的类，然后吃各种callback了。<br/>
+b、在自己的类的回调上，做一些hack的事情。<br/>
+4、最简单的sample&hellip;&ndash;_&ndash;</p>
 
 <p>``` objectivec DeriveNSURLProtocol:NSURLProtocol</p>
 
