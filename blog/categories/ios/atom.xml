@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ios | Chesterfield]]></title>
   <link href="http://chesterlee.github.io/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://chesterlee.github.io/"/>
-  <updated>2014-08-24T10:01:42+08:00</updated>
+  <updated>2014-08-24T10:03:26+08:00</updated>
   <id>http://chesterlee.github.io/</id>
   <author>
     <name><![CDATA[chesterlee]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[谈谈iOS中的HTTP缓存策略]]></title>
-    <link href="http://chesterlee.github.io/blog/2014/08/24/ioszhong-de-urlcacheji-zhi/"/>
-    <updated>2014-08-24T09:03:05+08:00</updated>
-    <id>http://chesterlee.github.io/blog/2014/08/24/ioszhong-de-urlcacheji-zhi</id>
+    <link href="http://chesterlee.github.io/blog/2014/08/14/ioszhong-de-urlcacheji-zhi/"/>
+    <updated>2014-08-14T09:03:05+08:00</updated>
+    <id>http://chesterlee.github.io/blog/2014/08/14/ioszhong-de-urlcacheji-zhi</id>
     <content type="html"><![CDATA[<p>iOS中的HTTP URL Cache机制是看上较为简单，但是暗含一些机制的东西。这里将它细化下来。让自己也加深下相应的记忆。</p>
 
 <p>首先，说下概念，HTTP URLCache是HTTP协议中的一部分，用于缓存Response，以达到减轻服务器负担的目的。在iOS中的URL Loading System中，提供了名字叫NSURLCache的类来设置URL缓存的配置信息。</p>
