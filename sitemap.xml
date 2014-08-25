@@ -3,6 +3,12 @@
   
   
   <url>
+    <loc>http://chesterlee.github.io/blog/2014/08/25/iosshou-shi-he-uishi-jian-chuan-di-de-chong-chong-xi-jie/</loc>
+    <lastmod>2014-08-25T20:03:53+08:00</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
     <loc>http://chesterlee.github.io/blog/2014/08/24/ios7zhong-ui-trick/</loc>
     <lastmod>2014-08-24T23:58:15+08:00</lastmod>
     <priority>0.8</priority>
@@ -53,21 +59,21 @@
   
   <url>
     <loc>http://chesterlee.github.io/blog/archives/</loc>
-    <lastmod>2014-08-25T00:04:58+08:00</lastmod>
+    <lastmod>2014-08-25T21:51:04+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://chesterlee.github.io/</loc>
-    <lastmod>2014-08-25T00:04:58+08:00</lastmod>
+    <lastmod>2014-08-25T21:51:04+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   
   <url>
     <loc>http://chesterlee.github.io/about/</loc>
-    <lastmod>2014-08-25T00:04:58+08:00</lastmod>
+    <lastmod>2014-08-25T21:51:04+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
