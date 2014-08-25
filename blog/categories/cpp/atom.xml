@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: cpp | Chesterlee's Tech room]]></title>
+  <title><![CDATA[Category: cpp | Chesterlee's tech room]]></title>
   <link href="http://chesterlee.github.io/blog/categories/cpp/atom.xml" rel="self"/>
   <link href="http://chesterlee.github.io/"/>
-  <updated>2014-08-25T22:00:51+08:00</updated>
+  <updated>2014-08-25T22:01:40+08:00</updated>
   <id>http://chesterlee.github.io/</id>
   <author>
     <name><![CDATA[chesterlee]]></name>
