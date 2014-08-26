@@ -1,0 +1,20 @@
+.sharing {
+  width: 92px;
+  margin: -25px 0 0 auto;
+
+  a {
+    @include opacity(1);
+
+    @include transition-property(opacity);
+    @include transition-duration(0.5s);
+
+    &:hover {
+      @include opacity(0.6);
+    }
+  }
+
+  img {
+    width: 20px;
+    height: 20px;
+  }
+}

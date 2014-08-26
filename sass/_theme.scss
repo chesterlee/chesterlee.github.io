@@ -1,0 +1,89 @@
+@mixin theme($color, $span_colors, $span_hover_colors) {
+  h1, h2, h3, h4, h5, h6 {
+    color: $color;
+  }
+  h2 {
+    border-bottom-color: $color;
+  }
+
+  a {
+    color: $color;
+  }
+
+  .article-header {
+    color: $color;
+    border-bottom-color: $color;
+  }
+
+  .article-title {
+    a {
+      text-decoration: none;
+
+      span {
+        @include transition-property(color, background-color);
+        @include transition-duration(0.5s);
+
+        &:nth-child(n)    { color: nth($span_colors, 1); }
+        &:nth-child(2n)   { color: nth($span_colors, 2); }
+        &:nth-child(3n)   { color: nth($span_colors, 3); }
+        &:nth-child(4n)   { color: nth($span_colors, 4); }
+        &:nth-child(2n+1) { color: nth($span_colors, 5); }
+        &:nth-child(3n+1) { color: nth($span_colors, 6); }
+        &:nth-child(4n+1) { color: nth($span_colors, 7); }
+      }
+
+      &:hover {
+        text-decoration: none;
+
+        span {
+          background-color: $color;
+
+          &:nth-child(n)    { color: nth($span_hover_colors, 1); }
+          &:nth-child(2n)   { color: nth($span_hover_colors, 2); }
+          &:nth-child(3n)   { color: nth($span_hover_colors, 3); }
+          &:nth-child(4n)   { color: nth($span_hover_colors, 4); }
+          &:nth-child(2n+1) { color: nth($span_hover_colors, 5); }
+          &:nth-child(3n+1) { color: nth($span_hover_colors, 6); }
+          &:nth-child(4n+1) { color: nth($span_hover_colors, 7); }
+        }
+      }
+    }
+  }
+
+  .page-header {
+    color: $color;
+    border-bottom-color: $color;
+  }
+}
+
+.theme-green {
+  @include theme(
+    #16605b,
+    (#196c67, #1d7d77, #22968e, #1b756f, #208982, #21928a, #1d7d77),
+    (#effbfa, #c1f1ee, #90e5e0, #cef4f1, #72dfd7, #c1f1ee, #adece8)
+  );
+}
+
+.theme-red {
+  @include theme(
+    #cf1c46,
+    (#dc1e4b, #e22c57, #e6476c, #e12350, #e43a62, #e64369, #e22c57),
+    (#ffffff, #ffffff, #fdedf1, #ffffff, #f8ced8, #ffffff, #ffffff)
+  );
+}
+
+.theme-purple {
+  @include theme(
+    #611d54,
+    (#6d215e, #7c256c, #942c80, #752365, #882976, #902b7d, #7c256c),
+    (#fcf6fb, #efcbe8, #e19cd4, #f3d7ed, #d980c8, #efcbe8, #eab7e0)
+  );
+}
+
+.theme-orange {
+  @include theme(
+    #ce6304,
+    (#dd6a04, #f17405, #fb831a, #e76f04, #fa7b0b, #fa8115, #f17405),
+    (#ffffff, #ffffff, #fee7d3, #ffffff, #fdd4b0, #ffffff, #fffaf6)
+  );
+}

@@ -1,0 +1,135 @@
+.page-header {
+  margin-bottom: 30px;
+  padding-bottom: 3px;
+  border-bottom: 3px solid #333333;
+  color: #333333;
+  text-align: center;
+
+  h1 {
+    font-weight: bold;
+  }
+
+  a {
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.article {
+  h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote {
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
+  h1, h2, h3 {
+    margin-top: 30px;
+    font-weight: bold;
+  }
+  h2 {
+    padding-bottom: 3px;
+    border-bottom: 1px solid #333333;
+  }
+
+  a {
+    color: #333333;
+    text-decoration: underline;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  .article-header {
+    @extend .page-header;
+    text-align: left;
+  }
+
+  .article-title {
+    margin-top: 10px;
+    margin-bottom: 3px;
+    font-weight: bold;
+    text-align: center;
+  }
+}
+
+.article-index {
+  .article {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    word-wrap: break-word;
+
+    .article-header {
+      margin-bottom: 10px;
+
+      h1 {
+        font-weight: bold;
+      }
+    }
+
+    .article-title {
+      font-size: 30px;
+      line-height: 1;
+      text-align: left;
+    }
+  }
+}
+
+.article-pagination {
+  margin: 20px;
+  padding: 0;
+  list-style: none;
+  text-align: center;
+
+  &:before, &:after {
+    display: table;
+    content: "";
+    line-height: 0;
+  }
+  &:after {
+    clear: both;
+  }
+
+  li {
+    &.previous { float: left; }
+    &.next     { float: right; }
+
+    > a {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333333;
+      text-decoration: none;
+
+      @include transition-property(color);
+      @include transition-duration(0.5s);
+
+      &:hover {
+        color: #f9f9f9;
+      }
+    }
+  }
+}
+
+.category-index {
+  .article-title {
+    margin-bottom: 3px;
+    font-size: 30px;
+    line-height: 1;
+    font-weight: bold;
+    text-align: left;
+  }
+
+  ul {
+    padding-left: 10px;
+    list-style: none;
+  }
+
+  li {
+    margin: 20px 0;
+  }
+}
+
+.disqus {
+  margin: 30px 20px 20px;
+}
