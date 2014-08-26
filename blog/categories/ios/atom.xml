@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ios | Chesterlee's tech room]]></title>
+  <link href="http://chesterlee.github.io/blog/categories/ios/atom.xml" rel="self"/>
+  <link href="http://chesterlee.github.io/"/>
+  <updated>2014-08-25T22:01:40+08:00</updated>
+  <id>http://chesterlee.github.io/</id>
+  <author>
+    <name><![CDATA[chesterlee]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[iOS手势和UI事件传递的种种细节]]></title>
+    <link href="http://chesterlee.github.io/blog/2014/08/25/iosshou-shi-he-uishi-jian-chuan-di-de-chong-chong-xi-jie/"/>
+    <updated>2014-08-25T20:03:53+08:00</updated>
+    <id>http://chesterlee.github.io/blog/2014/08/25/iosshou-shi-he-uishi-jian-chuan-di-de-chong-chong-xi-jie</id>
+    <content type="html"><![CDATA[<p>做iOS交互，最为重要的就是UI的事件传递需要很清楚。当然也要包括各种"小"细节。
+这里首先说说大的过程，也是UI事件传递的基本过程：当APP收到用户点击之后，就会做两个过程：</p>
+
+<ul>
+<li>1、遍历树，找哪个UIView是被Point击中。</li>
+<li>2、回溯tree node，形成响应者链。剩下的就是UIEvent的传递了。</li>
+</ul>
+
+
+<p>现在让我们谈谈几个问题，一个View添加了Gesture了，那么在它之上的touches的回调会收到调用吗？一个view的superview的VC添加了手势，那么在该view中的touches会收到调用吗？如何正确地传递给superview相应touches调用？UITouch里面有什么东西？如果这些有些不太清楚，那么请往下看。</p>
+
+<h4>几个不得不提的概念:</h4>
+
+<ul>
+<li>Touches began/Moved/Cancelled/touchesEnded是UIResponder的接口，用于接收触摸的各种事件。<strong>过程简述为UserTouch&mdash;>UIApplication&mdash;>UIWindow&mdash;>UIView</strong>。</li>
+<li><strong>UITouch代表一个手指，从开始接触屏幕到离开屏幕的触碰描述数据</strong>。展开来说，UITouch包含了上一次手指的位置信息，当前的UITouch的状态TouchPhase，当前的时间戳以及UITouch要送往的那些以定义的手势。具体作用和关联，后面讲。</li>
+<li>当发生了触摸时，UIEvent就会包含UITouch的数组，被App送到对应的Responder上（如果这个Responder书写了touchesBegan等UITouch的回调的话）。</li>
+<li>UITouch的状态机有TouchPhaseBegan、Moved、Ended几个。当然，分别对应那几个回调。这里请注意，<strong>UITouch的状态机和手势的状态机如UIGestureRecognizerStateBegan，是完全不同的，千万不要混淆</strong>.</li>
+<li><strong>Gesture的状态</strong>：单独Gesture(如Tap)是有识别状态的，一个叫Possible，一个叫Recognized，一个叫Failed。而连续Gesture(如Pinch)相比之下多了began、changed等状态。</li>
+</ul>
+
+
+<hr />
+
+<h4>UITouch的发送机制：</h4>
+
+<p>一句话：手势先于UIView获取Touch的响应权。详细说来：当对屏幕进行点击的时候，如前面所说，UITouch的对象会从UIApplication被依次传递，这里如果View或者其superview添加了Gesture。默认状况下：UITouch就会被送到这个Gesture上去识别，如果Gesture无法识别则会送UITouch对象点到的那个UIView上去做响应。</p>
+
+<p>回答前两个问题：这个事件先发送到一个Gesture上，并不意味着会结束touches等的调用，这个调用只是delay了。所以，第一个问题，它的touches began会收到回调，它的superview及其VC都会收到touches began的回调。而且began，moved有可能还先于手势收到回调，原因是就是Gesture对UI事件调用的影响原则：</p>
+
+<ul>
+<li>如果在某个时刻，如果Gesture根据UITouch的变化识别出了自己的手势，把Possble状态跳到了Recognized状态。那么App将不会给对应的View或VC发送后续的UIEvent。转而，UITouch的事件将会没有走完，且会收到touches:Cancelled事件而不会收到touches:Ended事件。</li>
+<li>如果整个过程中，Gesture都没有识别出自己的手势，那么它会设置自己的状态未Failed。那么这些UITouch对象会被转发给对应的UIView或VC。</li>
+</ul>
+
+
+<p>最后说说UItouches中包含了一个gestureRecognizers数组作用是什么呢，注意这个小过程：</p>
+
+<ul>
+<li>UITouch是通过touchesBegan、touchesMoved、touchesEnded等方法被送到对应的Gesture上的。UITouch其实也就是记录了被注册的Gesture对象的指针，这里就被传递到手势上了。</li>
+<li>因此，在默认状况下，如果一个view注册了touchesBegan、它或它的superview注册了Gesture，touchesbegan会先于Gesgure收到UITouch。</li>
+</ul>
+
+
+<hr />
+
+<h4>所以，在这里总结下，默认状况下手势是通过touchesBegan等事件传递的方式获取UITouch，并根据UITouch的变化进行了手势自身的判断，如果手势判断成功，手势自身的状态就会从Possible变为Recognized，从而阻止了touchesEnded的调用。但是在这个过程中，默认touchesBegan是先被目标view调用的。</h4>
+
+<p>最后说说delaysTouchesBegan 和 delaysTouchesEnded</p>
+
+<ul>
+<li><strong>概念</strong>。这两个属性是手势的，默认delaysTouchesBegan为NO，delaysTouchesEnded为Yes。表示的涵义是：不延迟touchesBegan调用，目标View可以接到这些事件，而Delay TouchesEnded的调用。让手势获取最终的决定权。PS:他们的影响类似ScrollView中的delaysContentTouches变量，是否把延迟把UITouch传递给ScrollView中的subView。</li>
+<li><strong>配置</strong>。你可以把delaysTouchesBegan开启，阻止touchesBegan调用，直接收到手势。但是这样会有时让用户感到UI失去响应。
+delaysTouchesEnded也可以被设置为NO，如果这样的话当delaysTouchesBegan为NO的情况，UITouch就会被传递到目标UIView上，相当于:UIView自己接事件，而且手势也去接事件。</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[edgesForExtendedLayout、automaticallyAdjustsScrollViewInsets和extendedLayoutIncludesOpaqueBars]]></title>
+    <link href="http://chesterlee.github.io/blog/2014/08/24/ios7zhong-ui-trick/"/>
+    <updated>2014-08-24T23:58:15+08:00</updated>
+    <id>http://chesterlee.github.io/blog/2014/08/24/ios7zhong-ui-trick</id>
+    <content type="html"><![CDATA[<p>这几个属性值得写清楚，因为他们有组合起来使用的状况，有时候情况会变得较为复杂。</p>
+
+<p>edgesForExtendedLayout：UIRectEdgeTop 延伸是会影响childviewcontroller的向上延伸的特点。（正确地说，是UINavigationController 作用所有的sub ViewController 中的向上延伸的特性。）如果edgesForExtendedLayout包含了UIRectEdgeTop，那么childVC的view会占据整个屏幕，反之，它会置于Navigationbar的offsetY下面。</p>
+
+<p>automaticallyAdjustsScrollViewInsets：它的涵义是：如果UINavigationController或UIToolbarViewController的子View是Scrollview及其子类，在edgesForExtendedLayout含有top的状况下，会修改ScrollView的ContentInsect，来满足Scrollview的内容向上滑动时，statubar和navigation bar浮在其内容上。当然，如果edgesForExtendedLayout如果不含有top，那么就关闭了浮在navigation bar和statubar的特性，automaticallyAdjustsScrollViewInsets的作用也就失去意义了- &ndash;>此时NavigationController不会因为这个值是YES来设置scrollview的contentInsects。PS：（对挂接到一个view的tableview或scrollview是无效的。注意这里如果使用了childviewcontroller就可以验证这一点了。）</p>
+
+<p>extendedLayoutIncludesOpaqueBars，这个属性指定了当Bar使用了不透明图片时，视图是否延伸至Bar所在区域，默认值时NO。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[谈谈iOS中的NSURLProtocol]]></title>
+    <link href="http://chesterlee.github.io/blog/2014/08/15/tan-tan-ioszhong-de-nsurlprotocol/"/>
+    <updated>2014-08-15T10:23:37+08:00</updated>
+    <id>http://chesterlee.github.io/blog/2014/08/15/tan-tan-ioszhong-de-nsurlprotocol</id>
+    <content type="html"><![CDATA[<p>NSURLProtocol是比较"小众"，但是能量极大的一个东东。在NSHipster中matt对其有详细介绍。<br/>
+它就像在少林寺里，武功最高的，就是在一旁扫落叶的僧人，默默无闻，你一旦发现他，各种绝学就来了。<br/>
+&ndash;_-扯远了，我们先看看它是什么，然后看看它能干什么。</p>
+
+<p>1、它的概念：
+它是一个抽象类，我们可以通过继承它来定义新的或已存在的URL加载行为。<br/>
+2、就它的功效而言,它可以做各种hack的事情：^_^</p>
+
+<ul>
+<li>拦截获取图片的Request，然后自行加载自己的图片。</li>
+<li>自己拦截特定Request，然后自己做签名，header修改。</li>
+<li>过滤Response、Request中的敏感信息，当然也可以加上敏感信息-0-。</li>
+<li>支持NSURLConnection的callback协议，可以对上层完全透明。</li>
+</ul>
+
+
+<p>3、怎么用？<br/>
+只需要做两件事情： <br/>
+a、子类化NSURLProtocol类，并注册。APP启动后，但做网络请求之前，就可以干这事情了。后续iOS必然是单例化你的类，然后吃各种callback了。<br/>
+b、在自己的类的回调上，做一些hack的事情。<br/>
+4、最简单的sample&hellip;&ndash;_&ndash;</p>
+
+<p>``` objectivec DeriveNSURLProtocol:NSURLProtocol</p>
+
+<pre><code>+ (BOOL)canInitWithRequest:(NSURLRequest*)theRequest
+{    
+     //自己选择要截获怎样的request，如果要截获就返回YES
+     if ([theRequest.URL.scheme caseInsensitiveCompare:@"testapp"] == NSOrderedSame) 
+     {        
+       return YES;    
+     }    
+     return NO;
+}
+
++ (NSURLRequest*)canonicalRequestForRequest:(NSURLRequest*)theRequest
+{   
+    // 正规化自己的request，因为request会用来找对应的cache，默认需要实现该方法，通常不需要修改。
+    return theRequest;
+}
+
+- (void)startLoading
+{    
+  //这里就开始加载了，模拟NSURLConnection的callback流程，
+  //依次call client的方法来模拟Connection的callback次序
+  NSLog(@"%@", request.URL);    
+  NSURLResponse *response = [[NSURLResponse alloc] initWithURL:[request URL] 
+                                                      MIMEType:@"image/png"  
+                                         expectedContentLength:-1 
+                                              textEncodingName:nil];    
+  NSString *imagePath = [[NSBundle mainBundle] pathForResource:@"myImage" 
+                                                         ofType:@"png"];
+  NSData *data = [NSData dataWithContentsOfFile:imagePath];
+  [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed]; 
+  [[self client] URLProtocol:self didLoadData:data];
+  [[self client] URLProtocolDidFinishLoading:self];
+  [response release];
+}
+
+- (void)stopLoading
+{    
+  //加载结束
+  NSLog(@"load over!");
+}
+</code></pre>
+
+<p>```</p>
+
+<p>5、更多详细介绍可以参看matt的<a href="http://nshipster.com/nsurlprotocol/">http://nshipster.com/nsurlprotocol/</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[谈谈iOS中的HTTP缓存策略]]></title>
+    <link href="http://chesterlee.github.io/blog/2014/08/10/ioszhong-de-urlcacheji-zhi/"/>
+    <updated>2014-08-10T09:03:05+08:00</updated>
+    <id>http://chesterlee.github.io/blog/2014/08/10/ioszhong-de-urlcacheji-zhi</id>
+    <content type="html"><![CDATA[<p>iOS中的HTTP URL Cache机制是看上较为简单，但是暗含一些机制的东西。这里将它细化下来。让自己也加深下相应的记忆。</p>
+
+<p>首先，说下概念，HTTP URLCache是HTTP协议中的一部分，用于缓存Response，以达到减轻服务器负担的目的。在iOS中的URL Loading System中，提供了名字叫NSURLCache的类来设置URL缓存的配置信息。</p>
+
+<p>在iOS中的URL缓存容器是共享的，因而我们可以自己继承NSURLCache来配置自己的cache，自定义化它的内存大小，磁盘大小甚至过期时间等等，最后设置为share cache即可。</p>
+
+<p>HTTP缓存在iOS中需要，配合着NSURLRequest的缓存策略来实现的。比如，如果指定了一个Request的缓存策略，那么对应Request就会按既定策略进行处理。策略常用如下：</p>
+
+<ul>
+<li><strong>NSURLRequestUseProtocolCachePolicy</strong>。一个Request的默认缓存策略。他是最为隐晦的，我们最后说。</li>
+<li><strong>NSURLRequestReturnCacheDataElseLoad</strong>。如果在之前的网络请求中，我们获取了Cache的Response，那么本次请求同样的接口，就直接从Cache中去抓。反之，从服务器上去获取，并在本地cache起来。(这里的问题是，如果cache存在，就一直拉不到服务器数据，所以用这个机制，有它的弊端，当然也要看具体的需求情况。可以通过自定义自类化NSURLCache来自定义cache time，但也仅仅适用于Data改变不大的项目中。)</li>
+<li><strong>NSURLRequestReturnCacheDataDontLoad</strong>。只从缓存中获取cached response而不从服务器获取。实属离线版本。</li>
+</ul>
+
+
+<p>好，这里展开说一下相对最为复杂的ProtocolCachePolicy机制：<br/>
+1、如果一个Request的NSCachedURLResponse不存在，就去请求网络。<br/>
+2、如果一个Request的NSCachedURLResponse存在，就去检查response去决定是否需要刷新。检查Response header的Cache-Control字段是否含有must-revalidated字段(HTTP1.1所带)。<br/>
+3、如果包含must-revalidated字段，就通过HEAD方法请求服务器，判断Response头是否有更新，如果有，则去拉数据下来。如果没有，则使用Cache资源。<br/>
+4、如果不包含must-revalidated字段，就看看Cache-Control是否包含其他字段，比如max-age等等看看是否过期，如果过期，继续用HEAD去检查Response头，是否为最新数据，如果有则去请求服务器，反之取cache。如果没有过期，则直接取cache。</p>
+
+<ul>
+<li>注意：由于HEAD是URL Loading System自身机制，由于没有抓包，所以没去验证。HEAD方法默认使用可以参见水果文档中的Cache Use Semantics for the HTTP Protocol。</li>
+</ul>
+
+
+<p>然后说下通用HTTP的缓存策略：</p>
+
+<p>  HTTP缓存策略中，我们从服务器获取Response后，可以找到(如果有)Response中包含Etag或则Last-Modified字段。当我们做第二次重复请求的时候，可以从CachedURLResponse取出来，把相应字段拼接在HTTPRequestHeader中（例如，IMS，If-Modified-Since配合Last_Modified），然后发送请求，服务端收到后，如果客户端的资源是最新的，那么就会返回304为Response，而不返回任何内容。反之，如果客户端资源落后了，则直接返回200，并返回Data给客户端。</p>
+
+<p>最后谈谈修改NSCachedURLResponse：<br/>
+在方法-(NSCachedURLResponse<em>)connection:(NSURLConnection</em>)connectionwillCacheResponse:(NSCachedURLResponse*)cachedResponse中，我们可以对即将缓存的Response进行修改，以达到自己的需求。</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>edgesForExtendedLayout、automaticallyAdjustsScrollViewInsets和extendedLayoutIncludesOpaqueBars - Chesterlee's tech room</title>
+  <meta name="author" content="chesterlee">
+
+  
+  <meta name="description" content="这几个属性值得写清楚，因为他们有组合起来使用的状况，有时候情况会变得较为复杂。 edgesForExtendedLayout：UIRectEdgeTop 延伸是会影响childviewcontroller的向上延伸的特点。（正确地说，是UINavigationController 作用所有的sub &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://chesterlee.github.io/blog/2014/08/24/ios7zhong-ui-trick/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Chesterlee's tech room" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Chesterlee's tech room</a></h1>
+  
+    <h2>Time is limited, so don't waste it living someone else's life</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://yahoo.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:chesterlee.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">edgesForExtendedLayout、automaticallyAdjustsScrollViewInsets和extendedLayoutIncludesOpaqueBars</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-08-24T23:58:15+08:00" pubdate data-updated="true">2014-08-24 23:58</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>这几个属性值得写清楚，因为他们有组合起来使用的状况，有时候情况会变得较为复杂。</p>
+
+<p>edgesForExtendedLayout：UIRectEdgeTop 延伸是会影响childviewcontroller的向上延伸的特点。（正确地说，是UINavigationController 作用所有的sub ViewController 中的向上延伸的特性。）如果edgesForExtendedLayout包含了UIRectEdgeTop，那么childVC的view会占据整个屏幕，反之，它会置于Navigationbar的offsetY下面。</p>
+
+<p>automaticallyAdjustsScrollViewInsets：它的涵义是：如果UINavigationController或UIToolbarViewController的子View是Scrollview及其子类，在edgesForExtendedLayout含有top的状况下，会修改ScrollView的ContentInsect，来满足Scrollview的内容向上滑动时，statubar和navigation bar浮在其内容上。当然，如果edgesForExtendedLayout如果不含有top，那么就关闭了浮在navigation bar和statubar的特性，automaticallyAdjustsScrollViewInsets的作用也就失去意义了- &ndash;>此时NavigationController不会因为这个值是YES来设置scrollview的contentInsects。PS：（对挂接到一个view的tableview或scrollview是无效的。注意这里如果使用了childviewcontroller就可以验证这一点了。）</p>
+
+<p>extendedLayoutIncludesOpaqueBars，这个属性指定了当Bar使用了不透明图片时，视图是否延伸至Bar所在区域，默认值时NO。</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">chesterlee</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-08-24T23:58:15+08:00" pubdate data-updated="true">2014-08-24 23:58</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ios/'>ios</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/08/15/tan-tan-ioszhong-de-nsurlprotocol/" title="Previous Post: 谈谈iOS中的NSURLProtocol">&laquo; 谈谈iOS中的NSURLProtocol</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/08/25/iosshou-shi-he-uishi-jian-chuan-di-de-chong-chong-xi-jie/" title="Next Post: iOS手势和UI事件传递的种种细节">iOS手势和UI事件传递的种种细节 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li class='category'><a href='/blog/categories/cpp/'>cpp (5)</a></li>
+<li class='category'><a href='/blog/categories/ios/'>ios (4)</a></li>
+
+  </ul>
+</section><section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/08/25/iosshou-shi-he-uishi-jian-chuan-di-de-chong-chong-xi-jie/">iOS手势和UI事件传递的种种细节</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/08/24/ios7zhong-ui-trick/">edgesForExtendedLayout、automaticallyAdjustsScrollViewInsets和extendedLayoutIncludesOpaqueBars</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/08/15/tan-tan-ioszhong-de-nsurlprotocol/">谈谈iOS中的NSURLProtocol</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/08/10/ioszhong-de-urlcacheji-zhi/">谈谈iOS中的HTTP缓存策略</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-di-wu-zhang-datayu-yi-xue/">我的C++对象模型读书笔记-- 第五章 Data语义学</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - chesterlee -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+  - <span class="credit">Theme by <a href="http://www.gehaxelt.in">Gehaxelt</a></span>
+  <span class="credit">and <a href="http://www.it-solutions-neef.de">IT Solutions Neef</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
