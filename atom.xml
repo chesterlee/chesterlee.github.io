@@ -4,7 +4,7 @@
   <title><![CDATA[Chesterlee's tech room]]></title>
   <link href="http://chesterlee.github.io/atom.xml" rel="self"/>
   <link href="http://chesterlee.github.io/"/>
-  <updated>2014-08-25T22:01:40+08:00</updated>
+  <updated>2014-08-26T21:53:42+08:00</updated>
   <id>http://chesterlee.github.io/</id>
   <author>
     <name><![CDATA[chesterlee]]></name>
@@ -12,6 +12,108 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[谈谈iOS中的VCTransition发展]]></title>
+    <link href="http://chesterlee.github.io/blog/2014/08/26/tan-tan-ioszhong-de-vctransitionfa-zhan/"/>
+    <updated>2014-08-26T21:19:13+08:00</updated>
+    <id>http://chesterlee.github.io/blog/2014/08/26/tan-tan-ioszhong-de-vctransitionfa-zhan</id>
+    <content type="html"><![CDATA[<h2>前言</h2>
+
+<p>iOS的VCTransition一直是在跟着iOS不断变化着的，最大的感觉就是不断地解耦，动画之间VC的关联变得薄弱，或者都抽象到一个统一的位置，进行处理。下面都说下：</p>
+
+<h4>Navigation、TabBar等切换</h4>
+
+<p>  这个是最早(传统的)的VC风格了。比如使用如下代码：</p>
+
+<pre><code>  -(IBAction)PushA:(id)sender 
+  {  
+     UIStoryboard *story = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+     AViewController *aVC = [story instantiateViewControllerWithIdentifier:@"AVCID"];  
+     [self.navigationController pushViewController:aVC animated:YES]; 
+  }
+</code></pre>
+
+<p>  这个方法是使用Navigation来管理VCs的一个Transition方式。比较简单，直接。但是耦合性比较大，在VC中必须知道自己要跳转到对应到VC，而且动画要写到对应的VC中，如果动画复杂，会很容易造成VC臃肿起来。</p>
+
+<h4>VC容器的Transition</h4>
+
+<p>由于iOS5.0后续版本新增了自定义的VC容器，那么从在容器中进行child vc之间到转场，会有专门的方法。比如如下代码:</p>
+
+<pre><code>  [self transitionFromViewController:self.goodsCollectionVC
+                  toViewController:self.mainPageVC
+                          duration:SWITCH_VCS_TIME
+                          options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+                  // do animation things
+} completion:^(BOOL finished) {
+    // do animation completion things
+}];
+</code></pre>
+
+<p>这个方法在容器中切换subVC比较方便，但是只实现了简单的Transition动画，并且依然是有耦合的。因为Container做动画的切换VC的时候，如果动画非常复杂，依然会有动画无法复用的状况。</p>
+
+<h4>StoryBoard和Segue</h4>
+
+<p>  这个是iOS5时提供的转场方式：通过在Storyboard中或代码中定义Push、Modal或 Custom segue，定义一个SegueID，然后需要做Transition的时候，去Perform一个Segue就可以了，代码如下：</p>
+
+<pre><code>  [self performSegueWithIdentifier:@"PushSegueID" sender:self];  
+</code></pre>
+
+<p>在执行动画之前，自己的VC就要做些preparation可以在如下代码中调用</p>
+
+<pre><code>  -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender NS_AVAILABLE_IOS(5_0){} 
+</code></pre>
+
+<p>  特别需要说一下，如果动画处理复杂的，通过Custom Segue，就可以把动画挪到自定义segue中，降低sourceVC的代码量，动画也可以解耦甚至抽象。主要步骤就有两个：<br/>
+  &ndash; 在Storybaord或代码中实例化自定义的segue。
+  &ndash; 自定义Segue类复写perform方法。<br/>
+  关键代码如下：</p>
+
+<pre><code>   -(void)perform
+   {
+      id sourceVC = self.sourceViewController;
+      id destVC = self.destinationViewController;
+      //Do animation  
+    }
+</code></pre>
+
+<p> segue 最关键的两个property，一个是sourceViewController，一个是destinationViewController，就实现一个动画而言，这两个变量就够了。</p>
+
+<h4>iOS7的Transition</h4>
+
+<p>iOS7提供了新的transition方式。默认提供了Present和Push的抽象动画，新增了percent的手势交互动画。例如，如果要自定义navigation push的动画就可以实现一个支持UIViewControllerAnimatedTransitioning的对象。在这个transition对象中，来设计自己的动画。和segue类似，代码可见：</p>
+
+<pre><code>   -(void)animateTransition:(id &lt;UIViewControllerContextTransitioning&gt;)transitionContext
+   {
+        UIViewController *destController =  [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];  
+        UIViewController *fromController =  [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
+        UIView *containerView = [transitionContext containerView];  
+        [containerView addSubview:destController.view];
+   }
+</code></pre>
+
+<p>和Segue相同的是，都可以通过对象来获取Source和DestinationVC。不同的是，iOS7新提供的Transition提供了ContainerView，来做动画交互的容器。<br/>
+对于外部而言，在代理中制定对应的Custom Transition对象即可使用他们了，可定制化更高：<br/>
+比如在VC Controller中实例化对应的代理方法：</p>
+
+<pre><code>   -(id &lt;UIViewControllerAnimatedTransitioning&gt;)navigationController:(UINavigationController *)navigationController
+                               animationControllerForOperation:(UINavigationControllerOperation)operation
+                                            fromViewController:(UIViewController *)fromVC
+                                              toViewController:(UIViewController *)toVC
+                                         {
+                                            if (someCondition) 
+                                            {
+                                              _naviTransitioning.operation = operation;
+                                              return  _naviTransitioning;
+                                            }
+                                            return nil;
+                                          }
+</code></pre>
+
+<p>至于iOS7的UIPercentDrivenInteractiveTransition，这里不展开讲了，具体可以搜搜相关文档。<br/>
+经过Transition的不断强化，iOS7新增的Transition，大大增强了动画的复用性，降低了耦合度，增加了交互性，给编码人员提供更多福利。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[iOS手势和UI事件传递的种种细节]]></title>
@@ -373,7 +475,7 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[我的C++对象模型读书笔记--第四章 The Semantics of Function]]></title>
+    <title type="html"><![CDATA[我的C++对象模型读书笔记--第四章 the Semantics of Function]]></title>
     <link href="http://chesterlee.github.io/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-si-zhang-the-semantics-of-function/"/>
     <updated>2014-08-02T09:25:15+08:00</updated>
     <id>http://chesterlee.github.io/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-si-zhang-the-semantics-of-function</id>
