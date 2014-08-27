@@ -4,7 +4,7 @@
   <title><![CDATA[Chesterlee's tech room]]></title>
   <link href="http://chesterlee.github.io/atom.xml" rel="self"/>
   <link href="http://chesterlee.github.io/"/>
-  <updated>2014-08-26T22:00:00+08:00</updated>
+  <updated>2014-08-27T08:05:30+08:00</updated>
   <id>http://chesterlee.github.io/</id>
   <author>
     <name><![CDATA[chesterlee]]></name>
@@ -475,7 +475,7 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[我的C++对象模型读书笔记--第四章 the Semantics of Function]]></title>
+    <title type="html"><![CDATA[我的C++对象模型读书笔记--第四章 The Semantics of Function]]></title>
     <link href="http://chesterlee.github.io/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-si-zhang-the-semantics-of-function/"/>
     <updated>2014-08-02T09:25:15+08:00</updated>
     <id>http://chesterlee.github.io/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-si-zhang-the-semantics-of-function</id>

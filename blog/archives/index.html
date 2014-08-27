@@ -20,17 +20,16 @@ Aug 25 2014 posted in ios edgesForExtendedLayout、 &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://chesterlee.github.io/blog/archives">
+  <link rel="canonical" href="http://chesterlee.github.io/blog/archives/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/atom.xml" rel="alternate" title="Chesterlee's tech room" type="application/atom+xml">
   <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/ender.js"></script>
   <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Chesterlee's tech room" type="application/atom+xml">
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href='https://fonts.googleapis.com/css?family=Noto+Serif:400,700' rel='stylesheet' type='text/css'>
-<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 
   
 
@@ -46,14 +45,20 @@ Aug 25 2014 posted in ios edgesForExtendedLayout、 &hellip;">
 
 </header>
   <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
   
 </ul>
-
+  
+<form action="http://yahoo.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:chesterlee.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
 <ul class="main-navigation">
   <li><a href="/">Blog</a></li>
   <li><a href="/blog/archives">Archives</a></li>
-  <li><a href="/about">About</a></li>
 </ul>
 
 </nav>
@@ -160,7 +165,7 @@ Aug 25 2014 posted in ios edgesForExtendedLayout、 &hellip;">
 
 <article>
   
-<h1><a href="/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-si-zhang-the-semantics-of-function/">我的C++对象模型读书笔记&#8211;第四章 the Semantics of Function</a></h1>
+<h1><a href="/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-si-zhang-the-semantics-of-function/">我的C++对象模型读书笔记&#8211;第四章 The Semantics of Function</a></h1>
 <time datetime="2014-08-02T09:25:15+08:00" pubdate><span class='month'>Aug</span> <span class='day'>02</span> <span class='year'>2014</span></time>
 
 <footer>
@@ -219,15 +224,7 @@ Aug 25 2014 posted in ios edgesForExtendedLayout、 &hellip;">
 
 </div>
 
-  <aside class="sidebar">
-   
-<form action="http://yahoo.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:chesterlee.github.io" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
+<aside class="sidebar">
   
     <section>
   <h1>Categories</h1>
@@ -271,12 +268,13 @@ Aug 25 2014 posted in ios edgesForExtendedLayout、 &hellip;">
 </aside>
 
 
-
     </div>
   </div>
   <footer role="contentinfo"><p>
   Copyright &copy; 2014 - chesterlee -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+  - <span class="credit">Theme by <a href="http://www.gehaxelt.in">Gehaxelt</a></span>
+  <span class="credit">and <a href="http://www.it-solutions-neef.de">IT Solutions Neef</a></span>
 </p>
 
 </footer>
@@ -290,27 +288,6 @@ Aug 25 2014 posted in ios edgesForExtendedLayout、 &hellip;">
 
 
 
-<script>
-  $(document).ready(function() {  
-  var stickyNavTop = $('nav').offset().top;  
-    
-  var stickyNav = function(){  
-  var scrollTop = $(window).scrollTop();  
-         
-  if (scrollTop > stickyNavTop) {   
-      $('nav').addClass('sticky');  
-  } else {  
-      $('nav').removeClass('sticky');   
-  }  
-  };  
-    
-  stickyNav();  
-    
-  $(window).scroll(function() {  
-      stickyNav();  
-  });  
-  });  
-</script>
 
 
 </body>
