@@ -9,7 +9,7 @@
   <meta name="author" content="chesterlee">
 
   
-  <meta name="description" content="前言 iOS的VCTransition一直是在跟着iOS不断变化着的，最大的感觉就是不断地解耦，动画之间VC的关联变得薄弱，或者都抽象到一个统一的位置，进行处理。下面都说下： Navigation、TabBar等切换 这个是最早(传统的)的VC风格了。比如使用如下代码： -(IBAction) &hellip;">
+  <meta name="description" content="最近接到需要进行ipad通过Apple TV进行多屏显示的需求，所以研究了下，可以在自己App中对外部荧幕进行Mirror和Different Content的切换。如果你没玩过，实在是有些可惜，不妨往下看看： 初步的概念 iOS App中UIWindow通常包含了App的view， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +65,140 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/08/28/tan-tan-ioszhong-de-duo-ping-mu-xian-shi/">谈谈iOS中的多屏幕显示</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-08-28T21:15:49+08:00" pubdate data-updated="true">2014-08-28 21:15</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>最近接到需要进行ipad通过Apple TV进行多屏显示的需求，所以研究了下，可以在自己App中对外部荧幕进行Mirror和Different Content的切换。如果你没玩过，实在是有些可惜，不妨往下看看：</p>
+
+<h4>初步的概念</h4>
+
+<p>iOS App中UIWindow通常包含了App的view，连通了当前的硬件设备。而和Window联系到一起的Screen代表了特定使用的显示内容。如果你的app允许用户使用外接显示器，我们就需要创建一个UIWIndow对象来管理对外界显示器的展示。</p>
+
+<h4>要显示内容到外部屏幕？请添加UIWindow</h4>
+
+<p>如果你要支持外屏显示，你需要建立另外一个不同的window对象，从而让这个UIWindow对象展示的内容投射放到外部设备上。默认你可以在两个window上展示相同的内容，因为他们默认是mirroring的。当然，你可以把这个mirroring关闭了，赋值为nil或初始化一个UIWIndow到上面去。</p>
+
+<h4>Window和Screen的概念</h4>
+
+<p>先说说UIWindow，它组合了所有需要显示的ViewTree，并负责对subview的展示，组织他们的继承体系，以及对它们的事件传递。通常每一个App都有一个window对象来展示app自己的UI（在iOS设备上）。如果有外部显示器链接到设备上，那么app就可以使用第二个window来进行大荧幕数据的展示。<br/>
+再说说UIScreen对象，对于UIWindow而言，每一个UIWindow中有一个UIScreen对象。UIScreen对象抽象地描述了一个具体显示设备的信息：bounds、mode、brightness等。你也可以监听各种消息，比如连接上显示器了，断开显示器了，显示器亮度调整了等的消息。</p>
+
+<h4>Window和Screen的其他用途</h4>
+
+<p>1、通过UIWindow来调整Window的亮度。还有wantsSoftwareDimming等等。
+2、通过UIScreen displayLinkWithTarget:selector: 接口来在runloop进行CoreAnimation每一帧的绘制，或使用OpenGL es直接绘制。</p>
+
+<h4>StoryBoard做了点事情</h4>
+
+<p>使用Storyboard，建立默认的VC。它就帮你做了下面几件事情：</p>
+
+<ul>
+<li>Instantiates a window. （初始化Window）</li>
+<li>Loads the main storyboard and instantiates its initial view controller. (初始化Storyboard中的initial VC)</li>
+<li>Assigns the new view controller to the window’s rootViewController property and then makes the window visible.(把initial VC作为UIWindow中的RootVC，然后让Window可见)</li>
+</ul>
+
+
+<h4>外接显示器的实际做法</h4>
+
+<p>默认的iOS行为：Mirror。如果默认什么都不处理，那么对于一个App而言，它的内容是直接镜像到荧幕上的。除非你要显示和iOS设备荧幕不一样的内容，你可以这样做：</p>
+
+<ul>
+<li>程序一启动，就要检查外部显示器的存在。并且注册Screen的连接和断开连接的Notification。</li>
+<li>当外部显示器可用了，无论是程序启动检测，还是收到Screen连接的Notification，你都要创建并且配置一个UIWindow给这个外部设备。</li>
+<li>连接这个UIWindow和这个合适的UIScreen对象，展示第二个UIWindow，并更新。</li>
+</ul>
+
+
+<p>BTW：如果要开启镜像，请把多出来的UIWindow给干掉就好了。</p>
+
+<h4>代码时间</h4>
+
+<p>好，接下来是代码时间，上面3步的代码如下：<br/>
+1、当外部设备Ready的时候，创建一个UIWindow匹配外部抽象的UIScreen对象。</p>
+
+<pre><code>- (void)checkForExistingScreenAndInitializeIfPresent
+{
+   if ([[UIScreen screens] count] &gt; 1)
+  {
+     UIScreen *secondScreen = [[UIScreen screens] objectAtIndex:1];
+     CGRect screenBounds = secondScreen.bounds;
+     self.secondWindow = [[UIWindow alloc] initWithFrame:screenBounds];
+     self.secondWindow.screen = secondScreen;
+     self.secondWindow.hidden = NO;
+  } 
+}
+</code></pre>
+
+<p>注意：UIWindow最好先和UIScreen连接起来，然后再显示UIWindow的内容，最好不要先显示UIWindow的内容，再链接UIScreen。因为非常耗资源。</p>
+
+<p>2、注册Screen的连接和断开事件</p>
+
+<pre><code> - (void)setUpScreenConnectionNotificationHandlers
+{
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(handleScreenDidConnectNotification:) name:UIScreenDidConnectNotification object:nil];
+    [center addObserver:self selector:@selector(handleScreenDidDisconnectNotification:)
+}
+</code></pre>
+
+<p>3、处理断开和连接的事件</p>
+
+<pre><code>- (void)handleScreenDidConnectNotification:(NSNotification*)aNotification
+{
+   UIScreen *newScreen = [aNotification object];
+   CGRect screenBounds = newScreen.bounds;
+   if (!self.secondWindow)
+   {
+    self.secondWindow = [[UIWindow alloc] initWithFrame:screenBounds];
+    self.secondWindow.screen = newScreen;
+   }
+}
+
+- (void)handleScreenDidDisconnectNotification:(NSNotification*)aNotification
+{
+  if (self.secondWindow)
+  {
+    // Hide and then delete the window.
+    self.secondWindow.hidden = YES;
+    self.secondWindow = nil;
+  }
+}
+</code></pre>
+
+<p> 以上代码也可以在水果文档的多屏编码指南中找到。其实这只是一个开始，表明自己Create的UIWindow可以以抽象的方式来在外部显示器上展示，至于不断添加业务逻辑，肯定需要更好的代码封装。最后说一句，水果文档建议在AppDelegate中进行Screen的监听，其实可以按需求来进行工作。大概就这样啦。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1114,136 +1248,9 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/07/26/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-guan-yu-dui-xiang/">我的C++对象模型读书笔记-第一章 关于对象</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-07-26T00:18:06+08:00" pubdate data-updated="true">2014-07-26 00:18</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>多亏几年前的积累，现在看来，之前的总结一点也没过时，相反，益处良多。必须转入。</p>
-
-<p>从准备找工作至今，才阅读完B.Lippman的Inside The C++ Object Model。所以索性整理一下对C++对象模型一书的读书心得。</p>
-
-<hr />
-
-<h3>第一章         关于对象</h3>
-
-<p>首先应该说下C的“算法驱动”思路：C语言中，“数据”和“处理数据的操作”十分开来的。简言之，这样的程序方法叫做“程序性的”，由以功能为导向的函数的算法所驱动，处理的是来自外部的数据。</p>
-
-<p>而在C++中，则使用的是独立的“抽象数据类型abstract data type（ADT)”所驱动。这样符合软件工程的设计。如果不使用virtual，C++本身的class布局及存取时间和struct没有区别。言外之意，只有存在虚函数(virtual function)和虚基类(virtual base class)这样的形式，才使得class实例化一个对象时，存在额外的负担。</p>
-
-<h4>1.1  C++对象模型(The C++ Object Model)</h4>
-
-<p>C++中，有两种数据成员(class data member):静态成员(static)和非静态成员(nonstatic)。有三种成员函数(class member function)：静态成员函数(static)、非静态成员函数(nonstatic)和虚函数(virtual)。</p>
-
-<p>对象模型的设计方式（其实也是设计对象模型时候的一些思路）</p>
-
-<p>1、简单对象模型：</p>
-
-<p>这个模型的设计目的是：降低设计复杂度。但是相应的陪上了执行期的空间和效率。设计思路如下：</p>
-
-<p>一个object 是一系列的slots(指针)，每一个slot指向一个member（成员） : data member and function slot（数据成员或函数成员）。每个data member and function member都有自己的slot。此模型中，meember 不放在object中，而是存放slot，由slot指向member。</p>
-
-<p>2、表格驱动对象模型：另一种方法。把所有member(成员)分发到两个table（表格）中，然后用class的对象的两个slot指向这两个table。</p>
-
-<p>3、C++对象模型：由简单对象模型演化过来。设计方式如下：</p>
-
-<p>Nonstatic data members（非静态成员） 存放在一个class object内，static data member（静态成员）放在class object 外，而static and nonstatic function memebers 放在所有的class object 之外。而virtual functions分两个步骤完成：</p>
-
-<p>a、每一个class（类）产生出一对之想virtual functions的指针，放在virtual table（虚表）中。</p>
-
-<p>b、每一个class object（对象）添加一个指针（vptr），指向相应的virtual table（虚表）。而vptr的设定和重置是由constructor（构造函数），destructor（析构函数），copy constructor（拷贝构造函数）完成的。而每一个class 所关联的type_info存放在表格的第一个slot中。</p>
-
-<hr />
-
-<p><strong>C++对象模型的优点是：综合了存取时间和空间效率</strong>。</p>
-
-<p>缺点是：（任何一种对象模型的设计都存在缺点，不是吗J）如果应用程序的代码本身没改变（即处理逻辑、函数等没变化），但是用到的类对象的非静态数据成员有所修改，那么与其相关的程序代码都要重新编译。</p>
-
-<p>如果对以上三种模型设计方式加上了继承，结果如下：</p>
-
-<p>1、简单模型：每一个base class（基类）可以被derived class object（子类）内的一个slot指出，该slot内含base class subobject的地址。    缺点：间接性导致了空间和存取时间上的负担， 优点：class object的大小不因base class的改变而受影响。</p>
-
-<p>（这里简单而言：缺点是如果继承的层次较多，那么子类包含的“指向基类的指针”就会越来越多，那么“负担”会越来越重。但是相应的好处是：如果基类发生成员改变等变化了，子类不需要重新编译，因为与之关联的仅仅是一个指针而已。）</p>
-
-<p>2、Base Table 模型。base class table产生出来，表格中的每一个slot内含一个相关的base class地址，类似virtual table内含一个virtual funciton地址。每个对象含有一个BPTR，指向base class table。缺点：由于间接性导致了空间和存取时间上的额外负担。优点：每个class object对于继承都有一直的表现方式：每个class object 都应该在一个固定的位置上安放一个base table指针，与base classes的大小和树木无关，而且不改变class objects的本身的大小。</p>
-
-<p>  3、 C++的模型。base class subject的data members直接放在derived class object中，提高了存取的效率，却使得只要每个base class data member改变，derived class 就需要重新编译。而Virtual base class的产生，需要一个间接的base class的表现方法。</p>
-
-<p>对象模型如何影响程序：不同的对象模型，会导致现有的程序代码必须修改以及必须加入新的程序代码两种结果。所以不管是哪种模型方式，编译器都采取这样的两种额外处理，使得程序结果正常。</p>
-
-<h4>1.2关键词带来差异(A Keyword Distinction)</h4>
-
-<p>为了支持8种整数的运算，所以C++支持了运算符重载。在C++中，必须保证同一个access section内的数据，其声明的次序出现在内存布局中，而不同的access sections的存放次序是不定的。同样，base class 和derived class的布局次序也是没有规定的。</p>
-
-<h4>1.3 对象的差异(An Object Distinction)</h4>
-
-<p>C++支持的三种programming paradigms:</p>
-
-<p>1、<strong>程序模型</strong>：类似于C语言风格。</p>
-
-<p>2、<strong>抽象数据类型模型</strong>：一组抽象的数据和它的相应表达式。如今叫OB（基于对象），不需要扩展，空间紧凑，速度快，编译期决定了函数引发的操作。</p>
-
-<p>3、<strong>面向对象模型</strong>：彼此类似的类型，通过一个抽象的base class被封装起来。
-C++以下列的方法支持多态：</p>
-
-<p>a、经由一组隐含的转化操作，将derived class object的地址赋给base class pointer  : shapre *ps = new circle();</p>
-
-<p>b、经由virtual function机制： ps->ritate();</p>
-
-<p>c、经由dynamic_case和typeid运算符：  if (circle * pc= dynamic_case <circle *> (ps) )</p>
-
-<p>需要多少的内存才能表现一个class object，一般而言有下面三种：</p>
-
-<p>1) 其nonstatic data members的大小</p>
-
-<p>2) alignment的需求</p>
-
-<p>3) Virtual funciton and Virtual base class的额外负担</p>
-
-<p>指针的类型：每个指针的大小是一样的，但是有“指向不同类型之各指针“间的区别，每个指针只能覆盖其指向对象的内存范围。</p>
-
-<p>指针类型会交到编译器如何解释某特定地址中的内存内容及其大小。</p>
-
-<p>对于多态情形：</p>
-
-<p>指针在编译期的时候，会被决定两点：</p>
-
-<p>1、当前指针类型只能调用的接口。</p>
-
-<p>2、能够调用接口的访问权限。</p>
-
-<p>但是在执行多态的情况下，编译期没有落实对应的函数执行实体，因为具体对象型别没有确定，故只有放到执行期，通过vptr找vtabl来落实具体的接口实现。</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
+    
+      <a class="prev" href="2">&larr; Older</a>
     
     <a href="/blog/archives">Blog Archives</a>
     
@@ -1255,12 +1262,16 @@ C++以下列的方法支持多态：</p>
   <h1>Categories</h1>
   <ul id="categories">
     <li class='category'><a href='/blog/categories/cpp/'>cpp (5)</a></li>
-<li class='category'><a href='/blog/categories/ios/'>ios (5)</a></li>
+<li class='category'><a href='/blog/categories/ios/'>ios (6)</a></li>
 
   </ul>
 </section><section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/08/28/tan-tan-ioszhong-de-duo-ping-mu-xian-shi/">谈谈iOS中的多屏幕显示</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2014/08/26/tan-tan-ioszhong-de-vctransitionfa-zhan/">谈谈iOS中的VCTransition发展</a>
@@ -1276,10 +1287,6 @@ C++以下列的方法支持多态：</p>
     
       <li class="post">
         <a href="/blog/2014/08/15/tan-tan-ioszhong-de-nsurlprotocol/">谈谈iOS中的NSURLProtocol</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/08/10/ioszhong-de-urlcacheji-zhi/">谈谈iOS中的HTTP缓存策略</a>
       </li>
     
   </ul>
