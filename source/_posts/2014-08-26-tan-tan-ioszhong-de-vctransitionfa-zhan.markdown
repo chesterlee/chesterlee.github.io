@@ -90,3 +90,11 @@ iOS7提供了新的transition方式。默认提供了Present和Push的抽象动�
   
 至于iOS7的UIPercentDrivenInteractiveTransition，这里不展开讲了，具体可以搜搜相关文档。  
 经过Transition的不断强化，iOS7新增的Transition，大大增强了动画的复用性，降低了耦合度，增加了交互性，给编码人员提供更多福利。
+
+<!-- Copyright Info BEGIN -->
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/08/26/tan-tan-ioszhong-de-vctransitionfa-zhan/"> 谈谈iOS中的VCTransition发展 </a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+<!-- Copyright Info END -->

@@ -7,7 +7,6 @@ categories: cpp
 keywords: c++,cpp
 description: 
 ---
-###我的C++对象模型读书笔记--第三章 Data语义学  
 
  C++ standard 不强制规定“base class subjects的排列次序”“不同存取层记得data members的排列次序” ，也不规定“virtual funcitons 和 virtual base class“的实现细节。
 当一个类并没有任何声明的时候，它实做一个对象的时候，实际分配了1个字节的大小的空间。从而使得这个对象能够有独一无二的地址空间。
@@ -139,7 +138,13 @@ Bjarne的做法：使用offset。把virtual base class和 virtual function entry
 
 
       
-
+<!-- Copyright Info BEGIN -->
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/07/26/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-san-zhang-datayu-yi-xue/"> 我的C++对象模型读书笔记—第三章 Data语义学</a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+<!-- Copyright Info END -->
 
 
 

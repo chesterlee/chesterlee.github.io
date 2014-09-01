@@ -7,7 +7,6 @@ categories: cpp
 keywords: cpp,c++
 description: 
 ---
-###我的C++对象模型读书笔记--第二章 构造函数语义学  
 #####2.1  Default Constructor 的构建操作
 
 Default Constructors只有当编译器需要default constructor的时候才会合成出一个constructor, 只有下面的四种情况才会有nontrivial default constructor产生，其余的都是trivial default constructor。（nontrivial是合成的有用的默认函数，trivial则是没多大用处的构造器）
@@ -177,3 +176,10 @@ X temp0;
 
 第二个：初始化列表的初始化次序。初始化次序和member在类中的声明次序一致。相互关联的member，需要十分留意初始化列表中，其中依赖的次序。解决的办法：把其中一部分使用初始化列表初始化，而另一部分放置到构造函数中使用user code予以表达，这样即便次序存在依赖，也会只“先执行合成的，再执行user的code”。
 
+<!-- Copyright Info BEGIN -->
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/07/26/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-er-zhang-gou-zao-han-shu-yu-yi-xue/"> 我的C++对象模型读书笔记—第二章 构造函数语义学</a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+<!-- Copyright Info END -->

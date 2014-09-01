@@ -46,3 +46,11 @@ description:
 * **概念**。这两个属性是手势的，默认delaysTouchesBegan为NO，delaysTouchesEnded为Yes。表示的涵义是：不延迟touchesBegan调用，目标View可以接到这些事件，而Delay TouchesEnded的调用。让手势获取最终的决定权。PS:他们的影响类似ScrollView中的delaysContentTouches变量，是否把延迟把UITouch传递给ScrollView中的subView。   
 * **配置**。你可以把delaysTouchesBegan开启，阻止touchesBegan调用，直接收到手势。但是这样会有时让用户感到UI失去响应。
 delaysTouchesEnded也可以被设置为NO，如果这样的话当delaysTouchesBegan为NO的情况，UITouch就会被传递到目标UIView上，相当于:UIView自己接事件，而且手势也去接事件。
+
+<!-- Copyright Info BEGIN -->
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/08/25/iosshou-shi-he-uishi-jian-chuan-di-de-chong-chong-xi-jie/"> iOS手势和UI事件传递的种种细节 </a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+<!-- Copyright Info END -->

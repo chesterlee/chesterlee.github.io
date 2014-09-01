@@ -83,4 +83,11 @@ BTW：如果要开启镜像，请把多出来的UIWindow给干掉就好了。
       }
     }
  以上代码也可以在水果文档的多屏编码指南中找到。其实这只是一个开始，表明自己Create的UIWindow可以以抽象的方式来在外部显示器上展示，至于不断添加业务逻辑，肯定需要更好的代码封装。最后说一句，水果文档建议在AppDelegate中进行Screen的监听，其实可以按需求来进行工作。大概就这样啦。
- 
+
+<!-- Copyright Info BEGIN -->
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/08/28/tan-tan-ioszhong-de-duo-ping-mu-xian-shi/"> 谈谈iOS中的多屏幕显示 </a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+<!-- Copyright Info END -->

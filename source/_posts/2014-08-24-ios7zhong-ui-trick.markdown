@@ -15,3 +15,11 @@ edgesForExtendedLayout：UIRectEdgeTop 延伸是会影响childviewcontroller的�
 automaticallyAdjustsScrollViewInsets：它的涵义是：如果UINavigationController或UIToolbarViewController的子View是Scrollview及其子类，在edgesForExtendedLayout含有top的状况下，会修改ScrollView的ContentInsect，来满足Scrollview的内容向上滑动时，statubar和navigation bar浮在其内容上。当然，如果edgesForExtendedLayout如果不含有top，那么就关闭了浮在navigation bar和statubar的特性，automaticallyAdjustsScrollViewInsets的作用也就失去意义了- ->此时NavigationController不会因为这个值是YES来设置scrollview的contentInsects。PS：（对挂接到一个view的tableview或scrollview是无效的。注意这里如果使用了childviewcontroller就可以验证这一点了。）
 
 extendedLayoutIncludesOpaqueBars，这个属性指定了当Bar使用了不透明图片时，视图是否延伸至Bar所在区域，默认值时NO。
+
+<!-- Copyright Info BEGIN -->
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/08/24/ios7zhong-ui-trick/"> edgesForExtendedLayout、automaticallyAdjustsScrollViewInsets和extendedLayoutIncludesOpaqueBars </a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+<!-- Copyright Info END -->
