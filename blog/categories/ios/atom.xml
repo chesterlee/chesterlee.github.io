@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ios | Chesterlee's tech room]]></title>
   <link href="http://chesterlee.github.io/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://chesterlee.github.io/"/>
-  <updated>2014-08-28T21:56:40+08:00</updated>
+  <updated>2014-09-01T20:24:50+08:00</updated>
   <id>http://chesterlee.github.io/</id>
   <author>
     <name><![CDATA[chesterlee]]></name>
@@ -117,6 +117,19 @@
 </code></pre>
 
 <p> 以上代码也可以在水果文档的多屏编码指南中找到。其实这只是一个开始，表明自己Create的UIWindow可以以抽象的方式来在外部显示器上展示，至于不断添加业务逻辑，肯定需要更好的代码封装。最后说一句，水果文档建议在AppDelegate中进行Screen的监听，其实可以按需求来进行工作。大概就这样啦。</p>
+
+<!-- Copyright Info BEGIN -->
+
+
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/08/28/tan-tan-ioszhong-de-duo-ping-mu-xian-shi/"> 谈谈iOS中的多屏幕显示 </a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+
+
+<!-- Copyright Info END -->
+
 ]]></content>
   </entry>
   
@@ -219,6 +232,19 @@
 
 <p>至于iOS7的UIPercentDrivenInteractiveTransition，这里不展开讲了，具体可以搜搜相关文档。<br/>
 经过Transition的不断强化，iOS7新增的Transition，大大增强了动画的复用性，降低了耦合度，增加了交互性，给编码人员提供更多福利。</p>
+
+<!-- Copyright Info BEGIN -->
+
+
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/08/26/tan-tan-ioszhong-de-vctransitionfa-zhan/"> 谈谈iOS中的VCTransition发展 </a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+
+
+<!-- Copyright Info END -->
+
 ]]></content>
   </entry>
   
@@ -283,6 +309,19 @@
 delaysTouchesEnded也可以被设置为NO，如果这样的话当delaysTouchesBegan为NO的情况，UITouch就会被传递到目标UIView上，相当于:UIView自己接事件，而且手势也去接事件。</li>
 </ul>
 
+
+<!-- Copyright Info BEGIN -->
+
+
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/08/25/iosshou-shi-he-uishi-jian-chuan-di-de-chong-chong-xi-jie/"> iOS手势和UI事件传递的种种细节 </a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+
+
+<!-- Copyright Info END -->
+
 ]]></content>
   </entry>
   
@@ -298,6 +337,19 @@ delaysTouchesEnded也可以被设置为NO，如果这样的话当delaysTouchesBe
 <p>automaticallyAdjustsScrollViewInsets：它的涵义是：如果UINavigationController或UIToolbarViewController的子View是Scrollview及其子类，在edgesForExtendedLayout含有top的状况下，会修改ScrollView的ContentInsect，来满足Scrollview的内容向上滑动时，statubar和navigation bar浮在其内容上。当然，如果edgesForExtendedLayout如果不含有top，那么就关闭了浮在navigation bar和statubar的特性，automaticallyAdjustsScrollViewInsets的作用也就失去意义了- &ndash;>此时NavigationController不会因为这个值是YES来设置scrollview的contentInsects。PS：（对挂接到一个view的tableview或scrollview是无效的。注意这里如果使用了childviewcontroller就可以验证这一点了。）</p>
 
 <p>extendedLayoutIncludesOpaqueBars，这个属性指定了当Bar使用了不透明图片时，视图是否延伸至Bar所在区域，默认值时NO。</p>
+
+<!-- Copyright Info BEGIN -->
+
+
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/08/24/ios7zhong-ui-trick/"> edgesForExtendedLayout、automaticallyAdjustsScrollViewInsets和extendedLayoutIncludesOpaqueBars </a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+
+
+<!-- Copyright Info END -->
+
 ]]></content>
   </entry>
   
@@ -374,6 +426,19 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
 <p>```</p>
 
 <p>5、更多详细介绍可以参看matt的<a href="http://nshipster.com/nsurlprotocol/">http://nshipster.com/nsurlprotocol/</a></p>
+
+<!-- Copyright Info BEGIN -->
+
+
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/08/15/tan-tan-ioszhong-de-nsurlprotocol/"> 谈谈iOS中的NSURLProtocol </a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+
+
+<!-- Copyright Info END -->
+
 ]]></content>
   </entry>
   

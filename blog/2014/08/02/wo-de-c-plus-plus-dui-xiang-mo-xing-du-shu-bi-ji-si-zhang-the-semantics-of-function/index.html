@@ -110,7 +110,7 @@
 
 <p>当使用base  class pointer 调用virtual function的时候，可能出现两种情况。因为该base class pointer可能指向的位置处于derived class object的开始处，也可能有一个偏移量。一般规则时，经由指向“第二或后继之base class”的志真来调用derived class virtual funciton ,改掉用操作所连带的“必要的this指针调整”操作，必须在执行期完成。</p>
 
-<p>那么怎么处理呢？ 可能本来不需要调整的也变得要调整了！ 真是讨厌！  嘿嘿！  thunk技术北引用到了编译器中！  怎么解决呢？</p>
+<p>那么怎么处理呢？ 可能本来不需要调整的也变得要调整了！ 真是讨厌！  嘿嘿！  thunk技术被引用到了编译器中！  怎么解决呢？</p>
 
 <p>Sun编译器的方法是提供所谓的“split functions”技术；以相同的算法产生两个函数，其中第二个在返回之前，为指针加上必要的offset，于是不论通过base1或者derived指针调用函数，都不要调整返回值；而如果通过base2指针调用，则是另外一个函数 。</p>
 
@@ -127,6 +127,19 @@
 <p>指向 virtual member functions 指针：对一个virtual member funciton 取地址，所能够获得的只是一个索引值。编译器在评估求值的时候，会(*ptr->vptr[(int)pmf])(ptr) !</p>
 
 <p>后三部分摘录自互联网，出处不明。</p>
+
+<!-- Copyright Info BEGIN -->
+
+
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-si-zhang-the-semantics-of-function/"> 我的C++对象模型读书笔记&#8211;第四章 the Semantics of Function </a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+
+
+<!-- Copyright Info END -->
+
 </div>
 
 

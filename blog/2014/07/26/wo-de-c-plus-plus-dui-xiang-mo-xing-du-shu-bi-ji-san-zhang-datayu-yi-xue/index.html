@@ -9,7 +9,8 @@
   <meta name="author" content="chesterlee">
 
   
-  <meta name="description" content="我的C++对象模型读书笔记&mdash;第三章 Data语义学 C++ standard 不强制规定“base class subjects的排列次序”“不同存取层记得data members的排列次序” ，也不规定“virtual funcitons 和 virtual base class“ &hellip;">
+  <meta name="description" content="C++ standard 不强制规定“base class subjects的排列次序”“不同存取层记得data members的排列次序” ，也不规定“virtual funcitons 和 virtual base class“的实现细节。
+当一个类并没有任何声明的时候，它实做一个对象的时候 &hellip;">
   <meta name="keywords" content="c++,cpp">
 
   <!-- http://t.co/dKP3o1e -->
@@ -88,9 +89,7 @@
   </header>
 
 
-<div class="entry-content"><h3>我的C++对象模型读书笔记&mdash;第三章 Data语义学</h3>
-
-<p> C++ standard 不强制规定“base class subjects的排列次序”“不同存取层记得data members的排列次序” ，也不规定“virtual funcitons 和 virtual base class“的实现细节。
+<div class="entry-content"><p> C++ standard 不强制规定“base class subjects的排列次序”“不同存取层记得data members的排列次序” ，也不规定“virtual funcitons 和 virtual base class“的实现细节。
 当一个类并没有任何声明的时候，它实做一个对象的时候，实际分配了1个字节的大小的空间。从而使得这个对象能够有独一无二的地址空间。</p>
 
 <p>而一个对象的大小不仅仅包含了该类所声明的nonstatic data members，而且还受到了，</p>
@@ -203,6 +202,21 @@
 <p>这种位移从1开始的特性是基于如下考虑的：如何区分&#8221;没有指向任何data member&#8221;的data member pointer 和 &ldquo;指向第一个data member &#8220;的data member pointer。</p>
 
 <p>注意以上的位移1的处理，编译器已经计算得符合“通常思考原则”。1的额外计算，不需要程序员担心。</p>
+
+<!-- Copyright Info BEGIN -->
+
+
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/07/26/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-san-zhang-datayu-yi-xue/"> 我的C++对象模型读书笔记—第三章 Data语义学</a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+
+
+<!-- Copyright Info END -->
+
+
+
 </div>
 
 

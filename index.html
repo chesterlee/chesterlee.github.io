@@ -190,6 +190,19 @@
 </code></pre>
 
 <p> 以上代码也可以在水果文档的多屏编码指南中找到。其实这只是一个开始，表明自己Create的UIWindow可以以抽象的方式来在外部显示器上展示，至于不断添加业务逻辑，肯定需要更好的代码封装。最后说一句，水果文档建议在AppDelegate中进行Screen的监听，其实可以按需求来进行工作。大概就这样啦。</p>
+
+<!-- Copyright Info BEGIN -->
+
+
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/08/28/tan-tan-ioszhong-de-duo-ping-mu-xian-shi/"> 谈谈iOS中的多屏幕显示 </a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+
+
+<!-- Copyright Info END -->
+
 </div>
   
   
@@ -319,6 +332,19 @@
 
 <p>至于iOS7的UIPercentDrivenInteractiveTransition，这里不展开讲了，具体可以搜搜相关文档。<br/>
 经过Transition的不断强化，iOS7新增的Transition，大大增强了动画的复用性，降低了耦合度，增加了交互性，给编码人员提供更多福利。</p>
+
+<!-- Copyright Info BEGIN -->
+
+
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/08/26/tan-tan-ioszhong-de-vctransitionfa-zhan/"> 谈谈iOS中的VCTransition发展 </a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+
+
+<!-- Copyright Info END -->
+
 </div>
   
   
@@ -410,6 +436,19 @@
 delaysTouchesEnded也可以被设置为NO，如果这样的话当delaysTouchesBegan为NO的情况，UITouch就会被传递到目标UIView上，相当于:UIView自己接事件，而且手势也去接事件。</li>
 </ul>
 
+
+<!-- Copyright Info BEGIN -->
+
+
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/08/25/iosshou-shi-he-uishi-jian-chuan-di-de-chong-chong-xi-jie/"> iOS手势和UI事件传递的种种细节 </a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+
+
+<!-- Copyright Info END -->
+
 </div>
   
   
@@ -452,6 +491,19 @@ delaysTouchesEnded也可以被设置为NO，如果这样的话当delaysTouchesBe
 <p>automaticallyAdjustsScrollViewInsets：它的涵义是：如果UINavigationController或UIToolbarViewController的子View是Scrollview及其子类，在edgesForExtendedLayout含有top的状况下，会修改ScrollView的ContentInsect，来满足Scrollview的内容向上滑动时，statubar和navigation bar浮在其内容上。当然，如果edgesForExtendedLayout如果不含有top，那么就关闭了浮在navigation bar和statubar的特性，automaticallyAdjustsScrollViewInsets的作用也就失去意义了- &ndash;>此时NavigationController不会因为这个值是YES来设置scrollview的contentInsects。PS：（对挂接到一个view的tableview或scrollview是无效的。注意这里如果使用了childviewcontroller就可以验证这一点了。）</p>
 
 <p>extendedLayoutIncludesOpaqueBars，这个属性指定了当Bar使用了不透明图片时，视图是否延伸至Bar所在区域，默认值时NO。</p>
+
+<!-- Copyright Info BEGIN -->
+
+
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/08/24/ios7zhong-ui-trick/"> edgesForExtendedLayout、automaticallyAdjustsScrollViewInsets和extendedLayoutIncludesOpaqueBars </a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+
+
+<!-- Copyright Info END -->
+
 </div>
   
   
@@ -591,6 +643,19 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
 
 
 <p>5、更多详细介绍可以参看matt的<a href="http://nshipster.com/nsurlprotocol/">http://nshipster.com/nsurlprotocol/</a></p>
+
+<!-- Copyright Info BEGIN -->
+
+
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/08/15/tan-tan-ioszhong-de-nsurlprotocol/"> 谈谈iOS中的NSURLProtocol </a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+
+
+<!-- Copyright Info END -->
+
 </div>
   
   
@@ -658,6 +723,19 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
 
 <p>最后谈谈修改NSCachedURLResponse：<br/>
 在方法-(NSCachedURLResponse<em>)connection:(NSURLConnection</em>)connectionwillCacheResponse:(NSCachedURLResponse*)cachedResponse中，我们可以对即将缓存的Response进行修改，以达到自己的需求。</p>
+
+<!-- Copyright Info BEGIN -->
+
+
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/08/10/ioszhong-de-urlcacheji-zhi/"> 谈谈iOS中的HTTP缓存策略 </a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+
+
+<!-- Copyright Info END -->
+
 </div>
   
   
@@ -813,6 +891,19 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
 <p>顺带需要说的是，析构函数的执行顺序和构造函数相反，此刻包括了vptr的初始化、膨胀等操作的反操作。</p>
 
 <p>部分段落摘录自网上，稍加修改，出处不明。</p>
+
+<!-- Copyright Info BEGIN -->
+
+
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-di-wu-zhang-datayu-yi-xue/"> 我的C++对象模型读书笔记&#8211; 第五章 Data语义学 </a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+
+
+<!-- Copyright Info END -->
+
 </div>
   
   
@@ -870,7 +961,7 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
 
 <p>当使用base  class pointer 调用virtual function的时候，可能出现两种情况。因为该base class pointer可能指向的位置处于derived class object的开始处，也可能有一个偏移量。一般规则时，经由指向“第二或后继之base class”的志真来调用derived class virtual funciton ,改掉用操作所连带的“必要的this指针调整”操作，必须在执行期完成。</p>
 
-<p>那么怎么处理呢？ 可能本来不需要调整的也变得要调整了！ 真是讨厌！  嘿嘿！  thunk技术北引用到了编译器中！  怎么解决呢？</p>
+<p>那么怎么处理呢？ 可能本来不需要调整的也变得要调整了！ 真是讨厌！  嘿嘿！  thunk技术被引用到了编译器中！  怎么解决呢？</p>
 
 <p>Sun编译器的方法是提供所谓的“split functions”技术；以相同的算法产生两个函数，其中第二个在返回之前，为指针加上必要的offset，于是不论通过base1或者derived指针调用函数，都不要调整返回值；而如果通过base2指针调用，则是另外一个函数 。</p>
 
@@ -887,6 +978,19 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
 <p>指向 virtual member functions 指针：对一个virtual member funciton 取地址，所能够获得的只是一个索引值。编译器在评估求值的时候，会(*ptr->vptr[(int)pmf])(ptr) !</p>
 
 <p>后三部分摘录自互联网，出处不明。</p>
+
+<!-- Copyright Info BEGIN -->
+
+
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-si-zhang-the-semantics-of-function/"> 我的C++对象模型读书笔记&#8211;第四章 the Semantics of Function </a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+
+
+<!-- Copyright Info END -->
+
 </div>
   
   
@@ -922,9 +1026,7 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
   </header>
 
 
-  <div class="entry-content"><h3>我的C++对象模型读书笔记&mdash;第三章 Data语义学</h3>
-
-<p> C++ standard 不强制规定“base class subjects的排列次序”“不同存取层记得data members的排列次序” ，也不规定“virtual funcitons 和 virtual base class“的实现细节。
+  <div class="entry-content"><p> C++ standard 不强制规定“base class subjects的排列次序”“不同存取层记得data members的排列次序” ，也不规定“virtual funcitons 和 virtual base class“的实现细节。
 当一个类并没有任何声明的时候，它实做一个对象的时候，实际分配了1个字节的大小的空间。从而使得这个对象能够有独一无二的地址空间。</p>
 
 <p>而一个对象的大小不仅仅包含了该类所声明的nonstatic data members，而且还受到了，</p>
@@ -1037,6 +1139,21 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
 <p>这种位移从1开始的特性是基于如下考虑的：如何区分&#8221;没有指向任何data member&#8221;的data member pointer 和 &ldquo;指向第一个data member &#8220;的data member pointer。</p>
 
 <p>注意以上的位移1的处理，编译器已经计算得符合“通常思考原则”。1的额外计算，不需要程序员担心。</p>
+
+<!-- Copyright Info BEGIN -->
+
+
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/07/26/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-san-zhang-datayu-yi-xue/"> 我的C++对象模型读书笔记—第三章 Data语义学</a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+
+
+<!-- Copyright Info END -->
+
+
+
 </div>
   
   
@@ -1072,9 +1189,7 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
   </header>
 
 
-  <div class="entry-content"><h3>我的C++对象模型读书笔记&mdash;第二章 构造函数语义学</h3>
-
-<h5>2.1  Default Constructor 的构建操作</h5>
+  <div class="entry-content"><h5>2.1  Default Constructor 的构建操作</h5>
 
 <p>Default Constructors只有当编译器需要default constructor的时候才会合成出一个constructor, 只有下面的四种情况才会有nontrivial default constructor产生，其余的都是trivial default constructor。（nontrivial是合成的有用的默认函数，trivial则是没多大用处的构造器）</p>
 
@@ -1238,6 +1353,19 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
 <p>第一个：member object的初始化，最好放到初始化列表里面。若放置于构造器中，则会产生临时的object0，初始化之，在做赋值运算给object，然后object0自行销毁，期间耗时耗力。若置于初始化列表，则编译器会在构造函数中，user code之前，调用object的构造函数，予以初始化。</p>
 
 <p>第二个：初始化列表的初始化次序。初始化次序和member在类中的声明次序一致。相互关联的member，需要十分留意初始化列表中，其中依赖的次序。解决的办法：把其中一部分使用初始化列表初始化，而另一部分放置到构造函数中使用user code予以表达，这样即便次序存在依赖，也会只“先执行合成的，再执行user的code”。</p>
+
+<!-- Copyright Info BEGIN -->
+
+
+<p class="post-footer">
+    原文地址：<a href="http://chesterlee.github.io/blog/2014/07/26/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-er-zhang-gou-zao-han-shu-yu-yi-xue/"> 我的C++对象模型读书笔记—第二章 构造函数语义学</a >
+    <br/>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+</p>
+
+
+<!-- Copyright Info END -->
+
 </div>
   
   
