@@ -5,12 +5,14 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>edgesForExtendedLayout、automaticallyAdjustsScrollViewInsets和extendedLayoutIncludesOpaqueBars - Chesterlee's tech room</title>
+  <title>use ReactiveCocoa - Chesterlee's tech room</title>
   <meta name="author" content="chesterlee">
 
   
-  <meta name="description" content="这几个属性值得写清楚，因为他们有组合起来使用的状况，有时候情况会变得较为复杂。 edgesForExtendedLayout：UIRectEdgeTop 延伸是会影响childviewcontroller的向上延伸的特点。（正确地说，是UINavigationController 作用所有的sub &hellip;">
-  <meta name="keywords" content="iOS7">
+  <meta name="description" content="还没细化，概念，暂时请看https://github.com/chesterlee/UseRAC 中的代码。
+博客后续更新。
+">
+  <meta name="keywords" content="iOS, ReactiveCocoa, MVVM">
 
   <!-- http://t.co/dKP3o1e -->
   <meta name="HandheldFriendly" content="True">
@@ -18,7 +20,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://chesterlee.github.io/blog/2014/08/24/ios7zhong-ui-trick/">
+  <link rel="canonical" href="http://chesterlee.github.io/blog/2014/09/15/use-reactivecocoa/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -65,7 +67,7 @@
   
   <header>
     
-      <h1 class="entry-title">edgesForExtendedLayout、automaticallyAdjustsScrollViewInsets和extendedLayoutIncludesOpaqueBars</h1>
+      <h1 class="entry-title">Use ReactiveCocoa</h1>
     
     
       <p class="meta">
@@ -81,20 +83,15 @@
   
 
 
-<time datetime="2014-08-24T23:58:15+08:00" pubdate data-updated="true">2014-08-24 23:58</time>
+<time datetime="2014-09-15T22:21:07+08:00" pubdate data-updated="true">2014-09-15 22:21</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>这几个属性值得写清楚，因为他们有组合起来使用的状况，有时候情况会变得较为复杂。</p>
-
-<p>edgesForExtendedLayout：UIRectEdgeTop 延伸是会影响childviewcontroller的向上延伸的特点。（正确地说，是UINavigationController 作用所有的sub ViewController 中的向上延伸的特性。）如果edgesForExtendedLayout包含了UIRectEdgeTop，那么childVC的view会占据整个屏幕，反之，它会置于Navigationbar的offsetY下面。</p>
-
-<p>automaticallyAdjustsScrollViewInsets：它的涵义是：如果UINavigationController或UIToolbarViewController的子View是Scrollview及其子类，在edgesForExtendedLayout含有top的状况下，会修改ScrollView的ContentInsect，来满足Scrollview的内容向上滑动时，statubar和navigation bar浮在其内容上。当然，如果edgesForExtendedLayout如果不含有top，那么就关闭了浮在navigation bar和statubar的特性，automaticallyAdjustsScrollViewInsets的作用也就失去意义了- &ndash;>此时NavigationController不会因为这个值是YES来设置scrollview的contentInsects。PS：（对挂接到一个view的tableview或scrollview是无效的。注意这里如果使用了childviewcontroller就可以验证这一点了。）</p>
-
-<p>extendedLayoutIncludesOpaqueBars，这个属性指定了当Bar使用了不透明图片时，视图是否延伸至Bar所在区域，默认值时NO。</p>
+<div class="entry-content"><p>还没细化，概念，暂时请看<a href="https://github.com/chesterlee/UseRAC">https://github.com/chesterlee/UseRAC</a> 中的代码。
+博客后续更新。</p>
 </div>
 
 
@@ -117,7 +114,7 @@
   
 
 
-<time datetime="2014-08-24T23:58:15+08:00" pubdate data-updated="true">2014-08-24 23:58</time>
+<time datetime="2014-09-15T22:21:07+08:00" pubdate data-updated="true">2014-09-15 22:21</time>
       
 
 <span class="categories">
@@ -145,10 +142,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2014/08/15/tan-tan-ioszhong-de-nsurlprotocol/" title="Previous Post: 谈谈iOS中的NSURLProtocol">&laquo; 谈谈iOS中的NSURLProtocol</a>
+        <a class="basic-alignment left" href="/blog/2014/08/28/tan-tan-ioszhong-de-duo-ping-mu-xian-shi/" title="Previous Post: 谈谈iOS中的多屏幕显示">&laquo; 谈谈iOS中的多屏幕显示</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2014/08/25/iosshou-shi-he-uishi-jian-chuan-di-de-chong-chong-xi-jie/" title="Next Post: iOS手势和UI事件传递的种种细节">iOS手势和UI事件传递的种种细节 &raquo;</a>
       
     </p>
   </footer>
