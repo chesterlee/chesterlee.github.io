@@ -11,6 +11,7 @@ single: true
       {% include post/author.html %}
       {% include post/date.html %}{% if updated %}{{ updated }}{% else %}{{ time }}{% endif %}
       {% include post/categories.html %}
+      {% include post/license.html %} 
     </p>
     {% unless page.sharing == false %}
       {% include post/sharing.html %}
@@ -29,6 +30,13 @@ single: true
   <section>
     <h1>Comments</h1>
     <div id="disqus_thread" aria-live="polite">{% include post/disqus_thread.html %}</div>
+  </section>
+{% endif %}
+<!-- 添加下面代码 -->
+{% if site.uyan_comment and page.comments == true %}
+  <section>
+    <h1>Comments</h1>
+    {% include post/uyan_comments.html %}
   </section>
 {% endif %}
 </div>

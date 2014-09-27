@@ -7,7 +7,7 @@ title: Chesterlee's tech room
 subtitle:  Time is limited, so don't waste it living someone else's life
 author: chesterlee
 simple_search: http://yahoo.com/search
-keywords: Apple, iOS, iPhone, iPad, O2O, Graphic, Objective C, C, C++, Swift
+keywords: Apple, iOS, iPhone, iPad, O2O, Graphic, Objective C, C, C++, Swift, Chesterlee
 description: chesterlee Mobile Programming Technical Share
 
 # Default date format is "ordinal" (resulting in "July 22nd 2007")
@@ -96,3 +96,10 @@ google_analytics_tracking_id:
 
 # Facebook Like
 facebook_like: false
+
+post_license: true
+
+# 添加下面代码
+# Uyan Comments
+uyan_comment: true
+

@@ -34,11 +34,3 @@ HTTP缓存在iOS中需要，配合着NSURLRequest的缓存策略来实现的。�
 
 最后谈谈修改NSCachedURLResponse：  
 在方法-(NSCachedURLResponse*)connection:(NSURLConnection*)connectionwillCacheResponse:(NSCachedURLResponse*)cachedResponse中，我们可以对即将缓存的Response进行修改，以达到自己的需求。
-
-<!-- Copyright Info BEGIN -->
-<p class="post-footer">
-    原文地址：<a href="http://chesterlee.github.io/blog/2014/08/10/ioszhong-de-urlcacheji-zhi/"> 谈谈iOS中的HTTP缓存策略 </a >
-    <br/>
-    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
-</p>
-<!-- Copyright Info END -->

@@ -137,14 +137,4 @@ Bjarne的做法：使用offset。把virtual base class和 virtual function entry
 注意以上的位移1的处理，编译器已经计算得符合“通常思考原则”。1的额外计算，不需要程序员担心。
 
 
-      
-<!-- Copyright Info BEGIN -->
-<p class="post-footer">
-    原文地址：<a href="http://chesterlee.github.io/blog/2014/07/26/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-san-zhang-datayu-yi-xue/"> 我的C++对象模型读书笔记—第三章 Data语义学</a >
-    <br/>
-    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
-</p>
-<!-- Copyright Info END -->
-
-
 

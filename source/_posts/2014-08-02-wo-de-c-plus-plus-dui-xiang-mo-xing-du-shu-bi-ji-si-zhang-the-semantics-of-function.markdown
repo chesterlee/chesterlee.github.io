@@ -51,11 +51,3 @@ MS的方法以所谓的'address points'来取代thunk策略，即将用来改写
  
 
 后三部分摘录自互联网，出处不明。
-
-<!-- Copyright Info BEGIN -->
-<p class="post-footer">
-    原文地址：<a href="http://chesterlee.github.io/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-si-zhang-the-semantics-of-function/"> 我的C++对象模型读书笔记--第四章 the Semantics of Function </a >
-    <br/>
-    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" ></a>版权声明：自由转载-非商用-非衍生-保持署名 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" >Creative Commons BY-NC-ND 3.0 </a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
-</p>
-<!-- Copyright Info END -->
