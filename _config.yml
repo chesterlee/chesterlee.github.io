@@ -3,8 +3,8 @@
 # ----------------------- #
 
 url: http://chesterlee.github.io
-title: Chesterlee's tech room
-subtitle:  Time is limited, so don't waste it living someone else's life
+title: Chesterlee's Zen
+subtitle:  Time's limited, so don't waste it living someone else's life
 author: chesterlee
 simple_search: http://yahoo.com/search
 keywords: Apple, iOS, iPhone, iPad, O2O, Graphic, Objective C, C, C++, Swift, Chesterlee
@@ -70,10 +70,6 @@ github_repo_count: 0
 github_show_profile_link: true
 github_skip_forks: true
 
-# Google +1
-google_plus_one: false
-google_plus_one_size: medium
-
 # Google Plus Profile
 # Hidden: No visible button, just add author information to search results
 googleplus_user:
@@ -94,8 +90,6 @@ disqus_show_comment_count: false
 # Google Analytics
 google_analytics_tracking_id:
 
-# Facebook Like
-facebook_like: false
 
 post_license: true
 
