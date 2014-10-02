@@ -23,11 +23,19 @@ ReactiveCocoa衍生自FRP（响应链编程）的一种，它是用OC语言来�
 a、使用一个既有信号(RAC已经给你wrapper好的Category)，然后使用匿名subscriber去做订阅行为，获取到next送来的值，或者error、completed的block，来做相应的业务逻辑操作。  
 b、如果自己要自定义信号，则需要通过create信号的方式，建立一个信号，在这个信号中执行数据获取、异步计算等操作，并在信号中发送sendNext、sendCompleted或sendError等数据或行为。注意，在sendNext中发送的数据，就是subscriber接到的数据。  
 
-另外，对于FRP而言，最为重要的就是信号和信号之间的关系：filter、flattenMap、CombineLatest、takeUntil、then等处理。  
+另外，对于FRP而言，最为重要的就是信号和信号之间的关系：filter、flattenMap、CombineLatest、takeUntil、then等处理。下面简要说明下：  
 
-我们可以看到，RAC可以在不影响原有业务逻辑的情况下，新增新的更复杂的业务逻辑。象积木一样不断积累和可扩展。而完全不必要地新增状态变量，让原有的代码发生更改。
+ * filter：信号过滤，用于判断信号返回值的业务合法性。只有合法的信号，才可以被继续向下输送。
+ * flattenMap(Map)：信号映射，可以将信号的发送过来的值重新计算，并以一个新值发送出去。
+ * CombineLatest：是将多个信号合并为一个信号，但是这个信号承载的value是多个信号返回的value。
+ * takeUntil：一个信号是一直hot的，但是当另外一个信号有效时，它就会失效。
+ * then：当某个信号结束后，可以用then来继续后续的wapper，返回或新生成一个新的signal，来继续操作。
+
+ReactiveCocoa还支持对系统Event、Notification、liftSelector、多线程、timer等处理。  
 
 文中具体的使用可以见UseRAC中的代码。
+
+我们可以看到，RAC可以在不影响原有业务逻辑的情况下，新增新的更复杂的业务逻辑。象积木一样不断积累和可扩展。而完全不必要地新增状态变量，让原有的代码发生更改。
 
 文中的概念参考文章有：  
 1、<a href = http://www.infoq.com/cn/articles/functional-reactive-programming>函数式反应型编程(FRP) —— 实时互动应用开发的新思路</a>  
