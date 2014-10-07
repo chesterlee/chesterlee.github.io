@@ -33,9 +33,9 @@ b、如果自己要自定义信号，则需要通过create信号的方式，建�
 
 ReactiveCocoa还支持对系统Event、Notification、liftSelector、多线程、timer等处理。  
 
-文中具体的使用可以见UseRAC中的代码。
-
 我们可以看到，RAC可以在不影响原有业务逻辑的情况下，新增新的更复杂的业务逻辑。象积木一样不断积累和可扩展。而完全不必要地新增状态变量，让原有的代码发生更改。
+
+本文只讲解比较关键的几个概念，详细的概念可以参看下面的文章，代码可以看看文中具体的使用也可以见<a href = https://github.com/chesterlee/UseRAC>UseRAC</a>中的代码。
 
 文中的概念参考文章有：  
 1、<a href = http://www.infoq.com/cn/articles/functional-reactive-programming>函数式反应型编程(FRP) —— 实时互动应用开发的新思路</a>  
