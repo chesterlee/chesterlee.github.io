@@ -4,7 +4,7 @@
   <title><![CDATA[Chesterlee's Zen]]></title>
   <link href="http://chesterlee.github.io/atom.xml" rel="self"/>
   <link href="http://chesterlee.github.io/"/>
-  <updated>2014-10-03T00:49:45+08:00</updated>
+  <updated>2014-10-07T20:34:55+08:00</updated>
   <id>http://chesterlee.github.io/</id>
   <author>
     <name><![CDATA[chesterlee]]></name>
@@ -49,9 +49,9 @@ b、如果自己要自定义信号，则需要通过create信号的方式，建�
 
 <p>ReactiveCocoa还支持对系统Event、Notification、liftSelector、多线程、timer等处理。</p>
 
-<p>文中具体的使用可以见UseRAC中的代码。</p>
-
 <p>我们可以看到，RAC可以在不影响原有业务逻辑的情况下，新增新的更复杂的业务逻辑。象积木一样不断积累和可扩展。而完全不必要地新增状态变量，让原有的代码发生更改。</p>
+
+<p>本文只讲解比较关键的几个概念，详细的概念可以参看下面的文章，代码可以看看文中具体的使用也可以见<a href = https://github.com/chesterlee/UseRAC>UseRAC</a>中的代码。</p>
 
 <p>文中的概念参考文章有：<br/>
 1、<a href = http://www.infoq.com/cn/articles/functional-reactive-programming>函数式反应型编程(FRP) —— 实时互动应用开发的新思路</a><br/>
