@@ -4,7 +4,7 @@
   <title><![CDATA[Chesterlee's Zen]]></title>
   <link href="http://chesterlee.github.io/atom.xml" rel="self"/>
   <link href="http://chesterlee.github.io/"/>
-  <updated>2014-10-07T21:02:29+08:00</updated>
+  <updated>2014-10-07T21:56:19+08:00</updated>
   <id>http://chesterlee.github.io/</id>
   <author>
     <name><![CDATA[chesterlee]]></name>
@@ -12,6 +12,50 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[谈谈在UIWebView中的内存控制]]></title>
+    <link href="http://chesterlee.github.io/blog/2014/10/07/control-memory-in-uiwebview/"/>
+    <updated>2014-10-07T21:05:05+08:00</updated>
+    <id>http://chesterlee.github.io/blog/2014/10/07/control-memory-in-uiwebview</id>
+    <content type="html"><![CDATA[<p>本文是一个webView内存管理的trick，可以直接拿来用。<br/>
+由于UIWebView的内容加载不受程序员直接控制，所以在UIWebView加载一些图片较多的网页时，如果图片较多，很容易就在网页读取阶段出现memory warning，而且当你把webview对象干掉时，内存依然不减。如果不处理的话，程序就会被kill掉。如何处理呢，下面是几个tip可以让君尝试：</p>
+
+<p>1、在每一次UIWebView读取页面结束后(Delegate)，调用UserDefault关闭缓存。代码：</p>
+
+<pre><code>   - (void)webViewDidFinishLoad:(UIWebView *)webView 
+   {
+     [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"WebKitCacheModelPreferenceKey"];  
+   } 
+</code></pre>
+
+<p>注意，不必担心这个WebKitCacheModelPreferenceKey会一直保持为0。因为每一次UIWebView加载页面的时候，都会把此值设置为1。</p>
+
+<p>2、在离开webview的controller时，使用WebView加载nil的URL，并清理webview。</p>
+
+<pre><code>-(void)viewDidDisappear:(BOOL)animated
+{
+  [super viewDidDisappear:animated];
+  [self.webView loadRequest:nil];
+  [self.webView removeFromSuperview];
+  self.webView = nil;
+  self.webView.delegate = nil;
+  [self.webView stopLoading];
+} 
+</code></pre>
+
+<p>3、在收到系统警告的时候，清理NSURLCache的CachedResponse。</p>
+
+<pre><code>-(void)didReceiveMemoryWarning
+{
+  [super didReceiveMemoryWarning];
+  [self.navigationController setNavigationBarHidden:NO];
+} 
+</code></pre>
+
+<p>trick结束:)。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[使用ReactiveCocoa]]></title>

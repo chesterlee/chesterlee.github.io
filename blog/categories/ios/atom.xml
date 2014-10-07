@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ios | Chesterlee's Zen]]></title>
   <link href="http://chesterlee.github.io/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://chesterlee.github.io/"/>
-  <updated>2014-10-07T21:02:29+08:00</updated>
+  <updated>2014-10-07T21:56:19+08:00</updated>
   <id>http://chesterlee.github.io/</id>
   <author>
     <name><![CDATA[chesterlee]]></name>
@@ -12,6 +12,50 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[谈谈在UIWebView中的内存控制]]></title>
+    <link href="http://chesterlee.github.io/blog/2014/10/07/control-memory-in-uiwebview/"/>
+    <updated>2014-10-07T21:05:05+08:00</updated>
+    <id>http://chesterlee.github.io/blog/2014/10/07/control-memory-in-uiwebview</id>
+    <content type="html"><![CDATA[<p>本文是一个webView内存管理的trick，可以直接拿来用。<br/>
+由于UIWebView的内容加载不受程序员直接控制，所以在UIWebView加载一些图片较多的网页时，如果图片较多，很容易就在网页读取阶段出现memory warning，而且当你把webview对象干掉时，内存依然不减。如果不处理的话，程序就会被kill掉。如何处理呢，下面是几个tip可以让君尝试：</p>
+
+<p>1、在每一次UIWebView读取页面结束后(Delegate)，调用UserDefault关闭缓存。代码：</p>
+
+<pre><code>   - (void)webViewDidFinishLoad:(UIWebView *)webView 
+   {
+     [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"WebKitCacheModelPreferenceKey"];  
+   } 
+</code></pre>
+
+<p>注意，不必担心这个WebKitCacheModelPreferenceKey会一直保持为0。因为每一次UIWebView加载页面的时候，都会把此值设置为1。</p>
+
+<p>2、在离开webview的controller时，使用WebView加载nil的URL，并清理webview。</p>
+
+<pre><code>-(void)viewDidDisappear:(BOOL)animated
+{
+  [super viewDidDisappear:animated];
+  [self.webView loadRequest:nil];
+  [self.webView removeFromSuperview];
+  self.webView = nil;
+  self.webView.delegate = nil;
+  [self.webView stopLoading];
+} 
+</code></pre>
+
+<p>3、在收到系统警告的时候，清理NSURLCache的CachedResponse。</p>
+
+<pre><code>-(void)didReceiveMemoryWarning
+{
+  [super didReceiveMemoryWarning];
+  [self.navigationController setNavigationBarHidden:NO];
+} 
+</code></pre>
+
+<p>trick结束:)。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[使用ReactiveCocoa]]></title>
@@ -333,21 +377,6 @@ b、如果自己要自定义信号，则需要通过create信号的方式，建�
 delaysTouchesEnded也可以被设置为NO，如果这样的话当delaysTouchesBegan为NO的情况，UITouch就会被传递到目标UIView上，相当于:UIView自己接事件，而且手势也去接事件。</li>
 </ul>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[edgesForExtendedLayout、automaticallyAdjustsScrollViewInsets和extendedLayoutIncludesOpaqueBars]]></title>
-    <link href="http://chesterlee.github.io/blog/2014/08/24/ios7zhong-ui-trick/"/>
-    <updated>2014-08-24T23:58:15+08:00</updated>
-    <id>http://chesterlee.github.io/blog/2014/08/24/ios7zhong-ui-trick</id>
-    <content type="html"><![CDATA[<p>这几个属性值得写清楚，因为他们有组合起来使用的状况，有时候情况会变得较为复杂。</p>
-
-<p>edgesForExtendedLayout：UIRectEdgeTop 延伸是会影响childviewcontroller的向上延伸的特点。（正确地说，是UINavigationController 作用所有的sub ViewController 中的向上延伸的特性。）如果edgesForExtendedLayout包含了UIRectEdgeTop，那么childVC的view会占据整个屏幕，反之，它会置于Navigationbar的offsetY下面。</p>
-
-<p>automaticallyAdjustsScrollViewInsets：它的涵义是：如果UINavigationController或UIToolbarViewController的子View是Scrollview及其子类，在edgesForExtendedLayout含有top的状况下，会修改ScrollView的ContentInsect，来满足Scrollview的内容向上滑动时，statubar和navigation bar浮在其内容上。当然，如果edgesForExtendedLayout如果不含有top，那么就关闭了浮在navigation bar和statubar的特性，automaticallyAdjustsScrollViewInsets的作用也就失去意义了- &ndash;>此时NavigationController不会因为这个值是YES来设置scrollview的contentInsects。PS：（对挂接到一个view的tableview或scrollview是无效的。注意这里如果使用了childviewcontroller就可以验证这一点了。）</p>
-
-<p>extendedLayoutIncludesOpaqueBars，这个属性指定了当Bar使用了不透明图片时，视图是否延伸至Bar所在区域，默认值时NO。</p>
 ]]></content>
   </entry>
   

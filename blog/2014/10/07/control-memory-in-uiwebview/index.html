@@ -5,12 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>edgesForExtendedLayout、automaticallyAdjustsScrollViewInsets和extendedLayoutIncludesOpaqueBars - Chesterlee's Zen</title>
+  <title>谈谈在UIWebView中的内存控制 - Chesterlee's Zen</title>
   <meta name="author" content="chesterlee">
 
   
-  <meta name="description" content="这几个属性值得写清楚，因为他们有组合起来使用的状况，有时候情况会变得较为复杂。 edgesForExtendedLayout：UIRectEdgeTop 延伸是会影响childviewcontroller的向上延伸的特点。（正确地说，是UINavigationController 作用所有的sub &hellip;">
-  <meta name="keywords" content="iOS7">
+  <meta name="description" content="本文是一个webView内存管理的trick，可以直接拿来用。
+由于UIWebView的内容加载不受程序员直接控制，所以在UIWebView加载一些图片较多的网页时，如果图片较多，很容易就在网页读取阶段出现memory warning，而且当你把webview对象干掉时，内存依然不减。 &hellip;">
+  <meta name="keywords" content="UIWebView内存管理, iOS, Memory Management">
 
   <!-- http://t.co/dKP3o1e -->
   <meta name="HandheldFriendly" content="True">
@@ -18,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://chesterlee.github.io/blog/2014/08/24/ios7zhong-ui-trick/">
+  <link rel="canonical" href="http://chesterlee.github.io/blog/2014/10/07/control-memory-in-uiwebview/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -65,7 +66,7 @@
   
   <header>
     
-      <h1 class="entry-title">edgesForExtendedLayout、automaticallyAdjustsScrollViewInsets和extendedLayoutIncludesOpaqueBars</h1>
+      <h1 class="entry-title">谈谈在UIWebView中的内存控制</h1>
     
     
       <p class="meta">
@@ -81,20 +82,49 @@
   
 
 
-<time datetime="2014-08-24T23:58:15+08:00" pubdate data-updated="true">2014-08-24 23:58</time>
+<time datetime="2014-10-07T21:05:05+08:00" pubdate data-updated="true">2014-10-07 21:05</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>这几个属性值得写清楚，因为他们有组合起来使用的状况，有时候情况会变得较为复杂。</p>
+<div class="entry-content"><p>本文是一个webView内存管理的trick，可以直接拿来用。<br/>
+由于UIWebView的内容加载不受程序员直接控制，所以在UIWebView加载一些图片较多的网页时，如果图片较多，很容易就在网页读取阶段出现memory warning，而且当你把webview对象干掉时，内存依然不减。如果不处理的话，程序就会被kill掉。如何处理呢，下面是几个tip可以让君尝试：</p>
 
-<p>edgesForExtendedLayout：UIRectEdgeTop 延伸是会影响childviewcontroller的向上延伸的特点。（正确地说，是UINavigationController 作用所有的sub ViewController 中的向上延伸的特性。）如果edgesForExtendedLayout包含了UIRectEdgeTop，那么childVC的view会占据整个屏幕，反之，它会置于Navigationbar的offsetY下面。</p>
+<p>1、在每一次UIWebView读取页面结束后(Delegate)，调用UserDefault关闭缓存。代码：</p>
 
-<p>automaticallyAdjustsScrollViewInsets：它的涵义是：如果UINavigationController或UIToolbarViewController的子View是Scrollview及其子类，在edgesForExtendedLayout含有top的状况下，会修改ScrollView的ContentInsect，来满足Scrollview的内容向上滑动时，statubar和navigation bar浮在其内容上。当然，如果edgesForExtendedLayout如果不含有top，那么就关闭了浮在navigation bar和statubar的特性，automaticallyAdjustsScrollViewInsets的作用也就失去意义了- &ndash;>此时NavigationController不会因为这个值是YES来设置scrollview的contentInsects。PS：（对挂接到一个view的tableview或scrollview是无效的。注意这里如果使用了childviewcontroller就可以验证这一点了。）</p>
+<pre><code>   - (void)webViewDidFinishLoad:(UIWebView *)webView 
+   {
+     [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"WebKitCacheModelPreferenceKey"];  
+   } 
+</code></pre>
 
-<p>extendedLayoutIncludesOpaqueBars，这个属性指定了当Bar使用了不透明图片时，视图是否延伸至Bar所在区域，默认值时NO。</p>
+<p>注意，不必担心这个WebKitCacheModelPreferenceKey会一直保持为0。因为每一次UIWebView加载页面的时候，都会把此值设置为1。</p>
+
+<p>2、在离开webview的controller时，使用WebView加载nil的URL，并清理webview。</p>
+
+<pre><code>-(void)viewDidDisappear:(BOOL)animated
+{
+  [super viewDidDisappear:animated];
+  [self.webView loadRequest:nil];
+  [self.webView removeFromSuperview];
+  self.webView = nil;
+  self.webView.delegate = nil;
+  [self.webView stopLoading];
+} 
+</code></pre>
+
+<p>3、在收到系统警告的时候，清理NSURLCache的CachedResponse。</p>
+
+<pre><code>-(void)didReceiveMemoryWarning
+{
+  [super didReceiveMemoryWarning];
+  [self.navigationController setNavigationBarHidden:NO];
+} 
+</code></pre>
+
+<p>trick结束:)。</p>
 </div>
 
 
@@ -117,7 +147,7 @@
   
 
 
-<time datetime="2014-08-24T23:58:15+08:00" pubdate data-updated="true">2014-08-24 23:58</time>
+<time datetime="2014-10-07T21:05:05+08:00" pubdate data-updated="true">2014-10-07 21:05</time>
       
 
 <span class="categories">
@@ -163,10 +193,8 @@ var jiathis_config = {data_track_clickback:'true'};
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2014/08/15/tan-tan-ioszhong-de-nsurlprotocol/" title="Previous Post: 谈谈iOS中的NSURLProtocol">&laquo; 谈谈iOS中的NSURLProtocol</a>
+        <a class="basic-alignment left" href="/blog/2014/09/15/use-reactivecocoa/" title="Previous Post: 使用ReactiveCocoa">&laquo; 使用ReactiveCocoa</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2014/08/25/iosshou-shi-he-uishi-jian-chuan-di-de-chong-chong-xi-jie/" title="Next Post: iOS手势和UI事件传递的种种细节">iOS手势和UI事件传递的种种细节 &raquo;</a>
       
     </p>
   </footer>
