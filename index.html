@@ -9,8 +9,7 @@
   <meta name="author" content="chesterlee">
 
   
-  <meta name="description" content="本文是一个webView内存管理的trick，可以直接拿来用。
-由于UIWebView的内容加载不受程序员直接控制，所以在UIWebView加载一些图片较多的网页时，如果图片较多，很容易就在网页读取阶段出现memory warning，而且当你把webview对象干掉时，内存依然不减。 &hellip;">
+  <meta name="description" content="下面是对最新iOS8sdk中Autolayout的category接口的解释，如果有错误，希望指正，谢谢！ UIConstraintBasedLayoutInstallingConstraints—-约束的添加和删除 -(void)addConstraint:(NSLayoutConstraint &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -63,6 +62,145 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/10/13/the-interface-of-the-autolayout/">Autolayout中的接口释义</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-13T21:48:18+08:00" pubdate data-updated="true">2014-10-13 21:48</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>下面是对最新iOS8sdk中Autolayout的category接口的解释，如果有错误，希望指正，谢谢！</p>
+
+<h5>UIConstraintBasedLayoutInstallingConstraints—-约束的添加和删除</h5>
+
+<pre><code>-(void)addConstraint:(NSLayoutConstraint *)constraint NS_AVAILABLE_IOS(6_0);    //添加约束  
+-(void)addConstraints:(NSArray *)constraints NS_AVAILABLE_IOS(6_0);             //添加约束集合
+-(void)removeConstraint:(NSLayoutConstraint *)constraint NS_AVAILABLE_IOS(6_0); //移除约束 
+-(void)removeConstraints:(NSArray *)constraints NS_AVAILABLE_IOS(6_0);          //移除约束集合       
+</code></pre>
+
+<h5>UIConstraintBasedLayoutCoreMethods—-约束的核心函数</h5>
+
+<pre><code>-(void)updateConstraintsIfNeeded NS_AVAILABLE_IOS(6_0);  //立即更新约束
+-(void)updateConstraints NS_AVAILABLE_IOS(6_0);//更新约束的接口，可以overrite来更新你特别需要更新的约束
+-(BOOL)needsUpdateConstraints NS_AVAILABLE_IOS(6_0);   //查询是否当前view需要更新约束
+-(void)setNeedsUpdateConstraints NS_AVAILABLE_IOS(6_0);// 标记需要更新约束，在下一个cycle的时候，run一次约束更新业务流程
+</code></pre>
+
+<h5>UIConstraintBasedCompatibility—-约束特性的打开和关闭</h5>
+
+<pre><code>//查询当前是否使用的Autoresizing 
+- (BOOL)translatesAutoresizingMaskIntoConstraints NS_AVAILABLE_IOS(6_0);  
+
+//如果手动添加约束，就需要call这个接口，默认的view是添加了autoresizing mask的，
+此时需要把他关闭，把此方法的flag传递为NO即可。但是SB/Xib会自动帮你做这个事情。
+仅仅手动添加约束需要。 
+- (void)setTranslatesAutoresizingMaskIntoConstraints:(BOOL)flag NS_AVAILABLE_IOS(6_0);
+
+//约束的Layout方式是lazily使用的。如果你在-updateConstraints中来初始化你的约束，
+但是如果没有添加约束的话，系统就不会调用这个-updateConstraints接口。
+这个就是鸡和蛋的问题，所以用这个方法在自定义的view中返回YES，表示一定要用AL来约束。
+比如在一个Cell内部，如果在-updateConstraints进行了constraint的更新，添加删除等，
+那么就调用此接口。  
++ (BOOL)requiresConstraintBasedLayout NS_AVAILABLE_IOS(6_0);
+</code></pre>
+
+<h5>UIConstraintBasedLayoutLayering（baselayout）</h5>
+
+<pre><code>//设置view在当前Frame下对应的alignmentRect的值，这个是AL系统回调函数  
+- (CGRect)alignmentRectForFrame:(CGRect)frame NS_AVAILABLE_IOS(6_0);
+
+//设置view在当前alignmentRect下对应的frame的值，这个是AL系统回调函数  
+- (CGRect)frameForAlignmentRect:(CGRect)alignmentRect NS_AVAILABLE_IOS(6_0);
+
+// 设置当前view计算alignment rect所需要用到UIEdgeInsets值，比较常用  
+- (UIEdgeInsets)alignmentRectInsets NS_AVAILABLE_IOS(6_0); 
+
+// 使用baseline对齐的约束layout时。当前的自定义view告诉AL到底是以本view
+的哪个来做对齐的（返回当前view的subview，就以这个subview做基线对齐），
+或则是本view自己（这个是默认的对齐方法情况）  
+- (UIView *)viewForBaselineLayout NS_AVAILABLE_IOS(6_0);
+
+// 默认的IntrinsicSize使用的value，为(UIViewNoIntrinsicMetric,UIViewNoIntrinsicMetric)，也就是(-1, -1)// -1  
+UIKIT_EXTERN const CGFloat UIViewNoIntrinsicMetric NS_AVAILABLE_IOS(6_0);
+
+// 当前view展示其内容的最小的size
+- (CGSize)intrinsicContentSize NS_AVAILABLE_IOS(6_0);
+
+// 刷新展示其内容的最小的size，这个要自己主动call，否则系统无法检测。   
+- (void)invalidateIntrinsicContentSize NS_AVAILABLE_IOS(6_0);
+
+//获取当前view在axis方向上的抗拉伸优先级  
+- (UILayoutPriority)contentHuggingPriorityForAxis:(UILayoutConstraintAxis)axis NS_AVAILABLE_IOS(6_0); 
+
+//设置当前view在axis方向上的抗拉伸优先级   
+- (void)setContentHuggingPriority:(UILayoutPriority)priority forAxis:(UILayoutConstraintAxis)axis NS_AVAILABLE_IOS(6_0);      
+
+//获取当前view在axis方向上的抗压缩优先级
+- (UILayoutPriority)contentCompressionResistancePriorityForAxis:(UILayoutConstraintAxis)axis NS_AVAILABLE_IOS(6_0);  
+
+//设置当前view在axis方向上的抗压缩优先级  
+- (void)setContentCompressionResistancePriority:(UILayoutPriority)priority forAxis:(UILayoutConstraintAxis)axis NS_AVAILABLE_IOS(6_0);
+</code></pre>
+
+<h5>UIConstraintBasedLayoutFittingSize(Autolaytou的size计算)</h5>
+
+<pre><code>// 一个标记，按可以展示内容最小的压缩大小来Layout对应的size（常用）  
+UIKIT_EXTERN const CGSize UILayoutFittingCompressedSize NS_AVAILABLE_IOS(6_0);  
+
+//一个标记，按可以展示内容可扩张最大的大小来Layout对应的size，没查到是以怎样的标准来计算的  
+UIKIT_EXTERN const CGSize UILayoutFittingExpandedSize NS_AVAILABLE_IOS(6_0);
+
+//配合UILayoutFittingCompressSize和UILayoutFittingExpandedSize来使用，
+在当前view的subviews的intrinsic size都可以计算的情况下，可以获取最小压缩（UILayoutFittingCompressSize）
+的size或最大（UILayoutFittingExpandedSize）的size。  
+
+- (CGSize)systemLayoutSizeFittingSize:(CGSize)targetSize NS_AVAILABLE_IOS(6_0);   
+
+//在两个方向上做不同类型的Fit size计算，相对而言，systemLayoutSizeFittingSize是在两个方向上都一致
+（都是Compressed或都是Expanded）的用法。  
+- (CGSize)systemLayoutSizeFittingSize:(CGSize)targetSize withHorizontalFittingPriority:(UILayoutPriority)horizontalFittingPriority verticalFittingPriority:(UILayoutPriority)verticalFittingPriority NS_AVAILABLE_IOS(8_0);
+</code></pre>
+
+<h5>UIConstraintBasedLayoutDebugging(AutoLayout调试使用)</h5>
+
+<pre><code>//影响当前方向的约束集合  
+- (NSArray *)constraintsAffectingLayoutForAxis:(UILayoutConstraintAxis)axis NS_AVAILABLE_IOS(6_0);
+
+//是否含有含糊不清的约束 
+- (BOOL)hasAmbiguousLayout NS_AVAILABLE_IOS(6_0); 
+
+//待整理  
+- (void)exerciseAmbiguityInLayout NS_AVAILABLE_IOS(6_0);  
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -973,80 +1111,6 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-si-zhang-the-semantics-of-function/">我的C++对象模型读书笔记&#8211;第四章 the Semantics of Function</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-08-02T09:25:15+08:00" pubdate data-updated="true">2014-08-02 09:25</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4>4.1 Member的各种调用方式</h4>
-
-<p>Nonstatic Member Functions：</p>
-
-<p>速度和一般的Nonmember function 有相同的效率。 编译器会对nonstatic member function进行改造。加入this参数，改变函数内部的对member data 的使用方法(使用this指针来存取！)，改变函数的名字&mdash;相当于nonmember function。这里面有一个函数名字的处理问题(name mangled处理)。</p>
-
-<p>Virtual Member Funciton：</p>
-
-<p>首先虚函数的调用方式若是指针调用，则是通过指针，找到vptr，打出偏移找到函数地址进行调用。其次，vptr的名字也是会被“name mangled”的，因为存在较为复杂的派生体系。</p>
-
-<p>在一个虚函数中调用另外一个虚函数，只需要写成类的函数(class::funcname())即可。因为在母函数中，执行期间已经决议出this指针指向的对象，因此上述做法可以压抑编译器的重复做法(使用vptr打偏移来做)。</p>
-
-<p>通过一个object（对象）调用虚拟函数，这时如果需要通过vptr中转一次，就会显得较为多余，编译器在决议的时候，会直接决议成nonstatic member function。</p>
-
-<p>Static Member Funciton：它的主要特性就是没有this指针，所以它不能够直接存取其class的nonstatic data members；也不能够被声明为virtual，const， volatile；它因此也就不需要经由某个class object 才能够被调用。他的调用速度和nonmember funciton差不多。如果取static member function的地址，那么将会是直接“Nonmember函数指针”，而不是“指向class member funciton的指针”。</p>
-
-<h4>4.2 Virtual Member Function</h4>
-
-<p>多重继承下的Virtual Funciton :</p>
-
-<p>当使用base  class pointer 调用virtual function的时候，可能出现两种情况。因为该base class pointer可能指向的位置处于derived class object的开始处，也可能有一个偏移量。一般规则时，经由指向“第二或后继之base class”的志真来调用derived class virtual funciton ,改掉用操作所连带的“必要的this指针调整”操作，必须在执行期完成。</p>
-
-<p>那么怎么处理呢？ 可能本来不需要调整的也变得要调整了！ 真是讨厌！  嘿嘿！  thunk技术被引用到了编译器中！  怎么解决呢？</p>
-
-<p>Sun编译器的方法是提供所谓的“split functions”技术；以相同的算法产生两个函数，其中第二个在返回之前，为指针加上必要的offset，于是不论通过base1或者derived指针调用函数，都不要调整返回值；而如果通过base2指针调用，则是另外一个函数 。</p>
-
-<p>IBM的方法呢？&#8221;把thunk搂抱在真正被调用的virtual function中。函数移开实现（1）调整this指针，然后才（2）执行程序员写的函数码；至于不需要调整的函数调用操作，就直接进入（2）部分&#8221;！</p>
-
-<p>MS的方法以所谓的&#8217;address points&#8217;来取代thunk策略，即将用来改写别人的函数（也就是overriding function)期待获得的是&#8217;引入virtual之class&#8217;的地址。这就是&#8217;address point&#8217;</p>
-
-<h4>4.4  指向Member Function的指针</h4>
-
-<p>指向 nonstatic member function 指针 :取一个nonstatic member function 的地址，如果该函数是nonvirtual ,则得到的结果是他在内存中的真正的地址。然而这个值也是不完全的，需要帮盯在某个class object的地址上，才能够通过它调用该函数。所有的nonstatic member functions 都需要对象的地址（以this参数指出）。</p>
-
-<p>指向 static member functions 指针 ：而static member functions的指针则是函数指针，而不是指向member function 的指针。</p>
-
-<p>指向 virtual member functions 指针：对一个virtual member funciton 取地址，所能够获得的只是一个索引值。编译器在评估求值的时候，会(*ptr->vptr[(int)pmf])(ptr) !</p>
-
-<p>后三部分摘录自互联网，出处不明。</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="2">&larr; Older</a>
@@ -1061,12 +1125,16 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
   <h1>Categories</h1>
   <ul id="categories">
     <li class='category'><a href='/blog/categories/cpp/'>cpp (5)</a></li>
-<li class='category'><a href='/blog/categories/ios/'>ios (8)</a></li>
+<li class='category'><a href='/blog/categories/ios/'>ios (9)</a></li>
 
   </ul>
 </section><section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/10/13/the-interface-of-the-autolayout/">Autolayout中的接口释义</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2014/10/07/control-memory-in-uiwebview/">谈谈在UIWebView中的内存控制</a>
@@ -1082,10 +1150,6 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
     
       <li class="post">
         <a href="/blog/2014/08/26/tan-tan-ioszhong-de-vctransitionfa-zhan/">谈谈iOS中的VCTransition发展</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/08/25/iosshou-shi-he-uishi-jian-chuan-di-de-chong-chong-xi-jie/">iOS手势和UI事件传递的种种细节</a>
       </li>
     
   </ul>

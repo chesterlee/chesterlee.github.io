@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ios | Chesterlee's Zen]]></title>
   <link href="http://chesterlee.github.io/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://chesterlee.github.io/"/>
-  <updated>2014-10-07T21:59:35+08:00</updated>
+  <updated>2014-10-13T22:43:19+08:00</updated>
   <id>http://chesterlee.github.io/</id>
   <author>
     <name><![CDATA[chesterlee]]></name>
@@ -12,6 +12,118 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Autolayout中的接口释义]]></title>
+    <link href="http://chesterlee.github.io/blog/2014/10/13/the-interface-of-the-autolayout/"/>
+    <updated>2014-10-13T21:48:18+08:00</updated>
+    <id>http://chesterlee.github.io/blog/2014/10/13/the-interface-of-the-autolayout</id>
+    <content type="html"><![CDATA[<p>下面是对最新iOS8sdk中Autolayout的category接口的解释，如果有错误，希望指正，谢谢！</p>
+
+<h5>UIConstraintBasedLayoutInstallingConstraints—-约束的添加和删除</h5>
+
+<pre><code>-(void)addConstraint:(NSLayoutConstraint *)constraint NS_AVAILABLE_IOS(6_0);    //添加约束  
+-(void)addConstraints:(NSArray *)constraints NS_AVAILABLE_IOS(6_0);             //添加约束集合
+-(void)removeConstraint:(NSLayoutConstraint *)constraint NS_AVAILABLE_IOS(6_0); //移除约束 
+-(void)removeConstraints:(NSArray *)constraints NS_AVAILABLE_IOS(6_0);          //移除约束集合       
+</code></pre>
+
+<h5>UIConstraintBasedLayoutCoreMethods—-约束的核心函数</h5>
+
+<pre><code>-(void)updateConstraintsIfNeeded NS_AVAILABLE_IOS(6_0);  //立即更新约束
+-(void)updateConstraints NS_AVAILABLE_IOS(6_0);//更新约束的接口，可以overrite来更新你特别需要更新的约束
+-(BOOL)needsUpdateConstraints NS_AVAILABLE_IOS(6_0);   //查询是否当前view需要更新约束
+-(void)setNeedsUpdateConstraints NS_AVAILABLE_IOS(6_0);// 标记需要更新约束，在下一个cycle的时候，run一次约束更新业务流程
+</code></pre>
+
+<h5>UIConstraintBasedCompatibility—-约束特性的打开和关闭</h5>
+
+<pre><code>//查询当前是否使用的Autoresizing 
+- (BOOL)translatesAutoresizingMaskIntoConstraints NS_AVAILABLE_IOS(6_0);  
+
+//如果手动添加约束，就需要call这个接口，默认的view是添加了autoresizing mask的，
+此时需要把他关闭，把此方法的flag传递为NO即可。但是SB/Xib会自动帮你做这个事情。
+仅仅手动添加约束需要。 
+- (void)setTranslatesAutoresizingMaskIntoConstraints:(BOOL)flag NS_AVAILABLE_IOS(6_0);
+
+//约束的Layout方式是lazily使用的。如果你在-updateConstraints中来初始化你的约束，
+但是如果没有添加约束的话，系统就不会调用这个-updateConstraints接口。
+这个就是鸡和蛋的问题，所以用这个方法在自定义的view中返回YES，表示一定要用AL来约束。
+比如在一个Cell内部，如果在-updateConstraints进行了constraint的更新，添加删除等，
+那么就调用此接口。  
++ (BOOL)requiresConstraintBasedLayout NS_AVAILABLE_IOS(6_0);
+</code></pre>
+
+<h5>UIConstraintBasedLayoutLayering（baselayout）</h5>
+
+<pre><code>//设置view在当前Frame下对应的alignmentRect的值，这个是AL系统回调函数  
+- (CGRect)alignmentRectForFrame:(CGRect)frame NS_AVAILABLE_IOS(6_0);
+
+//设置view在当前alignmentRect下对应的frame的值，这个是AL系统回调函数  
+- (CGRect)frameForAlignmentRect:(CGRect)alignmentRect NS_AVAILABLE_IOS(6_0);
+
+// 设置当前view计算alignment rect所需要用到UIEdgeInsets值，比较常用  
+- (UIEdgeInsets)alignmentRectInsets NS_AVAILABLE_IOS(6_0); 
+
+// 使用baseline对齐的约束layout时。当前的自定义view告诉AL到底是以本view
+的哪个来做对齐的（返回当前view的subview，就以这个subview做基线对齐），
+或则是本view自己（这个是默认的对齐方法情况）  
+- (UIView *)viewForBaselineLayout NS_AVAILABLE_IOS(6_0);
+
+// 默认的IntrinsicSize使用的value，为(UIViewNoIntrinsicMetric,UIViewNoIntrinsicMetric)，也就是(-1, -1)// -1  
+UIKIT_EXTERN const CGFloat UIViewNoIntrinsicMetric NS_AVAILABLE_IOS(6_0);
+
+// 当前view展示其内容的最小的size
+- (CGSize)intrinsicContentSize NS_AVAILABLE_IOS(6_0);
+
+// 刷新展示其内容的最小的size，这个要自己主动call，否则系统无法检测。   
+- (void)invalidateIntrinsicContentSize NS_AVAILABLE_IOS(6_0);
+
+//获取当前view在axis方向上的抗拉伸优先级  
+- (UILayoutPriority)contentHuggingPriorityForAxis:(UILayoutConstraintAxis)axis NS_AVAILABLE_IOS(6_0); 
+
+//设置当前view在axis方向上的抗拉伸优先级   
+- (void)setContentHuggingPriority:(UILayoutPriority)priority forAxis:(UILayoutConstraintAxis)axis NS_AVAILABLE_IOS(6_0);      
+
+//获取当前view在axis方向上的抗压缩优先级
+- (UILayoutPriority)contentCompressionResistancePriorityForAxis:(UILayoutConstraintAxis)axis NS_AVAILABLE_IOS(6_0);  
+
+//设置当前view在axis方向上的抗压缩优先级  
+- (void)setContentCompressionResistancePriority:(UILayoutPriority)priority forAxis:(UILayoutConstraintAxis)axis NS_AVAILABLE_IOS(6_0);
+</code></pre>
+
+<h5>UIConstraintBasedLayoutFittingSize(Autolaytou的size计算)</h5>
+
+<pre><code>// 一个标记，按可以展示内容最小的压缩大小来Layout对应的size（常用）  
+UIKIT_EXTERN const CGSize UILayoutFittingCompressedSize NS_AVAILABLE_IOS(6_0);  
+
+//一个标记，按可以展示内容可扩张最大的大小来Layout对应的size，没查到是以怎样的标准来计算的  
+UIKIT_EXTERN const CGSize UILayoutFittingExpandedSize NS_AVAILABLE_IOS(6_0);
+
+//配合UILayoutFittingCompressSize和UILayoutFittingExpandedSize来使用，
+在当前view的subviews的intrinsic size都可以计算的情况下，可以获取最小压缩（UILayoutFittingCompressSize）
+的size或最大（UILayoutFittingExpandedSize）的size。  
+
+- (CGSize)systemLayoutSizeFittingSize:(CGSize)targetSize NS_AVAILABLE_IOS(6_0);   
+
+//在两个方向上做不同类型的Fit size计算，相对而言，systemLayoutSizeFittingSize是在两个方向上都一致
+（都是Compressed或都是Expanded）的用法。  
+- (CGSize)systemLayoutSizeFittingSize:(CGSize)targetSize withHorizontalFittingPriority:(UILayoutPriority)horizontalFittingPriority verticalFittingPriority:(UILayoutPriority)verticalFittingPriority NS_AVAILABLE_IOS(8_0);
+</code></pre>
+
+<h5>UIConstraintBasedLayoutDebugging(AutoLayout调试使用)</h5>
+
+<pre><code>//影响当前方向的约束集合  
+- (NSArray *)constraintsAffectingLayoutForAxis:(UILayoutConstraintAxis)axis NS_AVAILABLE_IOS(6_0);
+
+//是否含有含糊不清的约束 
+- (BOOL)hasAmbiguousLayout NS_AVAILABLE_IOS(6_0); 
+
+//待整理  
+- (void)exerciseAmbiguityInLayout NS_AVAILABLE_IOS(6_0);  
+</code></pre>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[谈谈在UIWebView中的内存控制]]></title>
@@ -317,70 +429,6 @@ b、如果自己要自定义信号，则需要通过create信号的方式，建�
 
 <p>至于iOS7的UIPercentDrivenInteractiveTransition，这里不展开讲了，具体可以搜搜相关文档。<br/>
 经过Transition的不断强化，iOS7新增的Transition，大大增强了动画的复用性，降低了耦合度，增加了交互性，给编码人员提供更多福利。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[iOS手势和UI事件传递的种种细节]]></title>
-    <link href="http://chesterlee.github.io/blog/2014/08/25/iosshou-shi-he-uishi-jian-chuan-di-de-chong-chong-xi-jie/"/>
-    <updated>2014-08-25T20:03:53+08:00</updated>
-    <id>http://chesterlee.github.io/blog/2014/08/25/iosshou-shi-he-uishi-jian-chuan-di-de-chong-chong-xi-jie</id>
-    <content type="html"><![CDATA[<p>做iOS交互，最为重要的就是UI的事件传递需要很清楚。当然也要包括各种"小"细节。
-这里首先说说大的过程，也是UI事件传递的基本过程：当APP收到用户点击之后，就会做两个过程：</p>
-
-<ul>
-<li>1、遍历树，找哪个UIView是被Point击中。</li>
-<li>2、回溯tree node，形成响应者链。剩下的就是UIEvent的传递了。</li>
-</ul>
-
-
-<p>现在让我们谈谈几个问题，一个View添加了Gesture了，那么在它之上的touches的回调会收到调用吗？一个view的superview的VC添加了手势，那么在该view中的touches会收到调用吗？如何正确地传递给superview相应touches调用？UITouch里面有什么东西？如果这些有些不太清楚，那么请往下看。</p>
-
-<h4>几个不得不提的概念:</h4>
-
-<ul>
-<li>Touches began/Moved/Cancelled/touchesEnded是UIResponder的接口，用于接收触摸的各种事件。<strong>过程简述为UserTouch&mdash;>UIApplication&mdash;>UIWindow&mdash;>UIView</strong>。</li>
-<li><strong>UITouch代表一个手指，从开始接触屏幕到离开屏幕的触碰描述数据</strong>。展开来说，UITouch包含了上一次手指的位置信息，当前的UITouch的状态TouchPhase，当前的时间戳以及UITouch要送往的那些以定义的手势。具体作用和关联，后面讲。</li>
-<li>当发生了触摸时，UIEvent就会包含UITouch的数组，被App送到对应的Responder上（如果这个Responder书写了touchesBegan等UITouch的回调的话）。</li>
-<li>UITouch的状态机有TouchPhaseBegan、Moved、Ended几个。当然，分别对应那几个回调。这里请注意，<strong>UITouch的状态机和手势的状态机如UIGestureRecognizerStateBegan，是完全不同的，千万不要混淆</strong>.</li>
-<li><strong>Gesture的状态</strong>：单独Gesture(如Tap)是有识别状态的，一个叫Possible，一个叫Recognized，一个叫Failed。而连续Gesture(如Pinch)相比之下多了began、changed等状态。</li>
-</ul>
-
-
-<hr />
-
-<h4>UITouch的发送机制：</h4>
-
-<p>一句话：手势先于UIView获取Touch的响应权。详细说来：当对屏幕进行点击的时候，如前面所说，UITouch的对象会从UIApplication被依次传递，这里如果View或者其superview添加了Gesture。默认状况下：UITouch就会被送到这个Gesture上去识别，如果Gesture无法识别则会送UITouch对象点到的那个UIView上去做响应。</p>
-
-<p>回答前两个问题：这个事件先发送到一个Gesture上，并不意味着会结束touches等的调用，这个调用只是delay了。所以，第一个问题，它的touches began会收到回调，它的superview及其VC都会收到touches began的回调。而且began，moved有可能还先于手势收到回调，原因是就是Gesture对UI事件调用的影响原则：</p>
-
-<ul>
-<li>如果在某个时刻，如果Gesture根据UITouch的变化识别出了自己的手势，把Possble状态跳到了Recognized状态。那么App将不会给对应的View或VC发送后续的UIEvent。转而，UITouch的事件将会没有走完，且会收到touches:Cancelled事件而不会收到touches:Ended事件。</li>
-<li>如果整个过程中，Gesture都没有识别出自己的手势，那么它会设置自己的状态未Failed。那么这些UITouch对象会被转发给对应的UIView或VC。</li>
-</ul>
-
-
-<p>最后说说UItouches中包含了一个gestureRecognizers数组作用是什么呢，注意这个小过程：</p>
-
-<ul>
-<li>UITouch是通过touchesBegan、touchesMoved、touchesEnded等方法被送到对应的Gesture上的。UITouch其实也就是记录了被注册的Gesture对象的指针，这里就被传递到手势上了。</li>
-<li>因此，在默认状况下，如果一个view注册了touchesBegan、它或它的superview注册了Gesture，touchesbegan会先于Gesgure收到UITouch。</li>
-</ul>
-
-
-<hr />
-
-<h4>所以，在这里总结下，默认状况下手势是通过touchesBegan等事件传递的方式获取UITouch，并根据UITouch的变化进行了手势自身的判断，如果手势判断成功，手势自身的状态就会从Possible变为Recognized，从而阻止了touchesEnded的调用。但是在这个过程中，默认touchesBegan是先被目标view调用的。</h4>
-
-<p>最后说说delaysTouchesBegan 和 delaysTouchesEnded</p>
-
-<ul>
-<li><strong>概念</strong>。这两个属性是手势的，默认delaysTouchesBegan为NO，delaysTouchesEnded为Yes。表示的涵义是：不延迟touchesBegan调用，目标View可以接到这些事件，而Delay TouchesEnded的调用。让手势获取最终的决定权。PS:他们的影响类似ScrollView中的delaysContentTouches变量，是否把延迟把UITouch传递给ScrollView中的subView。</li>
-<li><strong>配置</strong>。你可以把delaysTouchesBegan开启，阻止touchesBegan调用，直接收到手势。但是这样会有时让用户感到UI失去响应。
-delaysTouchesEnded也可以被设置为NO，如果这样的话当delaysTouchesBegan为NO的情况，UITouch就会被传递到目标UIView上，相当于:UIView自己接事件，而且手势也去接事件。</li>
-</ul>
-
 ]]></content>
   </entry>
   
