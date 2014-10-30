@@ -9,7 +9,7 @@
   <meta name="author" content="chesterlee">
 
   
-  <meta name="description" content="下面是对最新iOS8sdk中Autolayout的category接口的解释，如果有错误，希望指正，谢谢！ UIConstraintBasedLayoutInstallingConstraints—-约束的添加和删除 -(void)addConstraint:(NSLayoutConstraint &hellip;">
+  <meta name="description" content="前段时间一直很忙，没有时间把AL的东西拿来总结下，今天整理下约束： 约束的类型 对于Autolayout而言，最为核心的基础就是约束。那么在iOS中约束到底有几种？它们有那些作用呢？下面说下。 NSLayoutConstraint，开放类，几乎是程序员最常用的约束。它用于设置view在view &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -74,6 +74,129 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/10/30/the-core-concept-of-the-autolayout/">AutoLayout中的约束</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-30T21:03:40+08:00" pubdate data-updated="true">2014-10-30 21:03</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前段时间一直很忙，没有时间把AL的东西拿来总结下，今天整理下约束：</p>
+
+<h3>约束的类型</h3>
+
+<p>对于Autolayout而言，最为核心的基础就是约束。那么在iOS中约束到底有几种？它们有那些作用呢？下面说下。</p>
+
+<ul>
+<li><p><strong>NSLayoutConstraint</strong>，开放类，几乎是程序员最常用的约束。它用于设置view在view tree之间的关系，自身大小等。</p></li>
+<li><p><strong>NSContentSizeLayoutConstraint</strong>，私有类。用于衡量view内容和大小相关的约束。比如Hugging和Compression，控制view的内容显示。</p></li>
+<li><p><strong>NSAutoresizingMaskLayoutConstraint</strong>，私有 类。由Autosizing mask转换到Autolayout系统中的约束表达。</p></li>
+<li><p><strong>_UILayoutSupportConstraint</strong>，私有类。布局支撑约束，它包括Top和Bottom的约束，用于控制view的显示边界，例如，它限制view的顶端显示不会和状态栏重合。</p></li>
+<li><p><strong>NSIBPrototypingLayoutConstraint</strong>，私有类。如果你丫在Storyboard中添加了一个UI控件，且没有在Storyboard中添加任何约束，但是标注了你要使用Autolayout，那么在实际的运行期，系统会默认为它添加NSIBPrototypingLayoutConstraint约束。</p></li>
+</ul>
+
+
+<p>值得一提的是：NSContentSizeLayoutConstraint最主要的作用是和intrinsic size一起工作，通常这个约束和Layout约束共同决定view的显示方式。</p>
+
+<h3>约束优先级</h3>
+
+<p>这里不去介绍约束优先级有哪些枚举值，而是说明它存在的意义：它通常是形容一个约束重要性的指标，通常两个约束如果共同决定一个显示属性的显示，当他们发生了抵触的时候，优先级表示其中一个约束，相比另外一个而言，更加重要。</p>
+
+<p>另外，<strong>优先级就是浮点数，通常用其整数表达</strong>。</p>
+
+<h3>ContentSize约束</h3>
+
+<p>AL系统有根据显示内容来自适应尺寸的能力。这个能力是由，Intrinsic Content Size内容大小、content hugging约束、content compression约束来共同决定。</p>
+
+<h4>intrinsic size</h4>
+
+<p>Intrinsic Content Size保证了当view的内容变化后，自己适应内容的大小的描述。</p>
+
+<p>自定义View需要自己计算适合自己的intrinsic size。而imageview、label等含有内容控件(除了UITextView)都会自己计算&#8221;适合内容的Size&#8221;，文档没有提是minSize来fit其中的Content，我就没这么写，不过应该可以这样理解。</p>
+
+<h4>Content Hugging</h4>
+
+<p>抗拉伸属性。其实它是一个约束，它使得它本身的大小更加贴合显示的内容。例如：如果一个UIView的内容显示需要200的宽度，那么如果UIView本身有宽度约束(此约束设置宽度为400)，此时若抗拉伸属性的优先级比宽度约束要高，View本身的大小就不会变化，反之就会被拉伸。</p>
+
+<h4>Compression Resistance</h4>
+
+<p>抗压缩属性。它的一切和抗拉伸相反。</p>
+
+<h4>Layout Constraints</h4>
+
+<p>其实Layout约束是程序员必须熟悉的。一个线性公式就说明了它的意义：</p>
+
+<pre><code>view1.attr1 = view2.attr2 * multiplier + constant  
+</code></pre>
+
+<p>这里=可以是>=，&lt;=，&lt;，>等。</p>
+
+<p>剩余就是描述Layout Constraint的<strong>生成和装载方式</strong>：</p>
+
+<p>生成方式比如:Layout Constraints的描述方式可以是原生NSLayoutConstraint来实现，也可以是VFL，也可以是自己封装的库。
+这里要进一步明确一个概念：约束是一种概念，它说明了一种关系。</p>
+
+<h4>约束的装载方式</h4>
+
+<p>1、View形容它自己的约束(一元约束)，添加到自己或者直系SuperView中。<br/>
+2、View和View之间的约束，如果view之间是父子关系，添加到父亲上。如果view和view是兄弟关系，则添加到他们共同的父亲节点上。<br/>
+3、View和View之间的约束，如果他们是两个不同的分支上的，则需要把约束添加到他们共同的祖先上面。<br/>
+相信这样说应该比较清晰了。</p>
+
+<h4>约束的比较</h4>
+
+<p>通常而言，比较对象，需要比较一个对象的所有成员变量，如果一一相等，则表明他们相等。
+但是，对于约束而言，这个比较方式比较例外：除了优先级以外的参数都要一致，才是一样的约束。也就是说优先级是不需要参与比较的。例如：</p>
+
+<pre><code>- (BOOL) isEqualToConstraint: (NSLayoutConstraint *) constraint 
+{
+      if (self.firstItem != constraint.firstItem) return NO;
+      if (self.secondItem != constraint.secondItem) return NO;
+      if (self.firstAttribute != constraint.firstAttribute) return NO; 
+      if (self.secondAttribute != constraint.secondAttribute) return NO; 
+      if (self.relation != constraint.relation) return NO;
+      if (self.multiplier != constraint.multiplier) return NO;
+      if (self.constant != constraint.constant) return NO;
+      return YES; 
+}
+</code></pre>
+
+<h3>约束使用的几个建议</h3>
+
+<p>1、充分利用约束的优先级。不要把什么约束的优先级都搞成Require。<br/>
+2、约束没有顺序而言。优先级越高越会得到满足。<br/>
+3、看上去有问题的，在iOS7和iOS8的AL系统对于Transform的行为，不太一致。transform的先后顺序不一致，有兴趣的朋友可以试试。<br/>
+4、不要无聊地建立一个ScrollView内部的view和Scrollview外部的view的约束。<br/>
+5、请注意UpdateConstraint、Layoutsubview、DrawRect的顺序，在这个管线中的特定阶段做自己想自定义的事情。<br/>
+6、注意约束描述的合理性，以避免自我矛盾的描述引起的Layout约束的冲突、歧义甚至崩溃。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -968,161 +1091,6 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-di-wu-zhang-datayu-yi-xue/">我的C++对象模型读书笔记&#8211; 第五章 Data语义学</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-08-02T09:27:24+08:00" pubdate data-updated="true">2014-08-02 09:27</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><ul>
-<li><p>合理设计之一：将共享的成员放置到base class中。</p></li>
-<li><p>合理设计之二：对于class的成员，应该在构造函数中或者其他的成员函数中初始化。如果让子类class去初始化base class的成员，将会破坏封装性。</p></li>
-</ul>
-
-
-<p>纯虚析构函数设计者一定要定义它，因为子类调用析构函数的时候，会默认静态地调用积累的虚析构函数，因此中间层如果没有定义，则会出现连接失败。因此一个较好的方案是，不要把析构函数写成纯虚。</p>
-
-<p>如果成员member function声明成虚函数，但是函数体是一个inline形式的（如果简单地return一个member data），那么每次被调用，而根本不会被子类复写的。这样的函数调用会消耗很大的性能。因此，不要把所有函数都写成虚函数，而去等编译器优化的时候去除虚函数声明。</p>
-
-<p>虚函数是否需要const？如果不使用const，则无法获取一个const引用或者指针，如果使用const，如果derive的对象要修改某一个datamember。因此无法协调。所以只有不使用const为好。</p>
-
-<h4>5.1无继承体系下的对象构造（关于编译器对代码“膨胀”的实现）</h4>
-
-<p>当类是一个Plain Ol’ Data的形式，只包含built-in数据的struct或者class的时候。那么当存在对象定义、复制、删除或者return的时候，理论上会出现trivial的构造函数、析构、赋值和拷贝构造函数。但是实际上，编译器要么是没有默认合成，要么是合成了却没有调用。</p>
-
-<p>关于构造函数的“膨胀”：如类Point定义一个变量local(1.0,1.0,1.0)。那么对于编译器，会对默认构造函数进行内联膨胀，膨胀成 Point local; local.<em>x = 1.0; local.</em>y = 1.0; local._z = 1.0;。而对应Point *pheap = new Point;而言，会被编译器修改为如下代码：</p>
-
-<pre><code> Point *pheap = new Point;   
- if(pheap) heap-&gt;Point::Point();
-</code></pre>
-
-<p>之后，再继续*pheap进行内联的膨胀。</p>
-
-<p>加上virtual function之后，也会引起编译器对构造器，析构器的膨胀。加上virtual function之后，vptr的初始化就会执行，初始化于构造器中，置于所有user code之前。</p>
-
-<p>因此，一个构造器名，如 Point::Point();会被膨胀为：</p>
-
-<pre><code>Point::Point(Point *this)
-</code></pre>
-
-<p>而函数体最前面，会被编译器添加：</p>
-
-<pre><code>this-&gt;_vptr = _vtbl_adrr;  //_vtbl_adrr指虚表首地址。
-</code></pre>
-
-<p>相应的，对于赋值构造、拷贝构造，编译器都会添加this,并用this去指向vptr，使得vptr被初始化，并指向当前的“合适的”虚表首地址。</p>
-
-<p>既然标准保证在member initialization list对应的代码执行前，该对象的vptr已经被正确的设置好，那么在member initialization list中调用virtual member function，从vptr的角度来看是安全的；但如果考虑到可能存在的member之间的依赖关系，这种风格显然是不安全、不推荐使用的。</p>
-
-<p>一般而言，如果程序中频繁的在函数中返回一个local class object，那么在设计class时，提供一个copy constructor就比较合理，它的存在会触发NRV优化。</p>
-
-<h4>5.2继承体系下的对象构造（编译器对构造函数的扩充内容和方式）</h4>
-
-<p>编译器扩充构造函数的主要方面可能如下：</p>
-
-<p>1、记录在initialization list 中的data members 初始化裁做会被放进 constructor的函数本身，并以members 的声明顺序为顺序。</p>
-
-<p>2、如果有一个member 没出现在member initialization list 之中，但是他又一个default constructor ，那么该default constructor 必须被调用</p>
-
-<p>3、在这之前呢，如果class object 具有virtual table pointers，那么它们必须被设定处置，以指向适当的virtual table。</p>
-
-<p>4、在那之前，所有的上一层的base class constructors必须被调用，以base class 的声明顺序为顺序。</p>
-
-<p> a) 如果base class 被列于member initialization list 之中， 那么任何明确制定的参数都被传递过去。</p>
-
-<p> b) 如果base class 没有被列于member initialization list 之中，而它具有default constructor,那么会调用default constructor。</p>
-
-<p> c) 如果base class是多重继承下的第二或后继的base class,那么this 指针必须有所调整。</p>
-
-<p>5、 在那之前，所有的virtual base class constructors 必须被调用，从做到又，从最深到最浅。</p>
-
-<p> a) 如果 class 被列于member initialization list 之中， 那么任何明确制定的参数都被传递过去， 如果 class 没有被列于member initialization list 之中，而它具有default constructor,那么会调用default construcotr</p>
-
-<p> b) class 中的每一个virtual base class subject 的便宜量必须在执行期间可被存取</p>
-
-<p> c) 如果class object是最底层的class, 其constructors可能被调用，某些用以支持这个行为的机制必须被放进来！</p>
-
-<p>具体的例子说明，见书207页-210页。</p>
-
-<ul>
-<li>关于虚拟继承，编译器需要对构造器处理的：</li>
-</ul>
-
-
-<p>当加入虚继承的时候，每个子类所拥有的是一个bptr，但是在子类的构造中，不可以每个子类都去调用 this->bptr->base::base()，因为虚基类只能被构造一次，因此，只有到最底层的子类，再进行对虚基类的构造器的调用。因此，在处理虚拟继承类族中的构造函数时，都会在构造函数中加入bool参数：</p>
-
-<p>如把derive::derive()改造为 derive::derive(derive *this,bool most_derive)。若bool值为真，则说明已经到了继承体系的最底层，则会调用虚拟基类的构造函数。否则不调用虚基类的构造函数。（这里的处理，编译器会在构造函数中自行加入。）</p>
-
-<p>这里也引发了一个问题：当一个子类对象完整的被定义出来的时候，我们会调用虚拟类的构造函数，当一个子类对象没有完整定义出来的时候，此构造函数则不会调用。因此可以生产出更有效率的编译器，它可以自行“拆解”构造器，使其更有效率，使一个“完整对象”的构造器能调用虚基类，并使用vptr。而使得“不完整对象”的构造器，无法调用虚基类和设定vptr。</p>
-
-<p>vptr初始化语义学(The Semantics of the vptr Initialization)</p>
-
-<p>vptr初始化是在执行期完成的，一般会发生4件事：</p>
-
-<p>1、        derived类无条件调用base类的constructor</p>
-
-<p>2、        调用完毕base的 constructor之后，初始化vptr。</p>
-
-<p>3、        构造函数的成员初值列如果存在，那么将会被扩展，并且置于vptr构建之后。</p>
-
-<p>4、        执行用户代码。</p>
-
-<h4>5.3 对象复制语意学</h4>
-
-<p>一个class的默认assignment operator，在如下情况下不具备bitwise copy语意：</p>
-
-<p>class含有一个member object，且其具有assignment operator。</p>
-
-<p>class的base class 具有 assignment operator。</p>
-
-<p>class包含virtual function。</p>
-
-<p>class有virtual base class。</p>
-
-<p>概括的说，non-trivial的assignment operator不具备bitwise copy semantics。只有non-trivial的assignment operator 才会被编译器合成出来。</p>
-
-<p>需要注意的时，并不存在与member initialization list 相对应的copy assignment list。</p>
-
-<p>assignment operator 在 virtual inheritance 下表现不佳。</p>
-
-<p>任何解决方案如果是以程序操作为基础，导致较高的复杂度和较大的错误倾向，一般公认，这表明语言在该方面存在弱点。</p>
-
-<h4>5.5解构语义学</h4>
-
-<p>如果class内带了object，且此object带有析构函数，那么class的就会自动合成一个析构函数，否则视为不需要（即便class包含虚函数）。</p>
-
-<p>顺带需要说的是，析构函数的执行顺序和构造函数相反，此刻包括了vptr的初始化、膨胀等操作的反操作。</p>
-
-<p>部分段落摘录自网上，稍加修改，出处不明。</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="2">&larr; Older</a>
@@ -1137,12 +1105,16 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
   <h1>Categories</h1>
   <ul id="categories">
     <li class='category'><a href='/blog/categories/cpp/'>cpp (5)</a></li>
-<li class='category'><a href='/blog/categories/ios/'>ios (9)</a></li>
+<li class='category'><a href='/blog/categories/ios/'>ios (10)</a></li>
 
   </ul>
 </section><section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/10/30/the-core-concept-of-the-autolayout/">AutoLayout中的约束</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2014/10/13/the-interface-of-the-autolayout/">Autolayout中的接口释义</a>
@@ -1158,10 +1130,6 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
     
       <li class="post">
         <a href="/blog/2014/08/28/tan-tan-ioszhong-de-duo-ping-mu-xian-shi/">谈谈iOS中的多屏幕显示</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/08/26/tan-tan-ioszhong-de-vctransitionfa-zhan/">谈谈iOS中的VCTransition发展</a>
       </li>
     
   </ul>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ios | Chesterlee's Zen]]></title>
   <link href="http://chesterlee.github.io/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://chesterlee.github.io/"/>
-  <updated>2014-10-20T22:55:04+08:00</updated>
+  <updated>2014-10-30T23:11:18+08:00</updated>
   <id>http://chesterlee.github.io/</id>
   <author>
     <name><![CDATA[chesterlee]]></name>
@@ -12,6 +12,102 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[AutoLayout中的约束]]></title>
+    <link href="http://chesterlee.github.io/blog/2014/10/30/the-core-concept-of-the-autolayout/"/>
+    <updated>2014-10-30T21:03:40+08:00</updated>
+    <id>http://chesterlee.github.io/blog/2014/10/30/the-core-concept-of-the-autolayout</id>
+    <content type="html"><![CDATA[<p>前段时间一直很忙，没有时间把AL的东西拿来总结下，今天整理下约束：</p>
+
+<h3>约束的类型</h3>
+
+<p>对于Autolayout而言，最为核心的基础就是约束。那么在iOS中约束到底有几种？它们有那些作用呢？下面说下。</p>
+
+<ul>
+<li><p><strong>NSLayoutConstraint</strong>，开放类，几乎是程序员最常用的约束。它用于设置view在view tree之间的关系，自身大小等。</p></li>
+<li><p><strong>NSContentSizeLayoutConstraint</strong>，私有类。用于衡量view内容和大小相关的约束。比如Hugging和Compression，控制view的内容显示。</p></li>
+<li><p><strong>NSAutoresizingMaskLayoutConstraint</strong>，私有 类。由Autosizing mask转换到Autolayout系统中的约束表达。</p></li>
+<li><p><strong>_UILayoutSupportConstraint</strong>，私有类。布局支撑约束，它包括Top和Bottom的约束，用于控制view的显示边界，例如，它限制view的顶端显示不会和状态栏重合。</p></li>
+<li><p><strong>NSIBPrototypingLayoutConstraint</strong>，私有类。如果你丫在Storyboard中添加了一个UI控件，且没有在Storyboard中添加任何约束，但是标注了你要使用Autolayout，那么在实际的运行期，系统会默认为它添加NSIBPrototypingLayoutConstraint约束。</p></li>
+</ul>
+
+
+<p>值得一提的是：NSContentSizeLayoutConstraint最主要的作用是和intrinsic size一起工作，通常这个约束和Layout约束共同决定view的显示方式。</p>
+
+<h3>约束优先级</h3>
+
+<p>这里不去介绍约束优先级有哪些枚举值，而是说明它存在的意义：它通常是形容一个约束重要性的指标，通常两个约束如果共同决定一个显示属性的显示，当他们发生了抵触的时候，优先级表示其中一个约束，相比另外一个而言，更加重要。</p>
+
+<p>另外，<strong>优先级就是浮点数，通常用其整数表达</strong>。</p>
+
+<h3>ContentSize约束</h3>
+
+<p>AL系统有根据显示内容来自适应尺寸的能力。这个能力是由，Intrinsic Content Size内容大小、content hugging约束、content compression约束来共同决定。</p>
+
+<h4>intrinsic size</h4>
+
+<p>Intrinsic Content Size保证了当view的内容变化后，自己适应内容的大小的描述。</p>
+
+<p>自定义View需要自己计算适合自己的intrinsic size。而imageview、label等含有内容控件(除了UITextView)都会自己计算"适合内容的Size"，文档没有提是minSize来fit其中的Content，我就没这么写，不过应该可以这样理解。</p>
+
+<h4>Content Hugging</h4>
+
+<p>抗拉伸属性。其实它是一个约束，它使得它本身的大小更加贴合显示的内容。例如：如果一个UIView的内容显示需要200的宽度，那么如果UIView本身有宽度约束(此约束设置宽度为400)，此时若抗拉伸属性的优先级比宽度约束要高，View本身的大小就不会变化，反之就会被拉伸。</p>
+
+<h4>Compression Resistance</h4>
+
+<p>抗压缩属性。它的一切和抗拉伸相反。</p>
+
+<h4>Layout Constraints</h4>
+
+<p>其实Layout约束是程序员必须熟悉的。一个线性公式就说明了它的意义：</p>
+
+<pre><code>view1.attr1 = view2.attr2 * multiplier + constant  
+</code></pre>
+
+<p>这里=可以是>=，&lt;=，&lt;，>等。</p>
+
+<p>剩余就是描述Layout Constraint的<strong>生成和装载方式</strong>：</p>
+
+<p>生成方式比如:Layout Constraints的描述方式可以是原生NSLayoutConstraint来实现，也可以是VFL，也可以是自己封装的库。
+这里要进一步明确一个概念：约束是一种概念，它说明了一种关系。</p>
+
+<h4>约束的装载方式</h4>
+
+<p>1、View形容它自己的约束(一元约束)，添加到自己或者直系SuperView中。<br/>
+2、View和View之间的约束，如果view之间是父子关系，添加到父亲上。如果view和view是兄弟关系，则添加到他们共同的父亲节点上。<br/>
+3、View和View之间的约束，如果他们是两个不同的分支上的，则需要把约束添加到他们共同的祖先上面。<br/>
+相信这样说应该比较清晰了。</p>
+
+<h4>约束的比较</h4>
+
+<p>通常而言，比较对象，需要比较一个对象的所有成员变量，如果一一相等，则表明他们相等。
+但是，对于约束而言，这个比较方式比较例外：除了优先级以外的参数都要一致，才是一样的约束。也就是说优先级是不需要参与比较的。例如：</p>
+
+<pre><code>- (BOOL) isEqualToConstraint: (NSLayoutConstraint *) constraint 
+{
+      if (self.firstItem != constraint.firstItem) return NO;
+      if (self.secondItem != constraint.secondItem) return NO;
+      if (self.firstAttribute != constraint.firstAttribute) return NO; 
+      if (self.secondAttribute != constraint.secondAttribute) return NO; 
+      if (self.relation != constraint.relation) return NO;
+      if (self.multiplier != constraint.multiplier) return NO;
+      if (self.constant != constraint.constant) return NO;
+      return YES; 
+}
+</code></pre>
+
+<h3>约束使用的几个建议</h3>
+
+<p>1、充分利用约束的优先级。不要把什么约束的优先级都搞成Require。<br/>
+2、约束没有顺序而言。优先级越高越会得到满足。<br/>
+3、看上去有问题的，在iOS7和iOS8的AL系统对于Transform的行为，不太一致。transform的先后顺序不一致，有兴趣的朋友可以试试。<br/>
+4、不要无聊地建立一个ScrollView内部的view和Scrollview外部的view的约束。<br/>
+5、请注意UpdateConstraint、Layoutsubview、DrawRect的顺序，在这个管线中的特定阶段做自己想自定义的事情。<br/>
+6、注意约束描述的合理性，以避免自我矛盾的描述引起的Layout约束的冲突、歧义甚至崩溃。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Autolayout中的接口释义]]></title>
@@ -327,108 +423,6 @@ b、如果自己要自定义信号，则需要通过create信号的方式，建�
 </code></pre>
 
 <p> 以上代码也可以在水果文档的多屏编码指南中找到。其实这只是一个开始，表明自己Create的UIWindow可以以抽象的方式来在外部显示器上展示，至于不断添加业务逻辑，肯定需要更好的代码封装。最后说一句，水果文档建议在AppDelegate中进行Screen的监听，其实可以按需求来进行工作。大概就这样啦。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[谈谈iOS中的VCTransition发展]]></title>
-    <link href="http://chesterlee.github.io/blog/2014/08/26/tan-tan-ioszhong-de-vctransitionfa-zhan/"/>
-    <updated>2014-08-26T21:19:13+08:00</updated>
-    <id>http://chesterlee.github.io/blog/2014/08/26/tan-tan-ioszhong-de-vctransitionfa-zhan</id>
-    <content type="html"><![CDATA[<h2>前言</h2>
-
-<p>iOS的VCTransition一直是在跟着iOS不断变化着的，最大的感觉就是不断地解耦，动画之间VC的关联变得薄弱，或者都抽象到一个统一的位置，进行处理。下面都说下：</p>
-
-<h4>Navigation、TabBar等切换</h4>
-
-<p>  这个是最早(传统的)的VC风格了。比如使用如下代码：</p>
-
-<pre><code>  -(IBAction)PushA:(id)sender 
-  {  
-     UIStoryboard *story = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-     AViewController *aVC = [story instantiateViewControllerWithIdentifier:@"AVCID"];  
-     [self.navigationController pushViewController:aVC animated:YES]; 
-  }
-</code></pre>
-
-<p>  这个方法是使用Navigation来管理VCs的一个Transition方式。比较简单，直接。但是耦合性比较大，在VC中必须知道自己要跳转到对应到VC，而且动画要写到对应的VC中，如果动画复杂，会很容易造成VC臃肿起来。</p>
-
-<h4>VC容器的Transition</h4>
-
-<p>由于iOS5.0后续版本新增了自定义的VC容器，那么从在容器中进行child vc之间到转场，会有专门的方法。比如如下代码:</p>
-
-<pre><code>  [self transitionFromViewController:self.goodsCollectionVC
-                  toViewController:self.mainPageVC
-                          duration:SWITCH_VCS_TIME
-                          options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
-                  // do animation things
-} completion:^(BOOL finished) {
-    // do animation completion things
-}];
-</code></pre>
-
-<p>这个方法在容器中切换subVC比较方便，但是只实现了简单的Transition动画，并且依然是有耦合的。因为Container做动画的切换VC的时候，如果动画非常复杂，依然会有动画无法复用的状况。</p>
-
-<h4>StoryBoard和Segue</h4>
-
-<p>  这个是iOS5时提供的转场方式：通过在Storyboard中或代码中定义Push、Modal或 Custom segue，定义一个SegueID，然后需要做Transition的时候，去Perform一个Segue就可以了，代码如下：</p>
-
-<pre><code>  [self performSegueWithIdentifier:@"PushSegueID" sender:self];  
-</code></pre>
-
-<p>在执行动画之前，自己的VC就要做些preparation可以在如下代码中调用</p>
-
-<pre><code>  -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender NS_AVAILABLE_IOS(5_0){} 
-</code></pre>
-
-<p>  特别需要说一下，如果动画处理复杂的，通过Custom Segue，就可以把动画挪到自定义segue中，降低sourceVC的代码量，动画也可以解耦甚至抽象。主要步骤就有两个：<br/>
-  &ndash; 在Storybaord或代码中实例化自定义的segue。
-  &ndash; 自定义Segue类复写perform方法。<br/>
-  关键代码如下：</p>
-
-<pre><code>   -(void)perform
-   {
-      id sourceVC = self.sourceViewController;
-      id destVC = self.destinationViewController;
-      //Do animation  
-    }
-</code></pre>
-
-<p> segue 最关键的两个property，一个是sourceViewController，一个是destinationViewController，就实现一个动画而言，这两个变量就够了。</p>
-
-<h4>iOS7的Transition</h4>
-
-<p>iOS7提供了新的transition方式。默认提供了Present和Push的抽象动画，新增了percent的手势交互动画。例如，如果要自定义navigation push的动画就可以实现一个支持UIViewControllerAnimatedTransitioning的对象。在这个transition对象中，来设计自己的动画。和segue类似，代码可见：</p>
-
-<pre><code>   -(void)animateTransition:(id &lt;UIViewControllerContextTransitioning&gt;)transitionContext
-   {
-        UIViewController *destController =  [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];  
-        UIViewController *fromController =  [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
-        UIView *containerView = [transitionContext containerView];  
-        [containerView addSubview:destController.view];
-   }
-</code></pre>
-
-<p>和Segue相同的是，都可以通过对象来获取Source和DestinationVC。不同的是，iOS7新提供的Transition提供了ContainerView，来做动画交互的容器。<br/>
-对于外部而言，在代理中制定对应的Custom Transition对象即可使用他们了，可定制化更高：<br/>
-比如在VC Controller中实例化对应的代理方法：</p>
-
-<pre><code>   -(id &lt;UIViewControllerAnimatedTransitioning&gt;)navigationController:(UINavigationController *)navigationController
-                               animationControllerForOperation:(UINavigationControllerOperation)operation
-                                            fromViewController:(UIViewController *)fromVC
-                                              toViewController:(UIViewController *)toVC
-                                         {
-                                            if (someCondition) 
-                                            {
-                                              _naviTransitioning.operation = operation;
-                                              return  _naviTransitioning;
-                                            }
-                                            return nil;
-                                          }
-</code></pre>
-
-<p>至于iOS7的UIPercentDrivenInteractiveTransition，这里不展开讲了，具体可以搜搜相关文档。<br/>
-经过Transition的不断强化，iOS7新增的Transition，大大增强了动画的复用性，降低了耦合度，增加了交互性，给编码人员提供更多福利。</p>
 ]]></content>
   </entry>
   
