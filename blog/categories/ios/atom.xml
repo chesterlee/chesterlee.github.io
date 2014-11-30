@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ios | Chesterlee's Zen]]></title>
   <link href="http://chesterlee.github.io/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://chesterlee.github.io/"/>
-  <updated>2014-11-30T10:25:32+08:00</updated>
+  <updated>2014-11-30T11:51:33+08:00</updated>
   <id>http://chesterlee.github.io/</id>
   <author>
     <name><![CDATA[chesterlee]]></name>
@@ -12,6 +12,210 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[iOS8中的PresentationController]]></title>
+    <link href="http://chesterlee.github.io/blog/2014/11/30/presentationcontroller-in-ios8/"/>
+    <updated>2014-11-30T10:28:24+08:00</updated>
+    <id>http://chesterlee.github.io/blog/2014/11/30/presentationcontroller-in-ios8</id>
+    <content type="html"><![CDATA[<p>在之前的一篇文章<a href = http://chesterlee.github.io/blog/2014/08/26/tan-tan-ioszhong-de-vctransitionfa-zhan/>谈谈iOS中的VCTransition发展</a>中，提到了Apple对iOS动画转场的不断改进，降低动画耦合。如今，在iOS8中的PresentationController，这样的改进更加彻底。下面对PresentationController进行简单的讲解：</p>
+
+<h3>Alert、ActionSheet和popOver的重定义</h3>
+
+<p>在iOS8中，Alert、ActionSheet和popOver都被重新定义了。我们一个一个说。</p>
+
+<h4>Alert和ActionSheet</h4>
+
+<p>对于<strong>Alert</strong>而言，使用全新的类UIAlertController来进行处理。比如要完成一个常用的点击事件的提示，提示按键点击回调等操作，比原有iOS7之前的Delegate系API，要简单很多，他更像是FRP的一种演化。<br/>
+例如，我们想对提示消息、确定、取消和删除按钮进行事件回调时，可以如下操作：</p>
+
+<pre><code> let alertControllerSheet : UIAlertController = UIAlertController(title: "test",
+        message: "AlertMessage",
+        preferredStyle: .Alert)
+
+    alertControllerSheet.addAction(UIAlertAction(title: "Confirm",
+        style: .Default,
+        handler: { (action: UIAlertAction!) -&gt; Void in
+        println("press confirm")
+    }))
+
+    alertControllerSheet.addAction(UIAlertAction(title: "Cancel",
+        style: .Cancel,
+        handler: { (action: UIAlertAction!) -&gt; Void in
+        println("press cancel")
+    }))
+
+    alertControllerSheet.addAction(UIAlertAction(title: "Delete",
+        style: .Destructive,
+        handler: { (action: UIAlertAction!) -&gt; Void in
+        println("press Delete")
+    }))
+</code></pre>
+
+<p>当然，Alert也可以用来进行简单的表单输入，比如要添加textfiled来进行显示，可以使用如下代码：</p>
+
+<pre><code> alertControllerSheet.addTextFieldWithConfigurationHandler { (textfield) -&gt; Void in
+        textfield.placeholder = "what's it?"
+    }
+</code></pre>
+
+<p>而具体的如何抓取TextField的字符串数据来进行业务处理，方法不少，这里略过。</p>
+
+<p>最后，我们在当前VC的接口中把Alert展示出来即可：</p>
+
+<pre><code> self.presentViewController(alertControllerSheet, animated: true, completion: nil)
+</code></pre>
+
+<p>相比Alert而言<strong>ActionSheet</strong>更简单。他不能添加TextFiled，而用法和Alert一致，也是使用UIAlertController来显示，不同的是，UIAlertController的preferredStyle类型是ActionSheet而已：</p>
+
+<pre><code>let alertControllerSheet : UIAlertController = UIAlertController(title: "test", message: "ActionSheets", 
+preferredStyle: .ActionSheet)
+
+alertControllerSheet.addAction(UIAlertAction(title: "Confirm", style: .Default, handler: { (action: UIAlertAction!) -&gt; Void in
+        println("confirm")
+    }))
+
+    alertControllerSheet.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { (action: UIAlertAction!) -&gt; Void in
+        println("cancel")
+    }))
+
+    alertControllerSheet.addAction(UIAlertAction(title: "Delete", style: .Destructive, handler: { (action: UIAlertAction!) -&gt; Void in
+        println("Delete")
+    }))
+</code></pre>
+
+<p>这样，ActionSheet和Alert就可以使用了。</p>
+
+<h4>Popover</h4>
+
+<p>显然，Popover也被改造了。它在iOS8中作为一种present的类型，置于每一个VC之中。在iOS8中，即便是iPhone这样的设备，依然可以使用Popover，而不单单是iPad来是使用了。值得一提的是，对于默认的PopOver行为，在iPhone6+上，横屏竖屏由于Compact和Regular的不同，而显示行为不一致。有兴趣的童鞋可以简单写一个试试。<br/>
+这里说下Popover的玩法流程：RootVC present一个VC，这个VC的present类型是popover，即可。不同的情况是，你可以写一个专用的VC用于popover，或者某个VC在特定情况下是Popover，在另外的情况下是Present行为。这里我们只讲前者：</p>
+
+<pre><code>@IBAction func popOverTapped(sender: AnyObject) {
+
+    let story : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+    let vc : PopoverViewController = story.instantiateViewControllerWithIdentifier("PopoverVCID") as PopoverViewController
+    var popPresentationController : UIPopoverPresentationController? = vc.popoverPresentationController
+    popPresentationController?.barButtonItem = UIBarButtonItem(customView: sender as UIView)
+    popPresentationController?.permittedArrowDirections = .Any
+    self.presentViewController(vc, animated: true, completion: nil)
+
+}
+</code></pre>
+
+<p>代码中我们准备Present一个类型为PopoverViewController的VC。在这里我们指定了弹出VC方向及其位置，而在另一个方面，在PopoverViewController中，我们约定，只要这个PopoverViewController被弹出来，就使用popOver。</p>
+
+<pre><code>required init(coder aDecoder: NSCoder)
+{
+    super.init(coder: aDecoder)
+
+    //cancel button
+    navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done,
+        target: self,
+        action: "done:")
+
+    // popover settings
+    modalPresentationStyle = .Popover
+    self.popoverPresentationController?.delegate = self;
+}
+</code></pre>
+
+<p>另外，如果我们要修改在iphone6+以下的popOver行为，可以实现当前VC自己的popoverPresentationController的代理，自己进行配置。</p>
+
+<pre><code>// if you want to adaptive the popover show, this is useful
+func adaptivePresentationStyleForPresentationController(PC: UIPresentationController!) -&gt; UIModalPresentationStyle{
+
+    let size = PC.presentingViewController.view.bounds.size
+
+    if (size.width &gt; 320.0)
+    {
+        //landscape, popover
+        return .None
+    }
+    else
+    {
+        // portrait, present
+        return .FullScreen
+    }
+}
+</code></pre>
+
+<p>上面代码就说如果是Land就popover，如果是Portrait就present。你可以看需求任意设置。</p>
+
+<h3>自定义Present的理念和玩法</h3>
+
+<p>前面说Popover提到了每一个概念，在VC中，Present是有类型的。那么自定义Present类型就是Custom。下面我们展开看看。
+实现一个自定义的Present需要至少4个对象来参与：</p>
+
+<ul>
+<li>Presenting的VC</li>
+<li>Presented的VC</li>
+<li>Present的Controller</li>
+<li>PresentAnimation的Controller</li>
+</ul>
+
+
+<p>Presented的VC用于展示Present的具体内容。Presenting的VC用于展示PresentedVC。Present的Controller用于对Custom展示的开始、结束，消失的开始、结束进行回调控制。而PresentAnimation的Controller用于控制具体展示出来的动画时长、动画细节等等。
+下面结合代码说下，在Presenting的VC中展示CustomPresentViewController，此时，CustomPresentViewController就是PresentedVC。</p>
+
+<pre><code>@IBAction func customPresentTapped(sender: AnyObject){
+
+    let story : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+    let vc : CustomPresentViewController = story.instantiateViewControllerWithIdentifier("CustomPresentVCID") as CustomPresentViewController
+    self.presentViewController(vc, animated: true, completion: nil)
+}
+</code></pre>
+
+<p>而在CustomPresentVC中，标明他的动画是自定义的，并指定转场代理：</p>
+
+<pre><code>func statementInit() {
+    self.modalPresentationStyle = .Custom
+    self.transitioningDelegate = self
+}
+</code></pre>
+
+<p>而后分别实现，以下三个回调：</p>
+
+<pre><code>func presentationControllerForPresentedViewController(presented: UIViewController!, presentingViewController presenting: UIViewController!, sourceViewController source: UIViewController!) -&gt; UIPresentationController!
+
+func animationControllerForPresentedController(presented: UIViewController!, presentingController presenting: UIViewController!, sourceController source: UIViewController!) -&gt; UIViewControllerAnimatedTransitioning!
+
+func animationControllerForDismissedController(dismissed: UIViewController!) -&gt; UIViewControllerAnimatedTransitioning!
+</code></pre>
+
+<p>第一个回调用于指定Present的Controller，后两个回调分别用于指定展示和消失状况下的PresentAnimation的Controller对象，用于动画控制。</p>
+
+<p>在Present的Controller这个对象中，它本身继承于UIPresentationController。只要在其中的：</p>
+
+<pre><code>override func presentationTransitionWillBegin()
+override func presentationTransitionDidEnd(completed: Bool)
+override func dismissalTransitionWillBegin()
+override func dismissalTransitionDidEnd(completed: Bool)
+</code></pre>
+
+<p>这几个接口进行实现，就可以完成对转场关键节点的控制。而也可以通过如下代码，对PresentedVC的大小，进行控制：</p>
+
+<pre><code>override func frameOfPresentedViewInContainerView() -&gt; CGRect
+</code></pre>
+
+<p>而对于动画控制对象而言，它只需要实现动画控制协议UIViewControllerAnimatedTransitioning即可接入动画接口，完成对具体转场动画的描述了。其内部的动画结构和iOS7的Navigation自定义转场的动画抽象方式是一样一样的，都有ContainerView、动画时间、转场动画接口等：</p>
+
+<pre><code>func transitionDuration(transitionContext: UIViewControllerContextTransitioning) -&gt; NSTimeInterval
+func animateTransition(transitionContext: UIViewControllerContextTransitioning)
+</code></pre>
+
+<p>这样就可以对自定义转场进行控制了。</p>
+
+<h3>搜索和UISearchController</h3>
+
+<p>在iOS8中的搜索也被更新了，使用UISearchController来完成搜索框和具体内容展示VC(ResultViewController)的衔接。这个后续结合代码详述。</p>
+
+<h3>结语</h3>
+
+<p>这里通篇都没有提到旧版本iOS实现Popover、Action、Alert对应的类名，这里其实意在忘记。记住新的就可以了。
+其中的代码除了Search以外，都有demo，可以直接到<a href = https://github.com/chesterlee/LearnPresentControl>LearnPresentControl</a>中查看。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[AutoLayout中的约束]]></title>
@@ -316,113 +520,6 @@ b、如果自己要自定义信号，则需要通过create信号的方式，建�
 4、<a href = http://www.raywenderlich.com/74106/mvvm-tutorial-with-reactivecocoa-part-1>MVVM Tutorial with ReactiveCocoa: Part &frac12;</a><br/>
 5、<a href = http://www.raywenderlich.com/74131/mvvm-tutorial-with-reactivecocoa-part-2>MVVM Tutorial with ReactiveCocoa: Part 2/2 </a><br/>
 6、<a href = http://limboy.me/tech/2014/06/06/deep-into-reactivecocoa2.html>ReactiveCocoa2实战</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[谈谈iOS中的多屏幕显示]]></title>
-    <link href="http://chesterlee.github.io/blog/2014/08/28/tan-tan-ioszhong-de-duo-ping-mu-xian-shi/"/>
-    <updated>2014-08-28T21:15:49+08:00</updated>
-    <id>http://chesterlee.github.io/blog/2014/08/28/tan-tan-ioszhong-de-duo-ping-mu-xian-shi</id>
-    <content type="html"><![CDATA[<p>最近接到需要进行ipad通过Apple TV进行多屏显示的需求，所以研究了下，可以在自己App中对外部荧幕进行Mirror和Different Content的切换。如果你没玩过，实在是有些可惜，不妨往下看看：</p>
-
-<h4>初步的概念</h4>
-
-<p>iOS App中UIWindow通常包含了App的view，连通了当前的硬件设备。而和Window联系到一起的Screen代表了特定使用的显示内容。如果你的app允许用户使用外接显示器，我们就需要创建一个UIWIndow对象来管理对外界显示器的展示。</p>
-
-<h4>要显示内容到外部屏幕？请添加UIWindow</h4>
-
-<p>如果你要支持外屏显示，你需要建立另外一个不同的window对象，从而让这个UIWindow对象展示的内容投射放到外部设备上。默认你可以在两个window上展示相同的内容，因为他们默认是mirroring的。当然，你可以把这个mirroring关闭了，赋值为nil或初始化一个UIWIndow到上面去。</p>
-
-<h4>Window和Screen的概念</h4>
-
-<p>先说说UIWindow，它组合了所有需要显示的ViewTree，并负责对subview的展示，组织他们的继承体系，以及对它们的事件传递。通常每一个App都有一个window对象来展示app自己的UI（在iOS设备上）。如果有外部显示器链接到设备上，那么app就可以使用第二个window来进行大荧幕数据的展示。<br/>
-再说说UIScreen对象，对于UIWindow而言，每一个UIWindow中有一个UIScreen对象。UIScreen对象抽象地描述了一个具体显示设备的信息：bounds、mode、brightness等。你也可以监听各种消息，比如连接上显示器了，断开显示器了，显示器亮度调整了等的消息。</p>
-
-<h4>Window和Screen的其他用途</h4>
-
-<p>1、通过UIWindow来调整Window的亮度。还有wantsSoftwareDimming等等。
-2、通过UIScreen displayLinkWithTarget:selector: 接口来在runloop进行CoreAnimation每一帧的绘制，或使用OpenGL es直接绘制。</p>
-
-<h4>StoryBoard做了点事情</h4>
-
-<p>使用Storyboard，建立默认的VC。它就帮你做了下面几件事情：</p>
-
-<ul>
-<li>Instantiates a window. （初始化Window）</li>
-<li>Loads the main storyboard and instantiates its initial view controller. (初始化Storyboard中的initial VC)</li>
-<li>Assigns the new view controller to the window’s rootViewController property and then makes the window visible.(把initial VC作为UIWindow中的RootVC，然后让Window可见)</li>
-</ul>
-
-
-<h4>外接显示器的实际做法</h4>
-
-<p>默认的iOS行为：Mirror。如果默认什么都不处理，那么对于一个App而言，它的内容是直接镜像到荧幕上的。除非你要显示和iOS设备荧幕不一样的内容，你可以这样做：</p>
-
-<ul>
-<li>程序一启动，就要检查外部显示器的存在。并且注册Screen的连接和断开连接的Notification。</li>
-<li>当外部显示器可用了，无论是程序启动检测，还是收到Screen连接的Notification，你都要创建并且配置一个UIWindow给这个外部设备。</li>
-<li>连接这个UIWindow和这个合适的UIScreen对象，展示第二个UIWindow，并更新。</li>
-</ul>
-
-
-<p>BTW：如果要开启镜像，请把多出来的UIWindow给干掉就好了。</p>
-
-<h4>代码时间</h4>
-
-<p>好，接下来是代码时间，上面3步的代码如下：<br/>
-1、当外部设备Ready的时候，创建一个UIWindow匹配外部抽象的UIScreen对象。</p>
-
-<pre><code>- (void)checkForExistingScreenAndInitializeIfPresent
-{
-   if ([[UIScreen screens] count] &gt; 1)
-  {
-     UIScreen *secondScreen = [[UIScreen screens] objectAtIndex:1];
-     CGRect screenBounds = secondScreen.bounds;
-     self.secondWindow = [[UIWindow alloc] initWithFrame:screenBounds];
-     self.secondWindow.screen = secondScreen;
-     self.secondWindow.hidden = NO;
-  } 
-}
-</code></pre>
-
-<p>注意：UIWindow最好先和UIScreen连接起来，然后再显示UIWindow的内容，最好不要先显示UIWindow的内容，再链接UIScreen。因为非常耗资源。</p>
-
-<p>2、注册Screen的连接和断开事件</p>
-
-<pre><code> - (void)setUpScreenConnectionNotificationHandlers
-{
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(handleScreenDidConnectNotification:) name:UIScreenDidConnectNotification object:nil];
-    [center addObserver:self selector:@selector(handleScreenDidDisconnectNotification:)
-}
-</code></pre>
-
-<p>3、处理断开和连接的事件</p>
-
-<pre><code>- (void)handleScreenDidConnectNotification:(NSNotification*)aNotification
-{
-   UIScreen *newScreen = [aNotification object];
-   CGRect screenBounds = newScreen.bounds;
-   if (!self.secondWindow)
-   {
-    self.secondWindow = [[UIWindow alloc] initWithFrame:screenBounds];
-    self.secondWindow.screen = newScreen;
-   }
-}
-
-- (void)handleScreenDidDisconnectNotification:(NSNotification*)aNotification
-{
-  if (self.secondWindow)
-  {
-    // Hide and then delete the window.
-    self.secondWindow.hidden = YES;
-    self.secondWindow = nil;
-  }
-}
-</code></pre>
-
-<p> 以上代码也可以在水果文档的多屏编码指南中找到。其实这只是一个开始，表明自己Create的UIWindow可以以抽象的方式来在外部显示器上展示，至于不断添加业务逻辑，肯定需要更好的代码封装。最后说一句，水果文档建议在AppDelegate中进行Screen的监听，其实可以按需求来进行工作。大概就这样啦。</p>
 ]]></content>
   </entry>
   
