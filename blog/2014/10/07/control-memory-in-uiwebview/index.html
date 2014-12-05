@@ -104,6 +104,9 @@
 <div class="entry-content"><p>本文是一个webView内存管理的trick，可以直接拿来用。<br/>
 由于UIWebView的内容加载不受程序员直接控制，所以在UIWebView加载一些图片较多的网页时，如果图片较多，很容易就在网页读取阶段出现memory warning，而且当你把webview对象干掉时，内存依然不减。如果不处理的话，程序就会被kill掉。如何处理呢，下面是几个tip可以让君尝试：</p>
 
+<!--more-->
+
+
 <p>1、在每一次UIWebView读取页面结束后(Delegate)，调用UserDefault关闭缓存。代码：</p>
 
 <pre><code>   - (void)webViewDidFinishLoad:(UIWebView *)webView 

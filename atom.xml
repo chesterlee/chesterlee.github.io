@@ -4,7 +4,7 @@
   <title><![CDATA[Chesterlee's Zen]]></title>
   <link href="http://chesterlee.github.io/atom.xml" rel="self"/>
   <link href="http://chesterlee.github.io/"/>
-  <updated>2014-11-30T11:51:33+08:00</updated>
+  <updated>2014-12-05T23:46:29+08:00</updated>
   <id>http://chesterlee.github.io/</id>
   <author>
     <name><![CDATA[chesterlee]]></name>
@@ -19,6 +19,9 @@
     <updated>2014-11-30T10:28:24+08:00</updated>
     <id>http://chesterlee.github.io/blog/2014/11/30/presentationcontroller-in-ios8</id>
     <content type="html"><![CDATA[<p>在之前的一篇文章<a href = http://chesterlee.github.io/blog/2014/08/26/tan-tan-ioszhong-de-vctransitionfa-zhan/>谈谈iOS中的VCTransition发展</a>中，提到了Apple对iOS动画转场的不断改进，降低动画耦合。如今，在iOS8中的PresentationController，这样的改进更加彻底。下面对PresentationController进行简单的讲解：</p>
+
+<!--more-->
+
 
 <h3>Alert、ActionSheet和popOver的重定义</h3>
 
@@ -226,7 +229,10 @@ func animateTransition(transitionContext: UIViewControllerContextTransitioning)
 
 <h3>约束的类型</h3>
 
-<p>对于Autolayout而言，最为核心的基础就是约束。那么在iOS中约束到底有几种？它们有那些作用呢？下面说下。</p>
+<p>对于Autolayout而言，最为核心的基础就是约束。那么在iOS中约束到底有几种？它们有那些作用呢？下面就谈谈。</p>
+
+<!--more-->
+
 
 <ul>
 <li><p><strong>NSLayoutConstraint</strong>，开放类，几乎是程序员最常用的约束。它用于设置view在view tree之间的关系，自身大小等。</p></li>
@@ -318,7 +324,10 @@ func animateTransition(transitionContext: UIViewControllerContextTransitioning)
     <link href="http://chesterlee.github.io/blog/2014/10/13/the-interface-of-the-autolayout/"/>
     <updated>2014-10-13T21:48:18+08:00</updated>
     <id>http://chesterlee.github.io/blog/2014/10/13/the-interface-of-the-autolayout</id>
-    <content type="html"><![CDATA[<p>下面是对最新iOS8sdk中Autolayout的category接口的解释，如果有错误，希望指正，谢谢！</p>
+    <content type="html"><![CDATA[<p>下文是对最新iOS8sdk中Autolayout的category接口的解释，如果有错误，希望指正，谢谢！</p>
+
+<!--more-->
+
 
 <h5>UIConstraintBasedLayoutInstallingConstraints—-约束的添加和删除</h5>
 
@@ -433,6 +442,9 @@ UIKIT_EXTERN const CGSize UILayoutFittingExpandedSize NS_AVAILABLE_IOS(6_0);
     <content type="html"><![CDATA[<p>本文是一个webView内存管理的trick，可以直接拿来用。<br/>
 由于UIWebView的内容加载不受程序员直接控制，所以在UIWebView加载一些图片较多的网页时，如果图片较多，很容易就在网页读取阶段出现memory warning，而且当你把webview对象干掉时，内存依然不减。如果不处理的话，程序就会被kill掉。如何处理呢，下面是几个tip可以让君尝试：</p>
 
+<!--more-->
+
+
 <p>1、在每一次UIWebView读取页面结束后(Delegate)，调用UserDefault关闭缓存。代码：</p>
 
 <pre><code>   - (void)webViewDidFinishLoad:(UIWebView *)webView 
@@ -479,6 +491,9 @@ UIKIT_EXTERN const CGSize UILayoutFittingExpandedSize NS_AVAILABLE_IOS(6_0);
     <updated>2014-09-15T22:21:07+08:00</updated>
     <id>http://chesterlee.github.io/blog/2014/09/15/use-reactivecocoa</id>
     <content type="html"><![CDATA[<p>本篇的文章的目的很明确，就是要会使用RAC。这里对RAC的关键概念和行为做出较为清晰的说明，便于使用。</p>
+
+<!--more-->
+
 
 <p>ReactiveCocoa衍生自FRP（响应链编程）的一种，它是用OC语言来描述FRP的一个框架。其根源可以追述到如下论坛：<a href= http://www.haskell.org/haskellwiki/Haskell>Haskell</a></p>
 
@@ -529,6 +544,9 @@ b、如果自己要自定义信号，则需要通过create信号的方式，建�
     <updated>2014-08-28T21:15:49+08:00</updated>
     <id>http://chesterlee.github.io/blog/2014/08/28/tan-tan-ioszhong-de-duo-ping-mu-xian-shi</id>
     <content type="html"><![CDATA[<p>最近接到需要进行ipad通过Apple TV进行多屏显示的需求，所以研究了下，可以在自己App中对外部荧幕进行Mirror和Different Content的切换。如果你没玩过，实在是有些可惜，不妨往下看看：</p>
+
+<!--more-->
+
 
 <h4>初步的概念</h4>
 
@@ -637,7 +655,10 @@ b、如果自己要自定义信号，则需要通过create信号的方式，建�
     <id>http://chesterlee.github.io/blog/2014/08/26/tan-tan-ioszhong-de-vctransitionfa-zhan</id>
     <content type="html"><![CDATA[<h2>前言</h2>
 
-<p>iOS的VCTransition一直是在跟着iOS不断变化着的，最大的感觉就是不断地解耦，动画之间VC的关联变得薄弱，或者都抽象到一个统一的位置，进行处理。下面都说下：</p>
+<p>iOS的VCTransition一直是在跟着iOS不断变化着的，最大的感觉就是不断地解耦，动画之间VC的关联变得薄弱，或者都抽象到一个统一的位置，进行处理。下面谈谈：</p>
+
+<!--more-->
+
 
 <h4>Navigation、TabBar等切换</h4>
 
@@ -737,7 +758,12 @@ b、如果自己要自定义信号，则需要通过create信号的方式，建�
     <link href="http://chesterlee.github.io/blog/2014/08/25/iosshou-shi-he-uishi-jian-chuan-di-de-chong-chong-xi-jie/"/>
     <updated>2014-08-25T20:03:53+08:00</updated>
     <id>http://chesterlee.github.io/blog/2014/08/25/iosshou-shi-he-uishi-jian-chuan-di-de-chong-chong-xi-jie</id>
-    <content type="html"><![CDATA[<p>做iOS交互，最为重要的就是UI的事件传递需要很清楚。当然也要包括各种&#8221;小&#8221;细节。
+    <content type="html"><![CDATA[<p>如题，详细谈谈iOS手势和事件传递的各个细节。</p>
+
+<!--more-->
+
+
+<p>做iOS交互，最为重要的就是UI的事件传递需要很清楚。当然也要包括各种&#8221;小&#8221;细节。
 这里首先说说大的过程，也是UI事件传递的基本过程：当APP收到用户点击之后，就会做两个过程：</p>
 
 <ul>
@@ -803,6 +829,9 @@ delaysTouchesEnded也可以被设置为NO，如果这样的话当delaysTouchesBe
     <id>http://chesterlee.github.io/blog/2014/08/24/ios7zhong-ui-trick</id>
     <content type="html"><![CDATA[<p>这几个属性值得写清楚，因为他们有组合起来使用的状况，有时候情况会变得较为复杂。</p>
 
+<!--more-->
+
+
 <p>edgesForExtendedLayout：UIRectEdgeTop 延伸是会影响childviewcontroller的向上延伸的特点。（正确地说，是UINavigationController 作用所有的sub ViewController 中的向上延伸的特性。）如果edgesForExtendedLayout包含了UIRectEdgeTop，那么childVC的view会占据整个屏幕，反之，它会置于Navigationbar的offsetY下面。</p>
 
 <p>automaticallyAdjustsScrollViewInsets：它的涵义是：如果UINavigationController或UIToolbarViewController的子View是Scrollview及其子类，在edgesForExtendedLayout含有top的状况下，会修改ScrollView的ContentInsect，来满足Scrollview的内容向上滑动时，statubar和navigation bar浮在其内容上。当然，如果edgesForExtendedLayout如果不含有top，那么就关闭了浮在navigation bar和statubar的特性，automaticallyAdjustsScrollViewInsets的作用也就失去意义了- &ndash;>此时NavigationController不会因为这个值是YES来设置scrollview的contentInsects。PS：（对挂接到一个view的tableview或scrollview是无效的。注意这里如果使用了childviewcontroller就可以验证这一点了。）</p>
@@ -819,6 +848,9 @@ delaysTouchesEnded也可以被设置为NO，如果这样的话当delaysTouchesBe
     <content type="html"><![CDATA[<p>NSURLProtocol是比较&#8221;小众&#8221;，但是能量极大的一个东东。在NSHipster中matt对其有详细介绍。<br/>
 它就像在少林寺里，武功最高的，就是在一旁扫落叶的僧人，默默无闻，你一旦发现他，各种绝学就来了。<br/>
 &ndash;_-扯远了，我们先看看它是什么，然后看看它能干什么。</p>
+
+<!--more-->
+
 
 <p>1、它的概念：
 它是一个抽象类，我们可以通过继承它来定义新的或已存在的URL加载行为。<br/>
@@ -930,6 +962,9 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
     <id>http://chesterlee.github.io/blog/2014/08/10/ioszhong-de-urlcacheji-zhi</id>
     <content type="html"><![CDATA[<p>iOS中的HTTP URL Cache机制是看上较为简单，但是暗含一些机制的东西。这里将它细化下来。让自己也加深下相应的记忆。</p>
 
+<!--more-->
+
+
 <p>首先，说下概念，HTTP URLCache是HTTP协议中的一部分，用于缓存Response，以达到减轻服务器负担的目的。在iOS中的URL Loading System中，提供了名字叫NSURLCache的类来设置URL缓存的配置信息。</p>
 
 <p>在iOS中的URL缓存容器是共享的，因而我们可以自己继承NSURLCache来配置自己的cache，自定义化它的内存大小，磁盘大小甚至过期时间等等，最后设置为share cache即可。</p>
@@ -968,7 +1003,12 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
     <link href="http://chesterlee.github.io/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-di-wu-zhang-datayu-yi-xue/"/>
     <updated>2014-08-02T09:27:24+08:00</updated>
     <id>http://chesterlee.github.io/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-di-wu-zhang-datayu-yi-xue</id>
-    <content type="html"><![CDATA[<ul>
+    <content type="html"><![CDATA[<p>C++语义学</p>
+
+<!--more-->
+
+
+<ul>
 <li><p>合理设计之一：将共享的成员放置到base class中。</p></li>
 <li><p>合理设计之二：对于class的成员，应该在构造函数中或者其他的成员函数中初始化。如果让子类class去初始化base class的成员，将会破坏封装性。</p></li>
 </ul>
@@ -1098,6 +1138,9 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
     <id>http://chesterlee.github.io/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-si-zhang-the-semantics-of-function</id>
     <content type="html"><![CDATA[<h4>4.1 Member的各种调用方式</h4>
 
+<!--more-->
+
+
 <p>Nonstatic Member Functions：</p>
 
 <p>速度和一般的Nonmember function 有相同的效率。 编译器会对nonstatic member function进行改造。加入this参数，改变函数内部的对member data 的使用方法(使用this指针来存取！)，改变函数的名字&mdash;相当于nonmember function。这里面有一个函数名字的处理问题(name mangled处理)。</p>
@@ -1143,7 +1186,8 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
     <link href="http://chesterlee.github.io/blog/2014/07/26/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-san-zhang-datayu-yi-xue/"/>
     <updated>2014-07-26T22:16:51+08:00</updated>
     <id>http://chesterlee.github.io/blog/2014/07/26/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-san-zhang-datayu-yi-xue</id>
-    <content type="html"><![CDATA[<p> C++ standard 不强制规定“base class subjects的排列次序”“不同存取层记得data members的排列次序” ，也不规定“virtual funcitons 和 virtual base class“的实现细节。
+    <content type="html"><![CDATA[<p> C++ standard 不强制规定“base class subjects的排列次序”“不同存取层记得data members的排列次序” ，也不规定“virtual funcitons 和 virtual base class“的实现细节。<br/>
+ <!--more-->
 当一个类并没有任何声明的时候，它实做一个对象的时候，实际分配了1个字节的大小的空间。从而使得这个对象能够有独一无二的地址空间。</p>
 
 <p>而一个对象的大小不仅仅包含了该类所声明的nonstatic data members，而且还受到了，</p>
@@ -1267,6 +1311,9 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
     <content type="html"><![CDATA[<h5>2.1  Default Constructor 的构建操作</h5>
 
 <p>Default Constructors只有当编译器需要default constructor的时候才会合成出一个constructor, 只有下面的四种情况才会有nontrivial default constructor产生，其余的都是trivial default constructor。（nontrivial是合成的有用的默认函数，trivial则是没多大用处的构造器）</p>
+
+<!--more-->
+
 
 <ul>
 <li>a、<strong>带有Default Constructor 的 Member Class Object</strong></li>
@@ -1445,6 +1492,9 @@ b、在自己的类的回调上，做一些hack的事情。<br/>
 <h3>第一章         关于对象</h3>
 
 <p>首先应该说下C的“算法驱动”思路：C语言中，“数据”和“处理数据的操作”十分开来的。简言之，这样的程序方法叫做“程序性的”，由以功能为导向的函数的算法所驱动，处理的是来自外部的数据。</p>
+
+<!--more-->
+
 
 <p>而在C++中，则使用的是独立的“抽象数据类型abstract data type（ADT)”所驱动。这样符合软件工程的设计。如果不使用virtual，C++本身的class布局及存取时间和struct没有区别。言外之意，只有存在虚函数(virtual function)和虚基类(virtual base class)这样的形式，才使得class实例化一个对象时，存在额外的负担。</p>
 

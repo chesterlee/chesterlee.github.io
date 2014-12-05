@@ -9,7 +9,7 @@
   <meta name="author" content="chesterlee">
 
   
-  <meta name="description" content="iOS中的HTTP URL Cache机制是看上较为简单，但是暗含一些机制的东西。这里将它细化下来。让自己也加深下相应的记忆。 首先，说下概念，HTTP URLCache是HTTP协议中的一部分，用于缓存Response，以达到减轻服务器负担的目的。在iOS中的URL Loading &hellip;">
+  <meta name="description" content="C++语义学 ">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -80,73 +80,6 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2014/08/10/ioszhong-de-urlcacheji-zhi/">谈谈iOS中的HTTP缓存策略</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-08-10T09:03:05+08:00" pubdate data-updated="true">2014-08-10 09:03</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>iOS中的HTTP URL Cache机制是看上较为简单，但是暗含一些机制的东西。这里将它细化下来。让自己也加深下相应的记忆。</p>
-
-<p>首先，说下概念，HTTP URLCache是HTTP协议中的一部分，用于缓存Response，以达到减轻服务器负担的目的。在iOS中的URL Loading System中，提供了名字叫NSURLCache的类来设置URL缓存的配置信息。</p>
-
-<p>在iOS中的URL缓存容器是共享的，因而我们可以自己继承NSURLCache来配置自己的cache，自定义化它的内存大小，磁盘大小甚至过期时间等等，最后设置为share cache即可。</p>
-
-<p>HTTP缓存在iOS中需要，配合着NSURLRequest的缓存策略来实现的。比如，如果指定了一个Request的缓存策略，那么对应Request就会按既定策略进行处理。策略常用如下：</p>
-
-<ul>
-<li><strong>NSURLRequestUseProtocolCachePolicy</strong>。一个Request的默认缓存策略。他是最为隐晦的，我们最后说。</li>
-<li><strong>NSURLRequestReturnCacheDataElseLoad</strong>。如果在之前的网络请求中，我们获取了Cache的Response，那么本次请求同样的接口，就直接从Cache中去抓。反之，从服务器上去获取，并在本地cache起来。(这里的问题是，如果cache存在，就一直拉不到服务器数据，所以用这个机制，有它的弊端，当然也要看具体的需求情况。可以通过自定义自类化NSURLCache来自定义cache time，但也仅仅适用于Data改变不大的项目中。)</li>
-<li><strong>NSURLRequestReturnCacheDataDontLoad</strong>。只从缓存中获取cached response而不从服务器获取。实属离线版本。</li>
-</ul>
-
-
-<p>好，这里展开说一下相对最为复杂的ProtocolCachePolicy机制：<br/>
-1、如果一个Request的NSCachedURLResponse不存在，就去请求网络。<br/>
-2、如果一个Request的NSCachedURLResponse存在，就去检查response去决定是否需要刷新。检查Response header的Cache-Control字段是否含有must-revalidated字段(HTTP1.1所带)。<br/>
-3、如果包含must-revalidated字段，就通过HEAD方法请求服务器，判断Response头是否有更新，如果有，则去拉数据下来。如果没有，则使用Cache资源。<br/>
-4、如果不包含must-revalidated字段，就看看Cache-Control是否包含其他字段，比如max-age等等看看是否过期，如果过期，继续用HEAD去检查Response头，是否为最新数据，如果有则去请求服务器，反之取cache。如果没有过期，则直接取cache。</p>
-
-<ul>
-<li>注意：由于HEAD是URL Loading System自身机制，由于没有抓包，所以没去验证。HEAD方法默认使用可以参见水果文档中的Cache Use Semantics for the HTTP Protocol。</li>
-</ul>
-
-
-<p>然后说下通用HTTP的缓存策略：</p>
-
-<p>  HTTP缓存策略中，我们从服务器获取Response后，可以找到(如果有)Response中包含Etag或则Last-Modified字段。当我们做第二次重复请求的时候，可以从CachedURLResponse取出来，把相应字段拼接在HTTPRequestHeader中（例如，IMS，If-Modified-Since配合Last_Modified），然后发送请求，服务端收到后，如果客户端的资源是最新的，那么就会返回304为Response，而不返回任何内容。反之，如果客户端资源落后了，则直接返回200，并返回Data给客户端。</p>
-
-<p>最后谈谈修改NSCachedURLResponse：<br/>
-在方法-(NSCachedURLResponse<em>)connection:(NSURLConnection</em>)connectionwillCacheResponse:(NSCachedURLResponse*)cachedResponse中，我们可以对即将缓存的Response进行修改，以达到自己的需求。</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
       <h1 class="entry-title"><a href="/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-di-wu-zhang-datayu-yi-xue/">我的C++对象模型读书笔记&#8211; 第五章 Data语义学</a></h1>
     
     
@@ -170,128 +103,14 @@
   </header>
 
 
-  <div class="entry-content"><ul>
-<li><p>合理设计之一：将共享的成员放置到base class中。</p></li>
-<li><p>合理设计之二：对于class的成员，应该在构造函数中或者其他的成员函数中初始化。如果让子类class去初始化base class的成员，将会破坏封装性。</p></li>
-</ul>
+  <div class="entry-content"><p>C++语义学</p>
 
-
-<p>纯虚析构函数设计者一定要定义它，因为子类调用析构函数的时候，会默认静态地调用积累的虚析构函数，因此中间层如果没有定义，则会出现连接失败。因此一个较好的方案是，不要把析构函数写成纯虚。</p>
-
-<p>如果成员member function声明成虚函数，但是函数体是一个inline形式的（如果简单地return一个member data），那么每次被调用，而根本不会被子类复写的。这样的函数调用会消耗很大的性能。因此，不要把所有函数都写成虚函数，而去等编译器优化的时候去除虚函数声明。</p>
-
-<p>虚函数是否需要const？如果不使用const，则无法获取一个const引用或者指针，如果使用const，如果derive的对象要修改某一个datamember。因此无法协调。所以只有不使用const为好。</p>
-
-<h4>5.1无继承体系下的对象构造（关于编译器对代码“膨胀”的实现）</h4>
-
-<p>当类是一个Plain Ol’ Data的形式，只包含built-in数据的struct或者class的时候。那么当存在对象定义、复制、删除或者return的时候，理论上会出现trivial的构造函数、析构、赋值和拷贝构造函数。但是实际上，编译器要么是没有默认合成，要么是合成了却没有调用。</p>
-
-<p>关于构造函数的“膨胀”：如类Point定义一个变量local(1.0,1.0,1.0)。那么对于编译器，会对默认构造函数进行内联膨胀，膨胀成 Point local; local.<em>x = 1.0; local.</em>y = 1.0; local._z = 1.0;。而对应Point *pheap = new Point;而言，会被编译器修改为如下代码：</p>
-
-<pre><code> Point *pheap = new Point;   
- if(pheap) heap-&gt;Point::Point();
-</code></pre>
-
-<p>之后，再继续*pheap进行内联的膨胀。</p>
-
-<p>加上virtual function之后，也会引起编译器对构造器，析构器的膨胀。加上virtual function之后，vptr的初始化就会执行，初始化于构造器中，置于所有user code之前。</p>
-
-<p>因此，一个构造器名，如 Point::Point();会被膨胀为：</p>
-
-<pre><code>Point::Point(Point *this)
-</code></pre>
-
-<p>而函数体最前面，会被编译器添加：</p>
-
-<pre><code>this-&gt;_vptr = _vtbl_adrr;  //_vtbl_adrr指虚表首地址。
-</code></pre>
-
-<p>相应的，对于赋值构造、拷贝构造，编译器都会添加this,并用this去指向vptr，使得vptr被初始化，并指向当前的“合适的”虚表首地址。</p>
-
-<p>既然标准保证在member initialization list对应的代码执行前，该对象的vptr已经被正确的设置好，那么在member initialization list中调用virtual member function，从vptr的角度来看是安全的；但如果考虑到可能存在的member之间的依赖关系，这种风格显然是不安全、不推荐使用的。</p>
-
-<p>一般而言，如果程序中频繁的在函数中返回一个local class object，那么在设计class时，提供一个copy constructor就比较合理，它的存在会触发NRV优化。</p>
-
-<h4>5.2继承体系下的对象构造（编译器对构造函数的扩充内容和方式）</h4>
-
-<p>编译器扩充构造函数的主要方面可能如下：</p>
-
-<p>1、记录在initialization list 中的data members 初始化裁做会被放进 constructor的函数本身，并以members 的声明顺序为顺序。</p>
-
-<p>2、如果有一个member 没出现在member initialization list 之中，但是他又一个default constructor ，那么该default constructor 必须被调用</p>
-
-<p>3、在这之前呢，如果class object 具有virtual table pointers，那么它们必须被设定处置，以指向适当的virtual table。</p>
-
-<p>4、在那之前，所有的上一层的base class constructors必须被调用，以base class 的声明顺序为顺序。</p>
-
-<p> a) 如果base class 被列于member initialization list 之中， 那么任何明确制定的参数都被传递过去。</p>
-
-<p> b) 如果base class 没有被列于member initialization list 之中，而它具有default constructor,那么会调用default constructor。</p>
-
-<p> c) 如果base class是多重继承下的第二或后继的base class,那么this 指针必须有所调整。</p>
-
-<p>5、 在那之前，所有的virtual base class constructors 必须被调用，从做到又，从最深到最浅。</p>
-
-<p> a) 如果 class 被列于member initialization list 之中， 那么任何明确制定的参数都被传递过去， 如果 class 没有被列于member initialization list 之中，而它具有default constructor,那么会调用default construcotr</p>
-
-<p> b) class 中的每一个virtual base class subject 的便宜量必须在执行期间可被存取</p>
-
-<p> c) 如果class object是最底层的class, 其constructors可能被调用，某些用以支持这个行为的机制必须被放进来！</p>
-
-<p>具体的例子说明，见书207页-210页。</p>
-
-<ul>
-<li>关于虚拟继承，编译器需要对构造器处理的：</li>
-</ul>
-
-
-<p>当加入虚继承的时候，每个子类所拥有的是一个bptr，但是在子类的构造中，不可以每个子类都去调用 this->bptr->base::base()，因为虚基类只能被构造一次，因此，只有到最底层的子类，再进行对虚基类的构造器的调用。因此，在处理虚拟继承类族中的构造函数时，都会在构造函数中加入bool参数：</p>
-
-<p>如把derive::derive()改造为 derive::derive(derive *this,bool most_derive)。若bool值为真，则说明已经到了继承体系的最底层，则会调用虚拟基类的构造函数。否则不调用虚基类的构造函数。（这里的处理，编译器会在构造函数中自行加入。）</p>
-
-<p>这里也引发了一个问题：当一个子类对象完整的被定义出来的时候，我们会调用虚拟类的构造函数，当一个子类对象没有完整定义出来的时候，此构造函数则不会调用。因此可以生产出更有效率的编译器，它可以自行“拆解”构造器，使其更有效率，使一个“完整对象”的构造器能调用虚基类，并使用vptr。而使得“不完整对象”的构造器，无法调用虚基类和设定vptr。</p>
-
-<p>vptr初始化语义学(The Semantics of the vptr Initialization)</p>
-
-<p>vptr初始化是在执行期完成的，一般会发生4件事：</p>
-
-<p>1、        derived类无条件调用base类的constructor</p>
-
-<p>2、        调用完毕base的 constructor之后，初始化vptr。</p>
-
-<p>3、        构造函数的成员初值列如果存在，那么将会被扩展，并且置于vptr构建之后。</p>
-
-<p>4、        执行用户代码。</p>
-
-<h4>5.3 对象复制语意学</h4>
-
-<p>一个class的默认assignment operator，在如下情况下不具备bitwise copy语意：</p>
-
-<p>class含有一个member object，且其具有assignment operator。</p>
-
-<p>class的base class 具有 assignment operator。</p>
-
-<p>class包含virtual function。</p>
-
-<p>class有virtual base class。</p>
-
-<p>概括的说，non-trivial的assignment operator不具备bitwise copy semantics。只有non-trivial的assignment operator 才会被编译器合成出来。</p>
-
-<p>需要注意的时，并不存在与member initialization list 相对应的copy assignment list。</p>
-
-<p>assignment operator 在 virtual inheritance 下表现不佳。</p>
-
-<p>任何解决方案如果是以程序操作为基础，导致较高的复杂度和较大的错误倾向，一般公认，这表明语言在该方面存在弱点。</p>
-
-<h4>5.5解构语义学</h4>
-
-<p>如果class内带了object，且此object带有析构函数，那么class的就会自动合成一个析构函数，否则视为不需要（即便class包含虚函数）。</p>
-
-<p>顺带需要说的是，析构函数的执行顺序和构造函数相反，此刻包括了vptr的初始化、膨胀等操作的反操作。</p>
-
-<p>部分段落摘录自网上，稍加修改，出处不明。</p>
 </div>
   
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-di-wu-zhang-datayu-yi-xue/">阅读全文 &rarr;</a>
+    </footer>
   
 
 
@@ -327,45 +146,12 @@
 
   <div class="entry-content"><h4>4.1 Member的各种调用方式</h4>
 
-<p>Nonstatic Member Functions：</p>
-
-<p>速度和一般的Nonmember function 有相同的效率。 编译器会对nonstatic member function进行改造。加入this参数，改变函数内部的对member data 的使用方法(使用this指针来存取！)，改变函数的名字&mdash;相当于nonmember function。这里面有一个函数名字的处理问题(name mangled处理)。</p>
-
-<p>Virtual Member Funciton：</p>
-
-<p>首先虚函数的调用方式若是指针调用，则是通过指针，找到vptr，打出偏移找到函数地址进行调用。其次，vptr的名字也是会被“name mangled”的，因为存在较为复杂的派生体系。</p>
-
-<p>在一个虚函数中调用另外一个虚函数，只需要写成类的函数(class::funcname())即可。因为在母函数中，执行期间已经决议出this指针指向的对象，因此上述做法可以压抑编译器的重复做法(使用vptr打偏移来做)。</p>
-
-<p>通过一个object（对象）调用虚拟函数，这时如果需要通过vptr中转一次，就会显得较为多余，编译器在决议的时候，会直接决议成nonstatic member function。</p>
-
-<p>Static Member Funciton：它的主要特性就是没有this指针，所以它不能够直接存取其class的nonstatic data members；也不能够被声明为virtual，const， volatile；它因此也就不需要经由某个class object 才能够被调用。他的调用速度和nonmember funciton差不多。如果取static member function的地址，那么将会是直接“Nonmember函数指针”，而不是“指向class member funciton的指针”。</p>
-
-<h4>4.2 Virtual Member Function</h4>
-
-<p>多重继承下的Virtual Funciton :</p>
-
-<p>当使用base  class pointer 调用virtual function的时候，可能出现两种情况。因为该base class pointer可能指向的位置处于derived class object的开始处，也可能有一个偏移量。一般规则时，经由指向“第二或后继之base class”的志真来调用derived class virtual funciton ,改掉用操作所连带的“必要的this指针调整”操作，必须在执行期完成。</p>
-
-<p>那么怎么处理呢？ 可能本来不需要调整的也变得要调整了！ 真是讨厌！  嘿嘿！  thunk技术被引用到了编译器中！  怎么解决呢？</p>
-
-<p>Sun编译器的方法是提供所谓的“split functions”技术；以相同的算法产生两个函数，其中第二个在返回之前，为指针加上必要的offset，于是不论通过base1或者derived指针调用函数，都不要调整返回值；而如果通过base2指针调用，则是另外一个函数 。</p>
-
-<p>IBM的方法呢？&#8221;把thunk搂抱在真正被调用的virtual function中。函数移开实现（1）调整this指针，然后才（2）执行程序员写的函数码；至于不需要调整的函数调用操作，就直接进入（2）部分&#8221;！</p>
-
-<p>MS的方法以所谓的&#8217;address points&#8217;来取代thunk策略，即将用来改写别人的函数（也就是overriding function)期待获得的是&#8217;引入virtual之class&#8217;的地址。这就是&#8217;address point&#8217;</p>
-
-<h4>4.4  指向Member Function的指针</h4>
-
-<p>指向 nonstatic member function 指针 :取一个nonstatic member function 的地址，如果该函数是nonvirtual ,则得到的结果是他在内存中的真正的地址。然而这个值也是不完全的，需要帮盯在某个class object的地址上，才能够通过它调用该函数。所有的nonstatic member functions 都需要对象的地址（以this参数指出）。</p>
-
-<p>指向 static member functions 指针 ：而static member functions的指针则是函数指针，而不是指向member function 的指针。</p>
-
-<p>指向 virtual member functions 指针：对一个virtual member funciton 取地址，所能够获得的只是一个索引值。编译器在评估求值的时候，会(*ptr->vptr[(int)pmf])(ptr) !</p>
-
-<p>后三部分摘录自互联网，出处不明。</p>
 </div>
   
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-si-zhang-the-semantics-of-function/">阅读全文 &rarr;</a>
+    </footer>
   
 
 
@@ -399,121 +185,13 @@
   </header>
 
 
-  <div class="entry-content"><p> C++ standard 不强制规定“base class subjects的排列次序”“不同存取层记得data members的排列次序” ，也不规定“virtual funcitons 和 virtual base class“的实现细节。
-当一个类并没有任何声明的时候，它实做一个对象的时候，实际分配了1个字节的大小的空间。从而使得这个对象能够有独一无二的地址空间。</p>
-
-<p>而一个对象的大小不仅仅包含了该类所声明的nonstatic data members，而且还受到了，</p>
-
-<p>1、支持语言特性（各种virtual特性）。</p>
-
-<p>2、边界对齐特性。</p>
-
-<p>两个部分的影响。而形成其最终大小。</p>
-
-<hr />
-
-<h4>3.1 Data Member的绑定(The Binding of a Data Member)</h4>
-
-<p> 数据成员的绑定指数据成员与函数成员的一体性，因此无需使用“防御性编码风格”。</p>
-
-<p> 所谓防御性编码风格，在C++具体所指是：</p>
-
-<p>1、所有的data member都放到了class声明的开始处。（原因：成员函数调用成员变量的时候，需要知道成员变量是哪一个成员变量，早期c++没有做到绑定，那么就需要类似“前置声明”一样的做法告诉编译器。）</p>
-
-<p>2、所有的inline function，不管长度都放置到class声明之外。（原因：当类的声明结束之后，member function本身才会开始被分析，而member function对数据成员的绑定操作会在整个class声明完成之后才发生。）</p>
-
-<p>但是以上两种基本无需实现，因为C++编译器已经能够解决。</p>
-
-<p>反倒是函数参数列表的形式，必须使用防御性编码风格。因为它不是在类完成之后被决议的，反而是在他们第一次遇到编译器的时候，就决议了。因此，例如，若在全局范围做typedef int length;并在class中先做了function的处理声明。那么若在随后的member data声明的时候加上typedef float length;则会出现参考操作不合法的情况。</p>
-
-<h4>3.2  Data member 的布局</h4>
-
-<p>C++ standard要求：在同一个access section 的member只要符合“较晚出现的members在class object中有较高的内存地址”即可，各个member之间并不一定需要得到连续的排列。当前编译器都是把一个以上的access section连锁到一起存放于内存，形成连续区块。可以使用内存高低的办法，去写一个函数，判断同一个类中，哪一个access section先出现。</p>
-
-<p>VPTR的存放位置也不一定，个个编译器自行规定。</p>
-
-<h4>3.3 Data Member的存取</h4>
-
-<p>static data member：只要是static member，那么存取就是一个固定的时间，因为他相当于一个global变量。如果取一个static data member的地址，就会得到一个指向其数据类型的指针，而不是一个指向其class member的指针。因为static member并不包含在一个class object 之中。既然static member放在global data segment之中，就需要对他进行命名处理，防止命名的冲突（注意，这里应该使用的name-mangling处理方法，进行1，名称计算。2名称还原。）</p>
-
-<p>再有，存取static data member不需要用对象(object)去获取，这只是一种语法上的便宜行事而已。</p>
-
-<p>Nonstatic data member：对一个nonstatic data member进行存取操作，编译器需要把class object的首地址加上data member在对象中的偏移量(offset)。origin._x&mdash;-等价于&mdash;>  &amp;origin+(&amp;Point3D::x-1); （-1的操作是用于判断指针是指向class的第一个member还是什么都没有指向。后面详述。）</p>
-
-<p>因为它的偏移量会在编译期间得到，因此如果该data member属于一个base class subjects的时候情况也一样。</p>
-
-<p>在虚继承的情况下：“经由base class subject存取class members”会增加一层新的间接性(bptr)。如果是由对象访问base class的数据成员(origin.x = 0;)，和上面的时间一样，因为它的偏移量在编译期间已经固定了，而如果是有一个指针来访问(如，pt->x = 0;)，则会很复杂，因为不知道该指针是指向什么类型的的对象。可能是base class，也可能是一个derived class，所以这个操作需啊放置到执行期能解决。</p>
-
-<h4>3.4“继承”和 Data Member</h4>
-
-<p>C++中，一个derived class object的空间是自己的members加上base class members。而之间的排列次序在C++  standard中并未强制指定。大部分编译器而言，都是把base class members放在前面。</p>
-
-<p>单独“继承”时候的Data Member：</p>
-
-<p>这里书上提到了一个值得讨论的地方：</p>
-
-<p>关于基类和子类的Data Member在补齐上的问题，是否需要以每个base member的空间+补齐空间+derive空间来实例化一个derive object？是的。因为如果每个class的对象空间补齐部分被填入member，那么对象之间的member wise复制操作将会破坏被复制的对象member。（当然，这是编译器落实的事情J）</p>
-
-<h5>加上多态</h5>
-
-<p>加上多态之后，将会给类的存取时间和空间带来额外的负担：</p>
-
-<p>1、加入了vtabl（对于类）。</p>
-
-<p>2、加入了vptr（对于对象）。(C++ 1.0置于对象空间尾部，2.0之后置于首部。)</p>
-
-<p>3、加强了构造器的能力。（构造器中，设置vptr指向的初值）</p>
-
-<p>4、加强了析构器的能力。（析构器重，抹掉vptr指向的值）</p>
-
-<h5>加上多重继承：</h5>
-
-<p>注意，在多继承中，存在基类没有virtual function，子类存在virtual function的情况，那么自然多态就会被打破，编译器需要介入。在把子类指针赋值给基类ptr的时候，编译器也需要介入。</p>
-
-<p>在进行指针转换的情况下，我们总需要进行基地址+offset的方法来调整(编译器是这样做的J)。通过这样的调整，能够使得基类指针类型，指向子类中基类的那个部分的首地址。（如 adrr = base +sizeof(XXX)）</p>
-
-<h5>虚拟继承：</h5>
-
-<p>策略是先安排好derived class的不变部分，而后再建立其共享部分。建立共享部分则需要通过一个指向该base class的指针，以访问virtual base class的成员。而不是像以前一样直接根据计算得到的偏移量得到。</p>
-
-<p>因此存在 this->vbtpr->datamember = XXXX;这样的操作。vbptr意为指向虚基类的不变部分的member地址。</p>
-
-<p>注意这里初期c++编译器对虚拟继承的设计，会对class的data member的“不良影响”如下：</p>
-
-<ul>
-<li><p>1、每个对象都要为每一个virtual base class背负这额外的指针，来获得对应的虚基类“共享的部分”。(vbptr)。</p></li>
-<li><p>2、如果虚拟继承的串链很长，那么间接存取的次数会增多(这里指多个层次的虚继承)，直接影响访问data member的效率。</p></li>
-</ul>
-
-
-<p>我们如何处理这两个问题？使得，<code>1：对象有固定的负担。2：固定的存取时间</code> 。</p>
-
-<p>解决方法有这些：</p>
-
-<p>第1个问题的解决方法：</p>
-
-<p>(在vc9.0中，多一个虚继承的基类，确乎会多一个vbptr，下面的优化貌似没有实现。不知何故！)</p>
-
-<p>微软编译器：在每一个类中，安插一个vbptr指向一个table，这个table包含了对应的虚基类的指针。</p>
-
-<p>Bjarne的做法：使用offset。把virtual base class和 virtual function entry混合在一起，即，vtable使用正值负值来进行“索引”，若是正值，索引得到的是虚函数的地址；若是负值，索引得到的是从基地址（子类对象的）到继承的虚基类member地址的偏移。</p>
-
-<p>如图：<br/>
-  <img src="/images/cppvirtualtable.jpg"></p>
-
-<p>一般而言，virtual base class最有效的应用形式是：一个抽象的virtual base，不包含任何data member。</p>
-
-<h5>3.5 对象成员的效率(Object Member Efficiency)（略过）</h5>
-
-<h5>3.6 指向data member 的指针</h5>
-
-<p>对于指向 nonstatic data member 的指针（如：&amp; Point3d::z），实际上是nonstatic data member在 class中的偏移量(注意：不能说成是class object中的偏移量)；更确切的说是 offset +1——也就是说，位于object 头部的成员对应的data member pointer 的值为1。但是，若对于取已经绑定于对象上的data member(如：&amp;origin.z)，取得的是在内存中实实在在的地址。</p>
-
-<p>这种位移从1开始的特性是基于如下考虑的：如何区分&#8221;没有指向任何data member&#8221;的data member pointer 和 &ldquo;指向第一个data member &#8220;的data member pointer。</p>
-
-<p>注意以上的位移1的处理，编译器已经计算得符合“通常思考原则”。1的额外计算，不需要程序员担心。</p>
-</div>
+  <div class="entry-content"><p> C++ standard 不强制规定“base class subjects的排列次序”“不同存取层记得data members的排列次序” ，也不规定“virtual funcitons 和 virtual base class“的实现细节。<br/>
+ </div>
   
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/07/26/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-san-zhang-datayu-yi-xue/">阅读全文 &rarr;</a>
+    </footer>
   
 
 
@@ -551,168 +229,12 @@
 
 <p>Default Constructors只有当编译器需要default constructor的时候才会合成出一个constructor, 只有下面的四种情况才会有nontrivial default constructor产生，其余的都是trivial default constructor。（nontrivial是合成的有用的默认函数，trivial则是没多大用处的构造器）</p>
 
-<ul>
-<li>a、<strong>带有Default Constructor 的 Member Class Object</strong></li>
-</ul>
-
-
-<p>如果一个class自己没有定义constructor，但是内含一个member object，而后者含有default constructor，那么此class的implicit default constructor（隐式构造函数）就是nontrivial的，编译器会合成一个constructor。注意被合成出来的constructor只满足编译器的需要，而不是程序员的需要（只完成编译器向要做的事情）。（例如：一个类中包含了两个成员，一个成员是一个对象，而另一个成员是built-in的变量，那么编译器会调用这个member对象的默认构造器，built-in变量就会置之不理。J）</p>
-
-<p>如果含有多个class member object，那么constructor要求初始化操作按照member object 在class 中的申明次序调用各个的constructors。</p>
-
-<p>注意：这样的编译器默认合成构造器，是隐式的，如果类本身存在构造器，那么编译器会在程序需要的(可以理解为user code J)代码之前，安插必要的default constructor。</p>
-
-<ul>
-<li>b、<strong>带有Default Constructor的Base Class</strong></li>
-</ul>
-
-
-<p>如果没有定义构造函数，编译器会产生一个nontrivial constructor，先调用相应的base class&rsquo;s constructor，如果用户自己定义了constructor，那么编译器将会安插调用所必要的default constructors的程序代码到用户自己定义的constructor中。（通俗地讲：用户已经定义了构造函数，但是没有定义默认构造函数，那么编译器会把默认的东西加在进去，但不会重新写一个default constructor出来）。</p>
-
-<ul>
-<li>c、<strong>带有一个Virtual Function 的 Class</strong></li>
-</ul>
-
-
-<p>因为编译器必须要初始化vptr 和vtable。所以如果类本身包含了虚函数，或者继承链中包含了虚函数，那么构造器是必须要履行它的职责：调用的时候修改vptr和vtable的内容。这个过程，编译器是需要插足的。</p>
-
-<ul>
-<li>d、<strong>带有一个Virtual Base Class 的 Class</strong></li>
-</ul>
-
-
-<p>在此之中，如果向要通过一个指针访问最顶端的class的data member,必须要通过&#8221;指向基类的指针&#8221;来完成。 pa-><em>vbcx->i=1024; 而</em>vbcx则是在class object的创建的时候完成的(此时编译器也自己做出了决定J)。</p>
-
-<hr />
-
-<h5>因此需要辨析常见的两个误解：</h5>
-
-<p>1、任何类如果程序员没有定义default constructor，编译器就一定会合成出一个来。（以上说明了4种情况，编译器才会自己合成或者安插默认行为）</p>
-
-<p>2、编译器合成出来的default constructor，会将class内的每个data member都设定为默认值。（以上第一点说明了，编译器只做自己“分内”的事情，built-in变量，不是它的职责。）</p>
-
-<h5>2.2 copy constructor 语意学</h5>
-
-<p>由三种情况使用到Copy Constructor: 1、object作为函数参数传递。2、函数的返回值是object。3、直接用一个同类实体最为初值而初始化。</p>
-
-<p>如果没有用户定义显示拷贝构造函数（explicit copy construtor），那么当进行同类对象赋值的时候，则是以Default Member-wise Initialization的形式递归进行的。（做法细节是：把一个对象的成员值，赋值到另外一个对象对应的成员上，但是对象内部的member object不能直接赋值，而是继续调用该member object的默认构造进行Default Member-wise Initialization。）（与构造函数类似，也存在trivial和nontrivial之分。）</p>
-
-<p>以上的做法，是包括着两种不同的判断行为，这样的行为取决于Bitwise  Copy Semantics的存在与否。（解释下：Bitwise Copy Semantics指按位逐次拷贝，那么在类的member data中，只包含了built-in类型的member的时候就具备了按位逐次拷贝的语义（对应对象值的拷贝）。在此情况下，编译器无需构建一个拷贝构造函数。）</p>
-
-<p>当存在以下情况，我们就称一个类不具备Bitwise Copy Semantics的语义，编译器需要构建一个拷贝构造函数，且这个拷贝构造函数是nontrivial的：</p>
-
-<p>1) class 内含一个member object， 而后者的class具有了一个copy constructor。</p>
-
-<p>2)当class 继承一个base class,而base class 好有一个copy constructor。</p>
-
-<p>3) class含有Virtual function。</p>
-
-<p>4) class派生自一个继承串链，其中具有Virtual base classes。</p>
-
-<p>后面两种比较复杂。当出现derived class 和base class之间的对象赋值的情况，必须要保证它们包含vptr的正确性，因此Bitwise Copy Semantics的语义不可行，所以也不具备。</p>
-
-<p>注意：“必须要保证它们包含vptr的正确性”的详细理解是：在多态体系下，如果对象实现对应按位拷贝的时候，若发生的切割(sliced)的话，子类的vptr就会blow up，从而失去了多态特性了，这是不允许的。因此不能再此情况下实行按位的拷贝操作。</p>
-
-<p>类似的，当存在虚基类(vitrtual base class)的时候，由于存在bptr于对象模型中需要妥善保存，如果出现了sliced情况，同样按位拷贝也会导致失去虚继承的情况。</p>
-
-<h5>2.3 程序转换语义学(Program Transformation Semantics)</h5>
-
-<p>这里讲解的是，编译器对用户程序进行处理的方法及原则：</p>
-
-<p>2.3.1、显示的初始化操作(Explicit Initialization)</p>
-
-<p>当用户使用显示初始化的时候，编译器会进行对象重新定义，并调用对应的拷贝构造函数。例如，已知X x0; 的时候，我们使用的时候，编译器会剖开成这样：</p>
-
-<p>X x1(x0);          左边转化成右边           X x1,x2;</p>
-
-<p>X x2(x0);          为编译器自行转换        x1.X::X(x0);</p>
-
-<p>x2.X::X(x0);       编译器在此时如是处理的。</p>
-
-<p>2.3.2、参数初始化(Argument Initialization)</p>
-
-<p>当函数调用参数是对象(object)的时候，那么编译器可能会做如下两种不同的操作：</p>
-
-<p>操作一：导入暂时性object。</p>
-
-<p>例如：函数声明 void foo(X x0);</p>
-
-<p>调用进入后，
-1、编译器实作一个X _temp;</p>
-
-<p>2、_temp.X::X(xx)。xx为实参。</p>
-
-<p>3、重新改写函数调用操作，foo(_temp);</p>
-
-<p>4、修改函数声明为引用。void foo(X &amp;x0);</p>
-
-<p>这里需要记忆的是，编译器会进行这样细节的实现。</p>
-
-<p>操作二：如borland C++编译器，可能会把实参直接建构到对应堆栈上。（此书无详述）</p>
-
-<p>2.3.3、返回值初始化(Return Value Initialization)</p>
-
-<p>返回值初始化是函数的返回值使用对象(object)做返回的情形，编译器需要做额外的处理。具体处理如下：</p>
-
-<p>编译器会产生临时的引用参数，并在return之前安插此引用参数的拷贝构造。</p>
-
-<p>例如：X bar() { X xx; return xx;} 会被转化为：</p>
-
-<p>void bar(X &amp; _res)      //这里安插了临时引用参数</p>
-
-<p>{</p>
-
-<p>X xx;</p>
-
-<p>xx.X::X();</p>
-
-<p>_res.X::X(xx);              //这里安插了临时引用的拷贝构造函数</p>
-
-<p>return;</p>
-
-<p>}</p>
-
-<p>而相应的 bar().memfunc(); //memfunc()为X的成员函数</p>
-
-<p>会被编译器转化为：</p>
-
-<p>X temp0;</p>
-
-<p>(bar(temp0),temp0).memfunc();</p>
-
-<p>2.3.4、使用者初始化(Optimization at the User Level)</p>
-
-<p>在返回值初始化的编译器处理基础之上，用户自行定义一个“计算“的构造函数。具备抽象，但缺乏效率。</p>
-
-<p>2.3.5、编译器初始化(Optimization at the Compiler Level)</p>
-
-<p> 编译器的优化和返回值初始化的编译器处理方式一样。这样的优化方式叫做NRV(Named Return Value)。但是，不可或缺的是，我们需要一个拷贝构造函数，去开启编译器的优化。因此，在于是否一个类需要用户自己定义拷贝构造函数，这样的问题，需要如下解释：</p>
-
-<p>例如：Class Point只包含了built-in的成员。那么，默认的拷贝构造函数则是trivial的。此时，我们无需去写一个显示的拷贝构造函数（explicit copy constructor），因为编译器会自动加上bitwise copy的行为，这里多此一举了。但是，如果class面临了很多以传值的方式做return value的时候，我们就需要去显示地提供一个拷贝构造，以开启编译器的NRV优化策略。</p>
-
-<h5>2.4 成员初始化队伍(列表)(Member Initialization List)</h5>
-
-<p>这里讲解的是，编译器如何处理初始化成员列表的。</p>
-
-<p>下列情况中，必须要使用member initialization list进行data member 的初始化：</p>
-
-<p>1) 当初始化一个reference member。</p>
-
-<p>2) 当初始化一个const member。</p>
-
-<p>3) 当调用一个base class 的constructor，而他拥有一组参数的时候。</p>
-
-<p>4) 调用一个member class 的constructor ,而他有一组参数。</p>
-
-<p>编译器会一一操作初始化列表的成员，以适当的顺序在class的constructor中插入初始化操作，并且保证它们都发生在任何explicit user code 之前。</p>
-
-<p>这里总的需要留意两点：</p>
-
-<p>第一个：member object的初始化，最好放到初始化列表里面。若放置于构造器中，则会产生临时的object0，初始化之，在做赋值运算给object，然后object0自行销毁，期间耗时耗力。若置于初始化列表，则编译器会在构造函数中，user code之前，调用object的构造函数，予以初始化。</p>
-
-<p>第二个：初始化列表的初始化次序。初始化次序和member在类中的声明次序一致。相互关联的member，需要十分留意初始化列表中，其中依赖的次序。解决的办法：把其中一部分使用初始化列表初始化，而另一部分放置到构造函数中使用user code予以表达，这样即便次序存在依赖，也会只“先执行合成的，再执行user的code”。</p>
 </div>
   
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/07/26/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-er-zhang-gou-zao-han-shu-yu-yi-xue/">阅读全文 &rarr;</a>
+    </footer>
   
 
 
@@ -756,92 +278,12 @@
 
 <p>首先应该说下C的“算法驱动”思路：C语言中，“数据”和“处理数据的操作”十分开来的。简言之，这样的程序方法叫做“程序性的”，由以功能为导向的函数的算法所驱动，处理的是来自外部的数据。</p>
 
-<p>而在C++中，则使用的是独立的“抽象数据类型abstract data type（ADT)”所驱动。这样符合软件工程的设计。如果不使用virtual，C++本身的class布局及存取时间和struct没有区别。言外之意，只有存在虚函数(virtual function)和虚基类(virtual base class)这样的形式，才使得class实例化一个对象时，存在额外的负担。</p>
-
-<h4>1.1  C++对象模型(The C++ Object Model)</h4>
-
-<p>C++中，有两种数据成员(class data member):静态成员(static)和非静态成员(nonstatic)。有三种成员函数(class member function)：静态成员函数(static)、非静态成员函数(nonstatic)和虚函数(virtual)。</p>
-
-<p>对象模型的设计方式（其实也是设计对象模型时候的一些思路）</p>
-
-<p>1、简单对象模型：</p>
-
-<p>这个模型的设计目的是：降低设计复杂度。但是相应的陪上了执行期的空间和效率。设计思路如下：</p>
-
-<p>一个object 是一系列的slots(指针)，每一个slot指向一个member（成员） : data member and function slot（数据成员或函数成员）。每个data member and function member都有自己的slot。此模型中，meember 不放在object中，而是存放slot，由slot指向member。</p>
-
-<p>2、表格驱动对象模型：另一种方法。把所有member(成员)分发到两个table（表格）中，然后用class的对象的两个slot指向这两个table。</p>
-
-<p>3、C++对象模型：由简单对象模型演化过来。设计方式如下：</p>
-
-<p>Nonstatic data members（非静态成员） 存放在一个class object内，static data member（静态成员）放在class object 外，而static and nonstatic function memebers 放在所有的class object 之外。而virtual functions分两个步骤完成：</p>
-
-<p>a、每一个class（类）产生出一对之想virtual functions的指针，放在virtual table（虚表）中。</p>
-
-<p>b、每一个class object（对象）添加一个指针（vptr），指向相应的virtual table（虚表）。而vptr的设定和重置是由constructor（构造函数），destructor（析构函数），copy constructor（拷贝构造函数）完成的。而每一个class 所关联的type_info存放在表格的第一个slot中。</p>
-
-<hr />
-
-<p><strong>C++对象模型的优点是：综合了存取时间和空间效率</strong>。</p>
-
-<p>缺点是：（任何一种对象模型的设计都存在缺点，不是吗J）如果应用程序的代码本身没改变（即处理逻辑、函数等没变化），但是用到的类对象的非静态数据成员有所修改，那么与其相关的程序代码都要重新编译。</p>
-
-<p>如果对以上三种模型设计方式加上了继承，结果如下：</p>
-
-<p>1、简单模型：每一个base class（基类）可以被derived class object（子类）内的一个slot指出，该slot内含base class subobject的地址。    缺点：间接性导致了空间和存取时间上的负担， 优点：class object的大小不因base class的改变而受影响。</p>
-
-<p>（这里简单而言：缺点是如果继承的层次较多，那么子类包含的“指向基类的指针”就会越来越多，那么“负担”会越来越重。但是相应的好处是：如果基类发生成员改变等变化了，子类不需要重新编译，因为与之关联的仅仅是一个指针而已。）</p>
-
-<p>2、Base Table 模型。base class table产生出来，表格中的每一个slot内含一个相关的base class地址，类似virtual table内含一个virtual funciton地址。每个对象含有一个BPTR，指向base class table。缺点：由于间接性导致了空间和存取时间上的额外负担。优点：每个class object对于继承都有一直的表现方式：每个class object 都应该在一个固定的位置上安放一个base table指针，与base classes的大小和树木无关，而且不改变class objects的本身的大小。</p>
-
-<p>  3、 C++的模型。base class subject的data members直接放在derived class object中，提高了存取的效率，却使得只要每个base class data member改变，derived class 就需要重新编译。而Virtual base class的产生，需要一个间接的base class的表现方法。</p>
-
-<p>对象模型如何影响程序：不同的对象模型，会导致现有的程序代码必须修改以及必须加入新的程序代码两种结果。所以不管是哪种模型方式，编译器都采取这样的两种额外处理，使得程序结果正常。</p>
-
-<h4>1.2关键词带来差异(A Keyword Distinction)</h4>
-
-<p>为了支持8种整数的运算，所以C++支持了运算符重载。在C++中，必须保证同一个access section内的数据，其声明的次序出现在内存布局中，而不同的access sections的存放次序是不定的。同样，base class 和derived class的布局次序也是没有规定的。</p>
-
-<h4>1.3 对象的差异(An Object Distinction)</h4>
-
-<p>C++支持的三种programming paradigms:</p>
-
-<p>1、<strong>程序模型</strong>：类似于C语言风格。</p>
-
-<p>2、<strong>抽象数据类型模型</strong>：一组抽象的数据和它的相应表达式。如今叫OB（基于对象），不需要扩展，空间紧凑，速度快，编译期决定了函数引发的操作。</p>
-
-<p>3、<strong>面向对象模型</strong>：彼此类似的类型，通过一个抽象的base class被封装起来。
-C++以下列的方法支持多态：</p>
-
-<p>a、经由一组隐含的转化操作，将derived class object的地址赋给base class pointer  : shapre *ps = new circle();</p>
-
-<p>b、经由virtual function机制： ps->ritate();</p>
-
-<p>c、经由dynamic_case和typeid运算符：  if (circle * pc= dynamic_case <circle *> (ps) )</p>
-
-<p>需要多少的内存才能表现一个class object，一般而言有下面三种：</p>
-
-<p>1) 其nonstatic data members的大小</p>
-
-<p>2) alignment的需求</p>
-
-<p>3) Virtual funciton and Virtual base class的额外负担</p>
-
-<p>指针的类型：每个指针的大小是一样的，但是有“指向不同类型之各指针“间的区别，每个指针只能覆盖其指向对象的内存范围。</p>
-
-<p>指针类型会交到编译器如何解释某特定地址中的内存内容及其大小。</p>
-
-<p>对于多态情形：</p>
-
-<p>指针在编译期的时候，会被决定两点：</p>
-
-<p>1、当前指针类型只能调用的接口。</p>
-
-<p>2、能够调用接口的访问权限。</p>
-
-<p>但是在执行多态的情况下，编译期没有落实对应的函数执行实体，因为具体对象型别没有确定，故只有放到执行期，通过vptr找vtabl来落实具体的接口实现。</p>
 </div>
   
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/07/26/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-guan-yu-dui-xiang/">阅读全文 &rarr;</a>
+    </footer>
   
 
 

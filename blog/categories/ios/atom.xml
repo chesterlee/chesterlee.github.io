@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ios | Chesterlee's Zen]]></title>
   <link href="http://chesterlee.github.io/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://chesterlee.github.io/"/>
-  <updated>2014-11-30T11:51:33+08:00</updated>
+  <updated>2014-12-05T23:46:29+08:00</updated>
   <id>http://chesterlee.github.io/</id>
   <author>
     <name><![CDATA[chesterlee]]></name>
@@ -19,6 +19,9 @@
     <updated>2014-11-30T10:28:24+08:00</updated>
     <id>http://chesterlee.github.io/blog/2014/11/30/presentationcontroller-in-ios8</id>
     <content type="html"><![CDATA[<p>在之前的一篇文章<a href = http://chesterlee.github.io/blog/2014/08/26/tan-tan-ioszhong-de-vctransitionfa-zhan/>谈谈iOS中的VCTransition发展</a>中，提到了Apple对iOS动画转场的不断改进，降低动画耦合。如今，在iOS8中的PresentationController，这样的改进更加彻底。下面对PresentationController进行简单的讲解：</p>
+
+<!--more-->
+
 
 <h3>Alert、ActionSheet和popOver的重定义</h3>
 
@@ -226,7 +229,10 @@ func animateTransition(transitionContext: UIViewControllerContextTransitioning)
 
 <h3>约束的类型</h3>
 
-<p>对于Autolayout而言，最为核心的基础就是约束。那么在iOS中约束到底有几种？它们有那些作用呢？下面说下。</p>
+<p>对于Autolayout而言，最为核心的基础就是约束。那么在iOS中约束到底有几种？它们有那些作用呢？下面就谈谈。</p>
+
+<!--more-->
+
 
 <ul>
 <li><p><strong>NSLayoutConstraint</strong>，开放类，几乎是程序员最常用的约束。它用于设置view在view tree之间的关系，自身大小等。</p></li>
@@ -318,7 +324,10 @@ func animateTransition(transitionContext: UIViewControllerContextTransitioning)
     <link href="http://chesterlee.github.io/blog/2014/10/13/the-interface-of-the-autolayout/"/>
     <updated>2014-10-13T21:48:18+08:00</updated>
     <id>http://chesterlee.github.io/blog/2014/10/13/the-interface-of-the-autolayout</id>
-    <content type="html"><![CDATA[<p>下面是对最新iOS8sdk中Autolayout的category接口的解释，如果有错误，希望指正，谢谢！</p>
+    <content type="html"><![CDATA[<p>下文是对最新iOS8sdk中Autolayout的category接口的解释，如果有错误，希望指正，谢谢！</p>
+
+<!--more-->
+
 
 <h5>UIConstraintBasedLayoutInstallingConstraints—-约束的添加和删除</h5>
 
@@ -433,6 +442,9 @@ UIKIT_EXTERN const CGSize UILayoutFittingExpandedSize NS_AVAILABLE_IOS(6_0);
     <content type="html"><![CDATA[<p>本文是一个webView内存管理的trick，可以直接拿来用。<br/>
 由于UIWebView的内容加载不受程序员直接控制，所以在UIWebView加载一些图片较多的网页时，如果图片较多，很容易就在网页读取阶段出现memory warning，而且当你把webview对象干掉时，内存依然不减。如果不处理的话，程序就会被kill掉。如何处理呢，下面是几个tip可以让君尝试：</p>
 
+<!--more-->
+
+
 <p>1、在每一次UIWebView读取页面结束后(Delegate)，调用UserDefault关闭缓存。代码：</p>
 
 <pre><code>   - (void)webViewDidFinishLoad:(UIWebView *)webView 
@@ -479,6 +491,9 @@ UIKIT_EXTERN const CGSize UILayoutFittingExpandedSize NS_AVAILABLE_IOS(6_0);
     <updated>2014-09-15T22:21:07+08:00</updated>
     <id>http://chesterlee.github.io/blog/2014/09/15/use-reactivecocoa</id>
     <content type="html"><![CDATA[<p>本篇的文章的目的很明确，就是要会使用RAC。这里对RAC的关键概念和行为做出较为清晰的说明，便于使用。</p>
+
+<!--more-->
+
 
 <p>ReactiveCocoa衍生自FRP（响应链编程）的一种，它是用OC语言来描述FRP的一个框架。其根源可以追述到如下论坛：<a href= http://www.haskell.org/haskellwiki/Haskell>Haskell</a></p>
 

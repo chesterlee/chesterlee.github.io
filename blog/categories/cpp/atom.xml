@@ -4,7 +4,7 @@
   <title><![CDATA[Category: cpp | Chesterlee's Zen]]></title>
   <link href="http://chesterlee.github.io/blog/categories/cpp/atom.xml" rel="self"/>
   <link href="http://chesterlee.github.io/"/>
-  <updated>2014-11-30T11:51:33+08:00</updated>
+  <updated>2014-12-05T23:46:29+08:00</updated>
   <id>http://chesterlee.github.io/</id>
   <author>
     <name><![CDATA[chesterlee]]></name>
@@ -18,7 +18,12 @@
     <link href="http://chesterlee.github.io/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-di-wu-zhang-datayu-yi-xue/"/>
     <updated>2014-08-02T09:27:24+08:00</updated>
     <id>http://chesterlee.github.io/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-di-wu-zhang-datayu-yi-xue</id>
-    <content type="html"><![CDATA[<ul>
+    <content type="html"><![CDATA[<p>C++语义学</p>
+
+<!--more-->
+
+
+<ul>
 <li><p>合理设计之一：将共享的成员放置到base class中。</p></li>
 <li><p>合理设计之二：对于class的成员，应该在构造函数中或者其他的成员函数中初始化。如果让子类class去初始化base class的成员，将会破坏封装性。</p></li>
 </ul>
@@ -148,6 +153,9 @@
     <id>http://chesterlee.github.io/blog/2014/08/02/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-si-zhang-the-semantics-of-function</id>
     <content type="html"><![CDATA[<h4>4.1 Member的各种调用方式</h4>
 
+<!--more-->
+
+
 <p>Nonstatic Member Functions：</p>
 
 <p>速度和一般的Nonmember function 有相同的效率。 编译器会对nonstatic member function进行改造。加入this参数，改变函数内部的对member data 的使用方法(使用this指针来存取！)，改变函数的名字&mdash;相当于nonmember function。这里面有一个函数名字的处理问题(name mangled处理)。</p>
@@ -193,7 +201,8 @@
     <link href="http://chesterlee.github.io/blog/2014/07/26/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-san-zhang-datayu-yi-xue/"/>
     <updated>2014-07-26T22:16:51+08:00</updated>
     <id>http://chesterlee.github.io/blog/2014/07/26/wo-de-c-plus-plus-dui-xiang-mo-xing-du-shu-bi-ji-san-zhang-datayu-yi-xue</id>
-    <content type="html"><![CDATA[<p> C++ standard 不强制规定“base class subjects的排列次序”“不同存取层记得data members的排列次序” ，也不规定“virtual funcitons 和 virtual base class“的实现细节。
+    <content type="html"><![CDATA[<p> C++ standard 不强制规定“base class subjects的排列次序”“不同存取层记得data members的排列次序” ，也不规定“virtual funcitons 和 virtual base class“的实现细节。<br/>
+ <!--more-->
 当一个类并没有任何声明的时候，它实做一个对象的时候，实际分配了1个字节的大小的空间。从而使得这个对象能够有独一无二的地址空间。</p>
 
 <p>而一个对象的大小不仅仅包含了该类所声明的nonstatic data members，而且还受到了，</p>
@@ -317,6 +326,9 @@
     <content type="html"><![CDATA[<h5>2.1  Default Constructor 的构建操作</h5>
 
 <p>Default Constructors只有当编译器需要default constructor的时候才会合成出一个constructor, 只有下面的四种情况才会有nontrivial default constructor产生，其余的都是trivial default constructor。（nontrivial是合成的有用的默认函数，trivial则是没多大用处的构造器）</p>
+
+<!--more-->
+
 
 <ul>
 <li>a、<strong>带有Default Constructor 的 Member Class Object</strong></li>
@@ -495,6 +507,9 @@
 <h3>第一章         关于对象</h3>
 
 <p>首先应该说下C的“算法驱动”思路：C语言中，“数据”和“处理数据的操作”十分开来的。简言之，这样的程序方法叫做“程序性的”，由以功能为导向的函数的算法所驱动，处理的是来自外部的数据。</p>
+
+<!--more-->
+
 
 <p>而在C++中，则使用的是独立的“抽象数据类型abstract data type（ADT)”所驱动。这样符合软件工程的设计。如果不使用virtual，C++本身的class布局及存取时间和struct没有区别。言外之意，只有存在虚函数(virtual function)和虚基类(virtual base class)这样的形式，才使得class实例化一个对象时，存在额外的负担。</p>
 

@@ -9,9 +9,8 @@
   <meta name="author" content="chesterlee">
 
   
-  <meta name="description" content="做iOS交互，最为重要的就是UI的事件传递需要很清楚。当然也要包括各种&#8221;小&#8221;细节。
-这里首先说说大的过程，也是UI事件传递的基本过程：当APP收到用户点击之后，就会做两个过程： 1、遍历树，找哪个UIView是被Point击中。
-2、回溯tree node，形成响应者链。 &hellip;">
+  <meta name="description" content="如题，详细谈谈iOS手势和事件传递的各个细节。 做iOS交互，最为重要的就是UI的事件传递需要很清楚。当然也要包括各种&#8221;小&#8221;细节。
+这里首先说说大的过程，也是UI事件传递的基本过程：当APP收到用户点击之后，就会做两个过程： 1、遍历树，找哪个UIView是被Point击中 &hellip;">
   <meta name="keywords" content="UI，Gesture">
 
   <!-- http://t.co/dKP3o1e -->
@@ -102,7 +101,12 @@
   </header>
 
 
-<div class="entry-content"><p>做iOS交互，最为重要的就是UI的事件传递需要很清楚。当然也要包括各种&#8221;小&#8221;细节。
+<div class="entry-content"><p>如题，详细谈谈iOS手势和事件传递的各个细节。</p>
+
+<!--more-->
+
+
+<p>做iOS交互，最为重要的就是UI的事件传递需要很清楚。当然也要包括各种&#8221;小&#8221;细节。
 这里首先说说大的过程，也是UI事件传递的基本过程：当APP收到用户点击之后，就会做两个过程：</p>
 
 <ul>
